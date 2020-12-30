@@ -6,9 +6,9 @@
     <color name="colorButton">#5B3E96</color>
     <color name="colorButtonDelete">#FF5C5C</color>
     <color name="colorCalendarSelectedDay">#6670FF</color>
-    <color name="colorBackgraund">#140A26</color>
+    <color name="colorBackground">#140A26</color>
     <color name="black">#252A31</color>
-    <color name="colorSelectedIcon">#243B6B</color>
-    <color name="colorIcon">#919DB5</color>
-    <color name="colorBottomAppBar">#BCEFF5F8</color>
+    <color name="colorIconStateChecked">#919DB5</color>
+    <color name="colorIconStateUnChecked">#243B6B</color>
+    <color name="colorBottomAppBar">#979797</color>
 </resources>
