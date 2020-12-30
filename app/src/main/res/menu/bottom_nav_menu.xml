@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_list___simple_line_icons"
+        app:showAsAction="ifRoom"
         android:title="@string/title_home" />
 
     <item
         android:id="@+id/navigation_notifications"
         android:icon="@drawable/ic_bell___simple_line_icons"
+        app:showAsAction="ifRoom"
         android:title="@string/title_notifications" />
     <item
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/ic_group_10"
+        app:showAsAction="ifRoom"
         android:title="@string/title_dashboard" />
 </menu>
