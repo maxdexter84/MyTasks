@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#221738</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#5B3E96</color>
+    <color name="colorButton">#5B3E96</color>
+    <color name="colorButtonDelete">#FF5C5C</color>
+    <color name="colorCalendarSelectedDay">#6670FF</color>
+    <color name="colorBackgraund">#140A26</color>
+    <color name="black">#252A31</color>
+    <color name="colorSelectedIcon">#243B6B</color>
+    <color name="colorIcon">#919DB5</color>
+    <color name="colorBottomAppBar">#BCEFF5F8</color>
+</resources>
