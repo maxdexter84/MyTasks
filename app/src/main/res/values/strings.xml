@@ -3,4 +3,10 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="event_name">Event name</string>
+    <string name="event_description">Description</string>
+    <string name="date_hint">06 october 2020</string>
+    <string name="time_hint">22:50</string>
+    <string name="add_button">Add</string>
 </resources>

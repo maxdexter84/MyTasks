@@ -34,14 +34,10 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> false
             }
+
+
         }
 
-
-
-
-
-
-
-
+        binding.fab.setOnClickListener { navController.navigate(MobileNavigationDirections.actionGlobalNewTaskFragment()) }
     }
 }

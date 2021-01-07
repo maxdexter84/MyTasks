@@ -7,19 +7,23 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="ru.maxdexter.mytasks.ui.home.HomeFragment"
+        android:name="ru.maxdexter.mytasks.ui.calendar.CalendarFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_calendar" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="ru.maxdexter.mytasks.ui.dashboard.DashboardFragment"
+        android:name="ru.maxdexter.mytasks.ui.profile.ProfileFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="ru.maxdexter.mytasks.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" /><action android:id="@+id/action_global_navigation_home" app:destination="@id/navigation_home"/><action android:id="@+id/action_global_navigation_dashboard" app:destination="@id/navigation_dashboard"/><action android:id="@+id/action_global_navigation_notifications" app:destination="@id/navigation_notifications"/>
+    <dialog
+        android:id="@+id/newTaskFragment"
+        android:name="ru.maxdexter.mytasks.ui.newtask.NewTaskFragment"
+        android:label="NewTaskFragment" /><action android:id="@+id/action_global_newTaskFragment" app:destination="@id/newTaskFragment"/>
 </navigation>
