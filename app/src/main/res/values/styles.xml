@@ -35,6 +35,7 @@
     </style>
 
     <style name="addButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/reply_orange_500</item>
         <item name="fontFamily">@font/rubik</item>
         <item name="cornerRadius">@dimen/min_space_0dp</item>
     </style>

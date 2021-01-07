@@ -42,7 +42,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         }
 
         binding.tvTimeChange.setOnClickListener {
-            TimePickerDialog(requireContext(),android.R.style.Theme_Material_Dialog,listener,12,50,true).show()
+            TimePickerDialog(requireContext(),listener,12,50,true).show()
         }
 
 
