@@ -6,4 +6,5 @@ data class Task(val id: Int ,
                 val eventDate: Long,
                 val eventTime: Int,
                 val isCompleted: Boolean = false,
-                val repeat: Boolean = false, val file: String, val image: String)
+                val repeat: Boolean = false,
+                val file: String)
