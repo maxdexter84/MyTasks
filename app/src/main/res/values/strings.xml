@@ -9,4 +9,6 @@
     <string name="date_hint">06 october 2020</string>
     <string name="time_hint">22:50</string>
     <string name="add_button">Add</string>
+    <string name="close_button">Close</string>
+    <string name="repeat">Repeat</string>
 </resources>

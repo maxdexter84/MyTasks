@@ -4,4 +4,6 @@
     <attr name="dateTimeTextAttr" format="reference"/>
     <attr name="addButtonAttr" format="reference"/>
     <attr name="colorPrimarySurfaceVariant" format="color" />
+
+    <attr name="textStyle" format="reference"/>
 </resources>

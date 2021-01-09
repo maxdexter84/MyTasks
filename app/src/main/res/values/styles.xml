@@ -21,13 +21,15 @@
         <!--System/Platform attributes-->
         <item name="android:windowBackground">?android:colorBackground</item>
         <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+
         <item name="dateTimeTextAttr">@style/dateTime</item>
         <item name="addButtonAttr">@style/addButtonStyle</item>
+        <item name="textStyle">@style/TextStyle</item>
     </style>
     
 
 
-    <style name="dateTime" parent="Widget.MaterialComponents.TextView">
+    <style name="dateTime" parent="Widget.AppCompat.TextView">
         <item name="android:textColor">@color/colorTextDay</item>
         <item name="android:textSize">@dimen/big_text_24sp</item>
         <item name="android:fontFamily">@font/roboto</item>
@@ -38,6 +40,11 @@
         <item name="backgroundTint">@color/reply_orange_500</item>
         <item name="fontFamily">@font/rubik</item>
         <item name="cornerRadius">@dimen/min_space_0dp</item>
+    </style>
+
+    <style name="TextStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">@dimen/big_text_24sp</item>
+        <item name="android:fontFamily">@font/roboto</item>
     </style>
 
 </resources>

@@ -94,11 +94,11 @@
 
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_add"
+            android:id="@+id/btn_close"
             style="?addButtonAttr"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/add_button"
+            android:text="@string/close_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/iv_add_file" />
@@ -107,25 +107,43 @@
             android:id="@+id/iv_add_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal_space_16dp"
             android:backgroundTint="@android:color/transparent"
             android:src="@drawable/ic_baseline_add_a_photo_24"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_add_file"
             app:layout_constraintEnd_toStartOf="@+id/iv_add_file"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switch_repeat_task" />
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageButton
             android:id="@+id/iv_add_file"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:backgroundTint="@android:color/transparent"
             android:src="@drawable/ic_baseline_attach_file_24"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_add_photo"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/normal_space_16dp"
+            app:layout_constraintEnd_toStartOf="@+id/ib_delete"
             app:layout_constraintStart_toEndOf="@+id/iv_add_photo"
-            app:layout_constraintTop_toTopOf="@+id/iv_add_photo" />
+            app:layout_constraintTop_toBottomOf="@+id/switch_repeat_task" />
 
+        <ImageButton
+            android:id="@+id/ib_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:src="@drawable/ic_baseline_delete_24"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_add_file"
+            app:layout_constraintEnd_toStartOf="@+id/ib_complete"
+            app:layout_constraintStart_toEndOf="@+id/iv_add_file" />
+
+        <ImageButton
+            android:id="@+id/ib_complete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:src="@drawable/ic_baseline_check_circle_24"
+            app:layout_constraintBottom_toBottomOf="@+id/ib_delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ib_delete" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
