@@ -6,8 +6,8 @@
     <data>
 
     </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.calendar.CalendarFragment">
@@ -16,32 +16,59 @@
             android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:fitsSystemWindows="true"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+
+            android:fitsSystemWindows="true">
+
             <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:fitsSystemWindows="true">
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
                 <CalendarView
                     android:id="@+id/calendarView"
-                    android:fitsSystemWindows="true"
+                    android:elevation="16dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:fitsSystemWindows="true"
+                    app:layout_collapseMode="parallax" />
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_collapseMode="pin" />
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
         </com.google.android.material.appbar.AppBarLayout>
-
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_table"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            tools:itemCount="24"
-            tools:listitem="@layout/item_hour_layout"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+            android:layout_height="wrap_content"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            android:layout_below="@+id/appBarLayout"
+            android:layout_gravity="bottom" />
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/bottomAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:fabAlignmentMode="end"
+           app:hideOnScroll="true"
+            app:menu="@menu/bottom_nav_menu"
+            style="@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface"
+            />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            app:layout_anchor="@id/bottomAppBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.Design.FloatingActionButton"
+            app:srcCompat="@drawable/ic_baseline_add_24" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </layout>

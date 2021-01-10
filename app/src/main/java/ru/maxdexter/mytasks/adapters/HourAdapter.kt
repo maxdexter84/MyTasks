@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.databinding.ItemHourLayoutBinding
 import ru.maxdexter.mytasks.models.Hour
 
@@ -14,10 +13,7 @@ class HourAdapter: RecyclerView.Adapter<HourAdapter.ViewHolder>() {
     private val list = mutableListOf<Hour>()
     init {
         for (i in 0..23 step 1){
-            when(i){
-                0 -> list.add(Hour(i,("$i" + "59").toInt()))
-            }
-
+            list.add(Hour(i,("$i" + "59").toInt()))
         }
     }
     class ViewHolder(val binding: ItemHourLayoutBinding): RecyclerView.ViewHolder(binding.root) {

@@ -16,28 +16,27 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_main )
-        val navController = findNavController(R.id.nav_host_fragment)
-
-        binding.bottomAppBar.setOnMenuItemClickListener {
-            when(it.itemId){
-                R.id.navigation_home ->{
-                    navController.navigate(MobileNavigationDirections.actionGlobalNavigationHome())
-                    true
-                }
-                R.id.navigation_notifications -> {
-                    navController.navigate(MobileNavigationDirections.actionGlobalNavigationNotifications())
-                    true
-                }
-                R.id.navigation_dashboard -> {
-                    navController.navigate(MobileNavigationDirections.actionGlobalNavigationDashboard())
-                    true
-                }
-                else -> false
-            }
-
-
-        }
-
-        binding.fab.setOnClickListener { navController.navigate(MobileNavigationDirections.actionGlobalNewTaskFragment()) }
+//        val navController = findNavController(R.id.nav_host_fragment)
+//        binding.bottomAppBar.setOnMenuItemClickListener {
+//            when(it.itemId){
+//                R.id.navigation_home ->{
+//                    navController.navigate(MobileNavigationDirections.actionGlobalNavigationHome())
+//                    true
+//                }
+//                R.id.navigation_notifications -> {
+//                    navController.navigate(MobileNavigationDirections.actionGlobalNavigationNotifications())
+//                    true
+//                }
+//                R.id.navigation_dashboard -> {
+//                    navController.navigate(MobileNavigationDirections.actionGlobalNavigationDashboard())
+//                    true
+//                }
+//                else -> false
+//            }
+//
+//
+//        }
+//
+//        binding.fab.setOnClickListener { navController.navigate(MobileNavigationDirections.actionGlobalNewTaskFragment()) }
     }
 }

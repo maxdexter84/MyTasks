@@ -8,13 +8,22 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import ru.maxdexter.mytasks.MobileNavigationDirections
 import ru.maxdexter.mytasks.R
+import ru.maxdexter.mytasks.adapters.HourAdapter
 import ru.maxdexter.mytasks.databinding.FragmentCalendarBinding
 
 class CalendarFragment : Fragment() {
 
     private lateinit var calendarViewModel: CalendarViewModel
     private lateinit var binding: FragmentCalendarBinding
+    private val hourAdapter: HourAdapter by lazy {
+        HourAdapter()
+    }
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -24,12 +33,40 @@ class CalendarFragment : Fragment() {
         calendarViewModel =
                 ViewModelProvider(this).get(CalendarViewModel::class.java)
 
-
         binding.calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
             Toast.makeText(requireContext(),"$dayOfMonth $month $year ${view.date}",Toast.LENGTH_SHORT).show()
 
         }
 
+
+        binding.recyclerTable.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = hourAdapter
+        }
+
+
+
+        binding.bottomAppBar.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.navigation_home ->{
+                    findNavController().navigate(MobileNavigationDirections.actionGlobalNavigationHome())
+                    true
+                }
+                R.id.navigation_notifications -> {
+                    findNavController().navigate(MobileNavigationDirections.actionGlobalNavigationNotifications())
+                    true
+                }
+                R.id.navigation_dashboard -> {
+                    findNavController().navigate(MobileNavigationDirections.actionGlobalNavigationDashboard())
+                    true
+                }
+                else -> false
+            }
+
+
+        }
+
+        binding.fab.setOnClickListener { findNavController().navigate(MobileNavigationDirections.actionGlobalNewTaskFragment()) }
         return binding.root
     }
 }
