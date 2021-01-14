@@ -48,16 +48,15 @@ class CalendarFragment : Fragment() {
 
         binding.bottomAppBar.setOnMenuItemClickListener {
             when(it.itemId){
-                R.id.navigation_home ->{
-                    findNavController().navigate(MobileNavigationDirections.actionGlobalNavigationHome())
+                R.id.navigation_note ->{
                     true
                 }
                 R.id.navigation_notifications -> {
-                    findNavController().navigate(MobileNavigationDirections.actionGlobalNavigationNotifications())
+                    findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNotificationsFragment())
                     true
                 }
                 R.id.navigation_dashboard -> {
-                    findNavController().navigate(MobileNavigationDirections.actionGlobalNavigationDashboard())
+                    findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToProfileFragment())
                     true
                 }
                 else -> false
@@ -66,7 +65,7 @@ class CalendarFragment : Fragment() {
 
         }
 
-        binding.fab.setOnClickListener { findNavController().navigate(MobileNavigationDirections.actionGlobalNewTaskFragment()) }
+        binding.fab.setOnClickListener { findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment()) }
         return binding.root
     }
 }

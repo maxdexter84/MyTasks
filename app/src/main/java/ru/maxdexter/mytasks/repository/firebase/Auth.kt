@@ -13,7 +13,8 @@ object Auth {
         val providerList = arrayListOf(
             AuthUI.IdpConfig.EmailBuilder().build(),
             AuthUI.IdpConfig.GoogleBuilder().build(),
-            AuthUI.IdpConfig.AnonymousBuilder().build())
+            AuthUI.IdpConfig.AnonymousBuilder().build(),
+        AuthUI.IdpConfig.PhoneBuilder().build())
 
         activity.startActivityForResult(
             AuthUI.getInstance()

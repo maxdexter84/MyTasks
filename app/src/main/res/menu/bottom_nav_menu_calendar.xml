@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_list___simple_line_icons"
-        app:showAsAction="ifRoom"
-        android:title="@string/title_home" />
+        android:id="@+id/navigation_note"
+        android:icon="@drawable/ic_baseline_sticky_note_2_24"
+        android:title="@string/title_note"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navigation_notifications"

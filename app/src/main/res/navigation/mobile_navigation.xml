@@ -3,27 +3,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@id/calendarFragment">
 
-    <fragment
-        android:id="@+id/navigation_home"
-        android:name="ru.maxdexter.mytasks.ui.calendar.CalendarFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_calendar" />
-
-    <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="ru.maxdexter.mytasks.ui.profile.ProfileFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_profile" />
-
-    <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="ru.maxdexter.mytasks.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" /><action android:id="@+id/action_global_navigation_home" app:destination="@id/navigation_home"/><action android:id="@+id/action_global_navigation_dashboard" app:destination="@id/navigation_dashboard"/><action android:id="@+id/action_global_navigation_notifications" app:destination="@id/navigation_notifications"/>
     <dialog
         android:id="@+id/newTaskFragment"
         android:name="ru.maxdexter.mytasks.ui.newtask.NewTaskFragment"
         android:label="NewTaskFragment" /><action android:id="@+id/action_global_newTaskFragment" app:destination="@id/newTaskFragment"/>
+    <fragment
+        android:id="@+id/calendarFragment"
+        android:name="ru.maxdexter.mytasks.ui.calendar.CalendarFragment"
+        android:label="CalendarFragment" >
+        <action
+            android:id="@+id/action_calendarFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_calendarFragment_to_newTaskFragment"
+            app:destination="@id/newTaskFragment" />
+        <action
+            android:id="@+id/action_calendarFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+        <action
+            android:id="@+id/action_calendarFragment_to_notificationsFragment"
+            app:destination="@id/notificationsFragment" />
+    </fragment>
+    <action android:id="@+id/action_global_calendarFragment" app:destination="@id/calendarFragment" />
+    <dialog
+        android:id="@+id/profileFragment"
+        android:name="ru.maxdexter.mytasks.ui.profile.ProfileFragment"
+        android:label="ProfileFragment" />
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="ru.maxdexter.mytasks.ui.detail.DetailFragment"
+        android:label="DetailFragment" />
+    <dialog
+        android:id="@+id/notificationsFragment"
+        android:name="ru.maxdexter.mytasks.ui.notifications.NotificationsFragment"
+        android:label="NotificationsFragment" />
 </navigation>

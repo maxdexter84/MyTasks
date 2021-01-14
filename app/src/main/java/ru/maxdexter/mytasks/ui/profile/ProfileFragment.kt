@@ -12,11 +12,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.firebase.ui.auth.IdpResponse
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.utils.Constants
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : BottomSheetDialogFragment() {
 
     private lateinit var profileViewModel: ProfileViewModel
 

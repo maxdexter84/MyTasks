@@ -56,7 +56,7 @@
             android:layout_gravity="bottom"
             app:fabAlignmentMode="end"
            app:hideOnScroll="true"
-            app:menu="@menu/bottom_nav_menu"
+            app:menu="@menu/bottom_nav_menu_calendar"
             style="@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface"
             />
 
