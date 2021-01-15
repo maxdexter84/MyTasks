@@ -7,12 +7,16 @@ import android.util.Log
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import ru.maxdexter.mytasks.models.User
+import ru.maxdexter.mytasks.repository.LoadingResponse
 import ru.maxdexter.mytasks.utils.Constants
 
 object Auth {
      fun startAuth( activity: Activity){
         val providerList = arrayListOf(
-            AuthUI.IdpConfig.EmailBuilder().build(),
             AuthUI.IdpConfig.GoogleBuilder().build(),
             AuthUI.IdpConfig.AnonymousBuilder().build(),
         AuthUI.IdpConfig.PhoneBuilder().build())
@@ -26,12 +30,13 @@ object Auth {
 
     }
 
-    fun outAuth(context: Context){
-        AuthUI.getInstance()
+    fun outAuth(context: Context) =
+          AuthUI.getInstance()
             .signOut(context)
-            .addOnCompleteListener {
 
-            }
+
+     fun getCurrentUser(): Flow<FirebaseUser?> {
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        return flow { emit(firebaseUser) }
     }
-
 }

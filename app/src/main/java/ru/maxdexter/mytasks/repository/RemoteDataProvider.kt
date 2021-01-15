@@ -2,6 +2,7 @@ package ru.maxdexter.mytasks.repository
 
 import kotlinx.coroutines.flow.Flow
 import ru.maxdexter.mytasks.models.Task
+import ru.maxdexter.mytasks.models.User
 
 interface RemoteDataProvider {
 

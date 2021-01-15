@@ -59,4 +59,21 @@ dependencies {
 
     //Google auth
     implementation 'com.firebaseui:firebase-ui-auth:6.4.0'
+
+
+    // Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.7"
+
+    //Firebase Firestore
+    implementation 'com.google.firebase:firebase-core:18.0.0'
+    implementation 'com.google.firebase:firebase-firestore:22.0.1'
+
+    //FirebaseAnalytics
+    implementation 'com.google.firebase:firebase-analytics:18.0.0'
+
+
+
+    //После добавления FireStore в проект столкнемся с превышением лимита количества методов для .dex-файлов. Чтобы решить эту проблему, необходимо добавить в проект поддержку MultiDex. Для этого добавим еще одну зависимость в build.gradle уровня модуля:
+    implementation 'com.android.support:multidex:1.0.3'
 }

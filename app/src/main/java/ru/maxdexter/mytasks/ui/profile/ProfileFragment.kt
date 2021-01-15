@@ -17,24 +17,59 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.databinding.FragmentProfileBinding
+import ru.maxdexter.mytasks.models.User
+import ru.maxdexter.mytasks.repository.firebase.Auth
 import ru.maxdexter.mytasks.utils.Constants
 
 class ProfileFragment : BottomSheetDialogFragment() {
 
     private lateinit var profileViewModel: ProfileViewModel
     private lateinit var binding: FragmentProfileBinding
+    private var isAuth:Boolean? = false
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(layoutInflater,R.layout.fragment_profile, container, false)
         profileViewModel =
                 ViewModelProvider(this).get(ProfileViewModel::class.java)
 
 
+        initBtn()
 
-        return binding.root
+
+        profileViewModel.currentUser.observe(viewLifecycleOwner,{
+            when(it?.isAnonymous){
+                true ->{
+                    binding.btnOut.isEnabled = false
+                    binding.btnIn.isEnabled = true
+                    binding.btnSync.isEnabled = false
+                }
+                false  -> {
+                    binding.btnOut.isEnabled = true
+                    binding.btnIn.isEnabled = false
+                    binding.btnSync.isEnabled = true
+                }
+            }
+        })
+
+
+       return binding.root
+    }
+
+    private fun initBtn() {
+        binding.btnIn.setOnClickListener {
+            activity?.let { act ->
+                Auth.startAuth(act)
+                profileViewModel.getUserData()}
+        }
+        binding.btnOut.setOnClickListener {
+            context?.let { con ->
+                Auth.outAuth(con)
+                profileViewModel.getUserData()
+            }
+        }
     }
 
 
@@ -47,8 +82,8 @@ class ProfileFragment : BottomSheetDialogFragment() {
             if (resultCode == Activity.RESULT_OK) {
                 // Successfully signed in
                 val user = FirebaseAuth.getInstance().currentUser
-
-                Log.i("LOGIN","${user?.email} ${user?.displayName} ${user?.photoUrl}")
+                isAuth = true
+                Log.i("LOGIN_IN_PROFILE","${user?.email} ${user?.displayName} ${user?.photoUrl}")
                 // ...
             } else {
                 // Sign in failed. If response is null the user canceled the
