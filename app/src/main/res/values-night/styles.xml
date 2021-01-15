@@ -49,4 +49,10 @@
         <item name="android:fontFamily">@font/roboto</item>
     </style>
 
+
+
+    <style name="MySwitchStyle" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="thumbTint">@color/selector_switch_thumb</item>
+    </style>
+
 </resources>

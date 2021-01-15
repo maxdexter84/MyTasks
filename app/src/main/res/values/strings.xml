@@ -13,4 +13,9 @@
     <string name="repeat">Repeat</string>
     <string name="title_note">Note</string>
     <string name="title_calendar">Calendar</string>
+    <string name="Authentication">Authentication</string>
+    <string name="synchronization">Synchronization</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="login">In</string>
+    <string name="logout">Out</string>
 </resources>

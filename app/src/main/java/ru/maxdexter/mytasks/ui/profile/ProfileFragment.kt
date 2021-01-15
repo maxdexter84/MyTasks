@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -15,25 +16,25 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import ru.maxdexter.mytasks.R
+import ru.maxdexter.mytasks.databinding.FragmentProfileBinding
 import ru.maxdexter.mytasks.utils.Constants
 
 class ProfileFragment : BottomSheetDialogFragment() {
 
     private lateinit var profileViewModel: ProfileViewModel
-
+    private lateinit var binding: FragmentProfileBinding
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
+        binding = DataBindingUtil.inflate(layoutInflater,R.layout.fragment_profile, container, false)
         profileViewModel =
                 ViewModelProvider(this).get(ProfileViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_profile, container, false)
-        val textView: TextView = root.findViewById(R.id.text_dashboard)
-        profileViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
-        return root
+
+
+
+        return binding.root
     }
 
 
@@ -46,7 +47,8 @@ class ProfileFragment : BottomSheetDialogFragment() {
             if (resultCode == Activity.RESULT_OK) {
                 // Successfully signed in
                 val user = FirebaseAuth.getInstance().currentUser
-                Log.i("LOGIN","${user?.email} ${user?.displayName}")
+
+                Log.i("LOGIN","${user?.email} ${user?.displayName} ${user?.photoUrl}")
                 // ...
             } else {
                 // Sign in failed. If response is null the user canceled the

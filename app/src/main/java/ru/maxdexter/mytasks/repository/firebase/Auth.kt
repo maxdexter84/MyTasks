@@ -1,6 +1,7 @@
 package ru.maxdexter.mytasks.repository.firebase
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.firebase.ui.auth.AuthUI
@@ -23,6 +24,14 @@ object Auth {
                 .build(), Constants.RC_SIGN_IN
         )
 
+    }
+
+    fun outAuth(context: Context){
+        AuthUI.getInstance()
+            .signOut(context)
+            .addOnCompleteListener {
+
+            }
     }
 
 }
