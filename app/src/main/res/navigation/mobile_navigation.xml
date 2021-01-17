@@ -30,12 +30,7 @@
     <dialog
         android:id="@+id/profileFragment"
         android:name="ru.maxdexter.mytasks.ui.profile.ProfileFragment"
-        android:label="ProfileFragment" >
-        <argument
-            android:name="isAuth"
-            app:argType="boolean"
-            android:defaultValue="false" />
-    </dialog>
+        android:label="ProfileFragment" />
     <fragment
         android:id="@+id/detailFragment"
         android:name="ru.maxdexter.mytasks.ui.detail.DetailFragment"

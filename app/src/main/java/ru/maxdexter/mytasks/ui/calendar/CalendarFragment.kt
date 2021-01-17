@@ -29,13 +29,7 @@ class CalendarFragment : Fragment() {
     private val hourAdapter: HourAdapter by lazy {
         HourAdapter()
     }
-    private var isAuth: Boolean = false
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if(savedInstanceState == null){
-            Auth.startAuth(requireActivity())
-        }
-    }
+
 
 
     override fun onCreateView(
@@ -58,8 +52,6 @@ class CalendarFragment : Fragment() {
             adapter = hourAdapter
         }
 
-
-
         initBottomAppBar()
 
         binding.fab.setOnClickListener { findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment()) }
@@ -74,7 +66,7 @@ class CalendarFragment : Fragment() {
                     true
                 }
                 R.id.navigation_profile -> {
-                    findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToProfileFragment(isAuth))
+                    findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToProfileFragment())
                     true
                 }
                 else -> false
@@ -84,24 +76,7 @@ class CalendarFragment : Fragment() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == Constants.RC_SIGN_IN) {
-            val response = IdpResponse.fromResultIntent(data)
 
-            if (resultCode == Activity.RESULT_OK) {
-                // Successfully signed in
-               val user = FirebaseAuth.getInstance().currentUser
-                Log.i("LOGIN","${user?.email} ${user?.displayName}")
-                // ...
-            } else {
-                // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
-                // ...
-            }
-        }
-    }
 
 
 

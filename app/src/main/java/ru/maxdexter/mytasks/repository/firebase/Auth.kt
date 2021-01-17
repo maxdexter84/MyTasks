@@ -10,11 +10,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.models.User
 import ru.maxdexter.mytasks.repository.LoadingResponse
 import ru.maxdexter.mytasks.utils.Constants
 
 object Auth {
+
      fun startAuth( activity: Activity){
         val providerList = arrayListOf(
             AuthUI.IdpConfig.GoogleBuilder().build(),
@@ -24,6 +26,7 @@ object Auth {
         activity.startActivityForResult(
             AuthUI.getInstance()
                 .createSignInIntentBuilder()
+                .setTheme(R.style.AppTheme)
                 .setAvailableProviders(providerList)
                 .build(), Constants.RC_SIGN_IN
         )
@@ -35,8 +38,5 @@ object Auth {
             .signOut(context)
 
 
-     fun getCurrentUser(): Flow<FirebaseUser?> {
-        val firebaseUser = FirebaseAuth.getInstance().currentUser
-        return flow { emit(firebaseUser) }
-    }
+
 }

@@ -70,13 +70,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_sync"
             android:layout_width="70dp"
             android:layout_height="40dp"
-            android:backgroundTint="@color/fui_transparent"
-            android:src="@drawable/ic_baseline_sync_24"
-            android:visibility="visible"
+            app:icon="@drawable/ic_baseline_sync_24"
+            android:text="0"
+            app:iconGravity="end"
+            android:elevation="@dimen/very_small_space_4dp"
             app:layout_constraintBottom_toBottomOf="@+id/textView3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/textView3" />
