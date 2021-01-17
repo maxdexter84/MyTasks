@@ -8,6 +8,9 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.databinding.FragmentProfileBinding
 import ru.maxdexter.mytasks.preferences.AppPreferences
@@ -19,6 +22,9 @@ class ProfileFragment : BottomSheetDialogFragment() {
     private lateinit var profileViewModelFactory: ProfileViewModelFactory
     private lateinit var binding: FragmentProfileBinding
     lateinit var appPreferences: AppPreferences
+    val job = SupervisorJob()
+    val uiScope = CoroutineScope(job + Dispatchers.Main)
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -29,11 +35,14 @@ class ProfileFragment : BottomSheetDialogFragment() {
         initViewModel()
         authObserver()
         initBtn()
-        binding.btnSync.addOnCheckedChangeListener { button, isChecked ->  }
+
+        setTheme()
        return binding.root
     }
 
-    internal fun initViewModel() {
+
+
+     private fun initViewModel() {
         profileViewModelFactory = ProfileViewModelFactory(appPreferences)
         profileViewModel =
             ViewModelProvider(this, profileViewModelFactory).get(ProfileViewModel::class.java)
@@ -45,9 +54,20 @@ class ProfileFragment : BottomSheetDialogFragment() {
         })
     }
 
+    @InternalCoroutinesApi
     override fun onResume() {
         super.onResume()
         profileViewModel.getUserData()
+
+
+    }
+
+    private fun setTheme() {
+        binding.switchAppTheme.isChecked = appPreferences.getTheme()
+        binding.switchAppTheme.setOnCheckedChangeListener { _, isChecked ->
+            appPreferences.savePref(isChecked, AppPreferences.IS_DARK_THEME)
+            requireActivity().recreate()
+        }
     }
 
     private fun initBtn() {

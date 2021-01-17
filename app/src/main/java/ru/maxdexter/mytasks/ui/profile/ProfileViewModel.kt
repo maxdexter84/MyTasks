@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.maxdexter.mytasks.models.User
 import ru.maxdexter.mytasks.preferences.AppPreferences
@@ -28,7 +31,7 @@ class ProfileViewModel(private val appPreferences: AppPreferences) : ViewModel()
         val user = FirebaseAuth.getInstance().currentUser
         val res = user != null
         _isAuth.value = res
-        savePref(res, IS_AUTH)
+        appPreferences.savePref(res, IS_AUTH)
         if (user != null){
             _currentUser.value = handleMapFirebaseUser(user)
         }
@@ -47,14 +50,6 @@ class ProfileViewModel(private val appPreferences: AppPreferences) : ViewModel()
             isAnonymous
         )
 
-    }
-    private  fun <T>savePref(tools: T, nameTools: String){
-        viewModelScope.launch {
-            when(nameTools){
-                IS_AUTH -> appPreferences.setIsAuth(tools as Int)
-                IS_DARK_THEME -> appPreferences.setTheme(tools as Boolean)
-            }
-        }
     }
 
 
