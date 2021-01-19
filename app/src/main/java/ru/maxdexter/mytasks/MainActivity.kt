@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     private val appPreferences by lazy {
         AppPreferences(this)
     }
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         when(appPreferences.getTheme()){
             true -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

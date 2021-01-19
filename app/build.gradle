@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.gms.google-services'
-
+apply plugin: 'realm-android'
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.0"
