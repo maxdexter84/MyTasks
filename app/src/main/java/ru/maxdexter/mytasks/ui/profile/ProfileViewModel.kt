@@ -38,17 +38,10 @@ class ProfileViewModel(private val appPreferences: AppPreferences) : ViewModel()
     }
 
     private fun handleMapFirebaseUser(it: FirebaseUser): User {
-        val name = it.displayName
-        val email = it.email
-        val phone = it.phoneNumber
-        val photo = it.photoUrl
-        val isAnonymous = it.isAnonymous
-        return User(
-            name,
-            email, phone,
-            photo,
-            isAnonymous
-        )
+        val phone = it.phoneNumber.toString()
+         val user = User()
+        user.phone = phone
+        return user
 
     }
 

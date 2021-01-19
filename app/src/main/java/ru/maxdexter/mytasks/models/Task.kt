@@ -1,17 +1,19 @@
 package ru.maxdexter.mytasks.models
 
+import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import java.util.*
 
-data class Task(@PrimaryKey
-                val id: String = UUID.randomUUID().toString(),
-                val title: String,
-                val description: String,
-                val eventDate: Long,
-                val eventTime: Int,
-                val isCompleted: Boolean = false,
-                val repeat: Boolean = false,
-                val file: List<String>,
-                val user: User
-                ) : RealmObject()
+open class Task : RealmObject() {
+    @PrimaryKey
+    var id: String = UUID.randomUUID().toString()
+    var title: String? = null
+    var description: String? = null
+    var eventDate: Long? = null
+    var eventTime: Int? = null
+    var isCompleted: Boolean = false
+    var repeat: Boolean = false
+    var file: RealmList<TaskFile>? = null
+    var user: User? = null
+}

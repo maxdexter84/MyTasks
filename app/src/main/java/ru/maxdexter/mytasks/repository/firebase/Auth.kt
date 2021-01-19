@@ -18,10 +18,7 @@ import ru.maxdexter.mytasks.utils.Constants
 object Auth {
 
      fun startAuth( activity: Activity){
-        val providerList = arrayListOf(
-            AuthUI.IdpConfig.GoogleBuilder().build(),
-            AuthUI.IdpConfig.AnonymousBuilder().build(),
-        AuthUI.IdpConfig.PhoneBuilder().build())
+        val providerList = arrayListOf(AuthUI.IdpConfig.PhoneBuilder().build())
 
         activity.startActivityForResult(
             AuthUI.getInstance()

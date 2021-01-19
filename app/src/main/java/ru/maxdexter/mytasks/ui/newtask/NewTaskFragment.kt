@@ -14,15 +14,19 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.Timestamp
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.databinding.FragmentNewTaskBinding
+import java.sql.Time
 import java.text.DateFormat
+import java.time.Month
+import java.time.Year
 import java.util.*
 
 class NewTaskFragment : BottomSheetDialogFragment() {
 
     private lateinit var  binding: FragmentNewTaskBinding
-
+    private val calendar = Calendar.getInstance(Locale.getDefault())
     @SuppressLint("ShowToast")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,24 +35,40 @@ class NewTaskFragment : BottomSheetDialogFragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_task, container, false)
         // Inflate the layout for this fragment
+        initDatePicker()
 
-        binding.tvDateChange.setOnClickListener {
-            val datePickerDialog = DatePickerDialog(requireContext())
-            datePickerDialog.show()
-        }
-
-        val listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-            Log.i("TIME_PICKER", "$hourOfDay $minute")
-        }
-
-        binding.tvTimeChange.setOnClickListener {
-            TimePickerDialog(requireContext(),listener,12,50,true).show()
-        }
+        initTimePicker()
 
 
 
 
         return binding.root
+    }
+
+    private fun initDatePicker() {
+        val listener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+            Log.i("DATE_PICKER","$year $month $dayOfMonth")
+        }
+        binding.tvDateChange.setOnClickListener {
+
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+            val datePickerDialog = DatePickerDialog(requireContext(), listener, year, month, day)
+            datePickerDialog.show()
+        }
+    }
+
+
+    private fun initTimePicker() {
+        val listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+            Log.i("TIME_PICKER","$hourOfDay $minute")
+        }
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+        binding.tvTimeChange.setOnClickListener {
+            TimePickerDialog(requireContext(), listener, hour, minute, true).show()
+        }
     }
 
 
