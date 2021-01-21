@@ -83,6 +83,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_time_change" />
 
+
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switch_repeat_task"
             android:layout_width="wrap_content"
@@ -100,19 +101,7 @@
             android:layout_height="wrap_content"
             android:text="@string/add_button"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_add_file" />
-
-        <ImageButton
-            android:id="@+id/iv_add_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal_space_16dp"
-            android:backgroundTint="@android:color/transparent"
-            android:src="@drawable/ic_baseline_add_a_photo_24"
-            app:layout_constraintEnd_toStartOf="@+id/iv_add_file"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switch_repeat_task" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageButton
             android:id="@+id/iv_add_file"
@@ -121,10 +110,16 @@
 
             android:backgroundTint="@android:color/transparent"
             android:src="@drawable/ic_baseline_attach_file_24"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_add_photo"
+            app:layout_constraintBottom_toTopOf="@+id/rv_file"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/iv_add_photo"
-            app:layout_constraintTop_toTopOf="@+id/iv_add_photo" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_repeat" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/btn_add" />
 
 
 
