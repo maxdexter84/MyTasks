@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.adapters.HourAdapter
+import ru.maxdexter.mytasks.adapters.TimeItemAdapter
 import ru.maxdexter.mytasks.databinding.FragmentCalendarBinding
 import ru.maxdexter.mytasks.models.Hour
 import ru.maxdexter.mytasks.models.TaskWithTaskFile
@@ -41,7 +42,7 @@ class CalendarFragment : Fragment() {
     }
     private lateinit var binding: FragmentCalendarBinding
     private val hourAdapter: HourAdapter by lazy {
-        HourAdapter()
+        HourAdapter(calendarViewModel)
     }
 
 
@@ -62,8 +63,15 @@ class CalendarFragment : Fragment() {
 
         initBottomAppBar()
 
+        calendarViewModel.selectedTask.observe(viewLifecycleOwner,{
+            if (it != ""){
+                findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToDetailFragment(it))
+            }
 
+        })
         binding.fab.setOnClickListener { findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment()) }
+
+
         return binding.root
     }
 

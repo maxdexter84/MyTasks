@@ -22,6 +22,11 @@ class CalendarViewModel(private val repository: LocalDatabase) : ViewModel() {
         val listTaskFile: LiveData<List<TaskWithTaskFile>>
         get() = _listTaskWithTaskFile
 
+
+    private var _selectedTask = MutableLiveData("")
+            val selectedTask: LiveData<String>
+            get() = _selectedTask
+
      fun loadData(year: Int, month: Int, day: Int){
          viewModelScope.launch {
              repository.getAllTaskWithTaskFile(year,month,day).collect {
@@ -29,7 +34,6 @@ class CalendarViewModel(private val repository: LocalDatabase) : ViewModel() {
              }
 
          }
-
     }
 
 
@@ -51,5 +55,9 @@ class CalendarViewModel(private val repository: LocalDatabase) : ViewModel() {
         return hourList
     }
 
+    fun selectedTask(uuid: String){
+        _selectedTask.value = uuid
+
+    }
 
 }

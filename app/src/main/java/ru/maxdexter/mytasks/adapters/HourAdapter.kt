@@ -3,26 +3,32 @@ package ru.maxdexter.mytasks.adapters
 import android.annotation.SuppressLint
 import android.content.Context
 import android.opengl.Visibility
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.maxdexter.mytasks.databinding.ItemHourLayoutBinding
 import ru.maxdexter.mytasks.models.Hour
+import ru.maxdexter.mytasks.ui.calendar.CalendarViewModel
 
-class HourAdapter: RecyclerView.Adapter<HourAdapter.ViewHolder>() {
+class HourAdapter(val viewModel: CalendarViewModel): RecyclerView.Adapter<HourAdapter.ViewHolder>() {
 
 
      var list = mutableListOf<Hour>()
 
     class ViewHolder(val binding: ItemHourLayoutBinding, val context: Context): RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(item: Hour){
+        fun bind(item: Hour, viewModel: CalendarViewModel){
             binding.tvPeriod.text = "${item.startPeriod}:00"
             if (item.list != null){
                 binding.recyclerView.visibility = RecyclerView.VISIBLE
                 binding.recyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
-                val adapter = TimeItemAdapter()
+                val adapter = TimeItemAdapter(object : TimeItemAdapter.ItemListener{
+                    override fun click(uuid: String) {
+                        viewModel.selectedTask(uuid)
+                    }
+                })
                 adapter.submitList(item.list)
                 binding.recyclerView.adapter = adapter
             }
@@ -41,7 +47,7 @@ class HourAdapter: RecyclerView.Adapter<HourAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
-        holder.bind(item)
+        holder.bind(item, viewModel)
     }
 
     override fun getItemCount(): Int {

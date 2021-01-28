@@ -10,10 +10,12 @@ import ru.maxdexter.mytasks.databinding.ItemTaskLayoutBinding
 import ru.maxdexter.mytasks.models.Task
 import ru.maxdexter.mytasks.models.TaskWithTaskFile
 
-class TimeItemAdapter : ListAdapter<TaskWithTaskFile, TimeItemAdapter.TaskViewHolder>(DiffCallback()){
+class TimeItemAdapter(private val itemListener: ItemListener) : ListAdapter<TaskWithTaskFile, TimeItemAdapter.TaskViewHolder>(DiffCallback()){
 
 
-
+    interface ItemListener{
+        fun click(uuid: String)
+    }
     class DiffCallback : DiffUtil.ItemCallback<TaskWithTaskFile>() {
         override fun areItemsTheSame(
             oldItem: TaskWithTaskFile,
@@ -37,16 +39,22 @@ class TimeItemAdapter : ListAdapter<TaskWithTaskFile, TimeItemAdapter.TaskViewHo
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position),itemListener)
     }
 
     class TaskViewHolder(private val binding:ItemTaskLayoutBinding ) : RecyclerView.ViewHolder(binding.root){
+
         @SuppressLint("SetTextI18n")
-        fun bind(item: TaskWithTaskFile){
+        fun bind(item: TaskWithTaskFile, listener: ItemListener){
             binding.tvTitle.text = item.task?.title
             binding.tvDescription.text = item.task?.description
             binding.tvTaskTime.text = "${item.task?.eventHour} : ${item.task?.eventMinute}"
+            itemView.setOnClickListener {
+                item.task?.let { it1 -> listener.click(it1.id) }
+            }
+
         }
+
 
         companion object{
             fun from(parent: ViewGroup): TaskViewHolder{
