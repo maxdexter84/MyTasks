@@ -5,7 +5,12 @@
     <data>
 
     </data>
-
+<com.google.android.material.card.MaterialCardView
+    android:elevation="@dimen/very_small_space_4dp"
+    app:cardCornerRadius="@dimen/very_small_space_4dp"
+    android:layout_margin="@dimen/small_space_8dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -38,4 +43,5 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
 </layout>
