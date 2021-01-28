@@ -29,6 +29,10 @@ class Repository(private val dao: TaskDao): LocalDatabase{
         return dao.getAllTaskWithTaskFile(year,month, day).flowOn(Dispatchers.IO)
     }
 
+    override fun getCurrentTask(uuid: String): Flow<TaskWithTaskFile> {
+        return dao.getTaskWithTaskFile(uuid).flowOn(Dispatchers.IO)
+    }
+
     override suspend fun deleteTask(uuid: String) {
         TODO("Not yet implemented")
     }
