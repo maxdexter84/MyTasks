@@ -19,17 +19,30 @@ import com.google.firebase.auth.FirebaseUser
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.adapters.HourAdapter
 import ru.maxdexter.mytasks.databinding.FragmentCalendarBinding
+import ru.maxdexter.mytasks.models.Hour
+import ru.maxdexter.mytasks.models.TaskWithTaskFile
+import ru.maxdexter.mytasks.repository.LocalDatabase
+import ru.maxdexter.mytasks.repository.Repository
 import ru.maxdexter.mytasks.repository.firebase.Auth
+import ru.maxdexter.mytasks.repository.localdatabase.RoomDb
 import ru.maxdexter.mytasks.utils.Constants
+import java.time.Month
+import java.time.MonthDay
+import java.time.Year
+import java.time.YearMonth
+import java.util.*
 
 class CalendarFragment : Fragment() {
 
-    private lateinit var calendarViewModel: CalendarViewModel
+    private val calendarViewModel: CalendarViewModel by lazy {
+        val db = RoomDb.invoke(requireContext())
+        val repository: LocalDatabase = Repository(db.getDao())
+        ViewModelProvider(this,CalendarViewModelFactory(repository)).get(CalendarViewModel::class.java)
+    }
     private lateinit var binding: FragmentCalendarBinding
     private val hourAdapter: HourAdapter by lazy {
         HourAdapter()
     }
-
 
 
     override fun onCreateView(
@@ -38,24 +51,35 @@ class CalendarFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_calendar,container, false)
-        calendarViewModel =
-                ViewModelProvider(this).get(CalendarViewModel::class.java)
+        calendarViewModel.loadData(Year.now().value,YearMonth.now().month.value,MonthDay.now().dayOfMonth)
+        calendarListener()
 
-        binding.calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
-            Toast.makeText(requireContext(),"$dayOfMonth $month $year ${view.date}",Toast.LENGTH_SHORT).show()
+        calendarViewModel.listTaskFile.observe(viewLifecycleOwner,{
+            val hourList = calendarViewModel.updateData(it)
+            initRecycler(hourList)
+        })
 
-        }
-
-
-        binding.recyclerTable.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = hourAdapter
-        }
 
         initBottomAppBar()
 
+
         binding.fab.setOnClickListener { findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment()) }
         return binding.root
+    }
+
+    private fun calendarListener() {
+        binding.calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+            calendarViewModel.loadData(year, month, dayOfMonth)
+        }
+    }
+
+
+    private fun initRecycler(hourList: MutableList<Hour>) {
+        binding.recyclerTable.apply {
+            hourAdapter.list = hourList
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = hourAdapter
+        }
     }
 
     private fun initBottomAppBar() {
@@ -71,13 +95,8 @@ class CalendarFragment : Fragment() {
                 }
                 else -> false
             }
-
-
         }
     }
-
-
-
 
 
 }

@@ -1,8 +1,11 @@
 package ru.maxdexter.mytasks.adapters
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.maxdexter.mytasks.databinding.ItemHourLayoutBinding
 import ru.maxdexter.mytasks.models.Hour
@@ -10,22 +13,25 @@ import ru.maxdexter.mytasks.models.Hour
 class HourAdapter: RecyclerView.Adapter<HourAdapter.ViewHolder>() {
 
 
-    private val list = mutableListOf<Hour>()
-    init {
-        for (i in 0..23 step 1){
-            list.add(Hour(i,("$i" + "59").toInt()))
-        }
-    }
-    class ViewHolder(val binding: ItemHourLayoutBinding): RecyclerView.ViewHolder(binding.root) {
+     var list = mutableListOf<Hour>()
+
+    class ViewHolder(val binding: ItemHourLayoutBinding, val context: Context): RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bind(item: Hour){
             binding.tvPeriod.text = "${item.startPeriod}:00"
+            if (item.list != null){
+                binding.recyclerView.visibility = RecyclerView.VISIBLE
+                binding.recyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+                val adapter = TimeItemAdapter()
+                adapter.submitList(item.list)
+                binding.recyclerView.adapter = adapter
+            }
         }
         companion object{
             fun from(parent: ViewGroup): ViewHolder{
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ItemHourLayoutBinding.inflate(layoutInflater,parent,false)
-                return ViewHolder(binding)
+                return ViewHolder(binding, parent.context)
             }        }
     }
 

@@ -1,8 +1,15 @@
 package ru.maxdexter.mytasks.models
 
 import android.net.Uri
-import io.realm.RealmObject
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 
-open class TaskFile : RealmObject(){
-    var uri: String = ""
-}
+@Entity
+data class TaskFile(
+                    @PrimaryKey
+                    var uri: String = "",
+                    var taskUUID: String = "",
+                    var name: String = "")
+
+

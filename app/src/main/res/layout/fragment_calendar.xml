@@ -15,7 +15,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="wrap_content"
 
             android:fitsSystemWindows="true">
 
@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                app:layout_scrollFlags="scroll">
 
                 <CalendarView
                     android:id="@+id/calendarView"
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             app:fabAlignmentMode="end"
-           app:hideOnScroll="true"
+            app:hideOnScroll="true"
             app:menu="@menu/bottom_nav_menu_calendar"
             style="@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface"
             />
@@ -67,7 +67,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/Widget.Design.FloatingActionButton"
-            app:srcCompat="@drawable/ic_baseline_add_24" />
+            app:srcCompat="@drawable/ic_baseline_add_24"
+            android:contentDescription="@string/add_new_task_fab_description" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

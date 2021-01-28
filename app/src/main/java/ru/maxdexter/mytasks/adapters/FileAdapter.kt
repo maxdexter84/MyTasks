@@ -14,7 +14,7 @@ class FileAdapter: ListAdapter<TaskFile,FileAdapter.ViewHolder>(TaskDiffCallback
     class ViewHolder(val binding: ItemFileBinding):RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: TaskFile){
-            binding.tvFileName.text = item.uri
+            binding.tvFileName.text = item.name
         }
 
         companion object{

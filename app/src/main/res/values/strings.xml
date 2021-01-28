@@ -18,4 +18,5 @@
     <string name="dark_theme">Dark theme</string>
     <string name="login">In</string>
     <string name="logout">Out</string>
+    <string name="add_new_task_fab_description">Add new task</string>
 </resources>

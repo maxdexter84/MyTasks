@@ -1,47 +1,57 @@
 package ru.maxdexter.mytasks.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.databinding.ItemTaskLayoutBinding
 import ru.maxdexter.mytasks.models.Task
+import ru.maxdexter.mytasks.models.TaskWithTaskFile
 
-class TimeItemAdapter : ListAdapter<Task, TimeItemAdapter.TaskViewHolder>(DiffCallback()){
+class TimeItemAdapter : ListAdapter<TaskWithTaskFile, TimeItemAdapter.TaskViewHolder>(DiffCallback()){
 
 
 
-    class DiffCallback : DiffUtil.ItemCallback<Task>() {
-        override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean {
-            TODO("Not yet implemented")
+    class DiffCallback : DiffUtil.ItemCallback<TaskWithTaskFile>() {
+        override fun areItemsTheSame(
+            oldItem: TaskWithTaskFile,
+            newItem: TaskWithTaskFile
+        ): Boolean {
+           return oldItem == newItem
         }
 
-        override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean {
-            TODO("Not yet implemented")
+        override fun areContentsTheSame(
+            oldItem: TaskWithTaskFile,
+            newItem: TaskWithTaskFile
+        ): Boolean {
+           return oldItem.task == newItem.task
         }
+
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
-        TODO("Not yet implemented")
+        return TaskViewHolder.from(parent)
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        holder.bind(getItem(position))
     }
 
     class TaskViewHolder(private val binding:ItemTaskLayoutBinding ) : RecyclerView.ViewHolder(binding.root){
-        fun bind(item: Task){
-
+        @SuppressLint("SetTextI18n")
+        fun bind(item: TaskWithTaskFile){
+            binding.tvTitle.text = item.task?.title
+            binding.tvDescription.text = item.task?.description
+            binding.tvTaskTime.text = "${item.task?.eventHour} : ${item.task?.eventMinute}"
         }
 
         companion object{
-            fun from(parent: ViewGroup): ItemTaskLayoutBinding{
+            fun from(parent: ViewGroup): TaskViewHolder{
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = ItemTaskLayoutBinding.inflate(layoutInflater,parent)
-                return binding
+                return TaskViewHolder(ItemTaskLayoutBinding.inflate(layoutInflater,parent,false))
             }
         }
     }

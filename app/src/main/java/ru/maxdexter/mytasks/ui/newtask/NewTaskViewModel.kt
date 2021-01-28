@@ -3,23 +3,32 @@ package ru.maxdexter.mytasks.ui.newtask
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.realm.RealmList
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import ru.maxdexter.mytasks.models.Task
 import ru.maxdexter.mytasks.models.TaskFile
+import ru.maxdexter.mytasks.models.TaskWithTaskFile
 import ru.maxdexter.mytasks.models.User
+import ru.maxdexter.mytasks.repository.LoadingResponse
+import ru.maxdexter.mytasks.repository.LocalDatabase
+import ru.maxdexter.mytasks.repository.Repository
+import java.io.IOException
 import java.util.*
 
-class NewTaskViewModel : ViewModel() {
+class NewTaskViewModel (private val repository: LocalDatabase): ViewModel() {
     private val calendar = Calendar.getInstance(Locale.getDefault())
     val user = User()
-    val task = Task()
-    val list: RealmList<TaskFile> = RealmList()
+    private val task = Task()
+    private val list = mutableListOf<TaskFile>()
+    val taskWithTaskFile = TaskWithTaskFile()
 
     private val REQUEST_CODE: Int = 123
+
 
    private val selectDate = Calendar.Builder()
 
@@ -31,6 +40,10 @@ class NewTaskViewModel : ViewModel() {
     val liveTime: LiveData<String>
         get() = _liveTime
 
+    private val _fileList = MutableLiveData<List<TaskFile>>()
+            val fileList: LiveData<List<TaskFile>>
+            get() = _fileList
+
 
     init {
         getCurrentDate()
@@ -38,15 +51,15 @@ class NewTaskViewModel : ViewModel() {
     }
 
     private fun getCurrentTime(){
-        var hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
        setTime(hour,minute)
     }
 
     private fun getCurrentDate(){
         val year = calendar.get(Calendar.YEAR)
-        var month = calendar.get(Calendar.MONTH)
-        var day = calendar.get(Calendar.DAY_OF_MONTH)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
         setDate(year,month,day)
 
     }
@@ -55,33 +68,56 @@ class NewTaskViewModel : ViewModel() {
         val mon =  if (month.toString().length < 2) "0${month + 1}" else month + 1
         val d = if (day.toString().length < 2) "0$day" else day
         selectDate.setDate(year,month,day)
+        task.eventYear = year
+        task.eventMonth = month
+        task.eventDay = day
         _liveDate.value = "$d.$mon.$year"
 
     }
 
     fun setTime(hour: Int, minute: Int){
         val h = if(hour.toString().length < 2) "0$hour" else hour
-        selectDate.setTimeOfDay(hour,minute,0)
+        selectDate.setTimeOfDay(hour,minute,0).build()
+        task.eventHour = hour
+        task.eventMinute = minute
         _liveTime.value = "$h : $minute"
     }
 
     fun saveTask(title: String, description: String){
+        selectDate.build()
         task.description = description
         task.title = title
-        selectDate.build()
+        taskWithTaskFile.task = task
+        saveTaskToDb()
     }
 
     fun saveFile(requestCode: Int, resultCode: Int, data: Intent?){
-        var fileUri: Uri? = null
+        val taskFile = TaskFile()
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK){
             if (data?.data != null){
-                fileUri = data.data
+                taskFile.uri = data.data.toString()
+                val tokenArr = data.data.toString().split("/")
+                taskFile.name = tokenArr[tokenArr.lastIndex]
             }
         }
-        val taskFile = TaskFile()
-        taskFile.uri = fileUri.toString()
+
         list.add(taskFile)
-        task.file = list
+        _fileList.value = list
+        taskWithTaskFile.list = list
+
     }
+
+    private fun saveTaskToDb(){
+        taskWithTaskFile.task = task
+        viewModelScope.launch {
+            try {
+                repository.saveTask(taskWithTaskFile)
+            }catch (e: IOException) {
+               val resp = LoadingResponse.Error(e.message)
+            }
+
+        }
+    }
+
 
 }

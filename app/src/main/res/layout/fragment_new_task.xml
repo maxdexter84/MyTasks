@@ -118,8 +118,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_file"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/btn_add" />
+            android:layout_height="100dp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_add"
+            app:layout_constraintStart_toStartOf="parent" />
 
 
 

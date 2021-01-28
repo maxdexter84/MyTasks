@@ -1,8 +1,7 @@
 package ru.maxdexter.mytasks.models
 
-import android.net.Uri
-import io.realm.RealmObject
 
-open class User : RealmObject(){
+
+open class User {
     var phone: String = "0"
 }

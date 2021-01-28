@@ -1,32 +1,25 @@
 package ru.maxdexter.mytasks.ui.newtask
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TimePicker
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.Timestamp
 import ru.maxdexter.mytasks.R
+import ru.maxdexter.mytasks.adapters.FileAdapter
 import ru.maxdexter.mytasks.databinding.FragmentNewTaskBinding
-import java.io.File
-import java.sql.Time
-import java.text.DateFormat
-import java.time.Month
-import java.time.Year
+import ru.maxdexter.mytasks.repository.LocalDatabase
+import ru.maxdexter.mytasks.repository.Repository
+import ru.maxdexter.mytasks.repository.localdatabase.RoomDb
+import ru.maxdexter.mytasks.utils.textListener
 import java.util.*
 
 class NewTaskFragment : BottomSheetDialogFragment() {
@@ -36,7 +29,12 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     private val calendar = Calendar.getInstance(Locale.getDefault())
     private val date = Calendar.Builder()
     private val viewModel by lazy {
-        ViewModelProvider(this).get(NewTaskViewModel::class.java)
+        val db: RoomDb = RoomDb.invoke(requireContext())
+        val repository: LocalDatabase = Repository(db.getDao())
+        ViewModelProvider(this,NewTaskViewModelFactory(repository)).get(NewTaskViewModel::class.java)
+    }
+    private val adapter: FileAdapter by lazy {
+        FileAdapter()
     }
     @SuppressLint("ShowToast")
     override fun onCreateView(
@@ -49,15 +47,28 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         timeObserver()
         initDatePicker()
         initTimePicker()
+
         binding.btnAdd.setOnClickListener {
-            val title = binding.tvTitle.text ?: ""
-            val description = binding.tvTaskDescription.text ?: ""
+            val title = binding.tvTitle.text.toString()
+            val desc = binding.tvTaskDescription.text.toString()
+
+            viewModel.saveTask(title, desc)
             dismiss()
         }
         binding.ivAddFile.setOnClickListener {
             getFile()
         }
+
+        initRecycler()
         return binding.root
+    }
+
+    private fun initRecycler() {
+        viewModel.fileList.observe(viewLifecycleOwner, {
+            binding.rvFile.layoutManager = LinearLayoutManager(context)
+            adapter.submitList(it)
+            binding.rvFile.adapter = adapter
+        })
     }
 
     private fun dateObserver() {
@@ -75,7 +86,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     @SuppressLint("SetTextI18n")
     private fun initDatePicker() {
         val listener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
-           viewModel.setDate(year,month,dayOfMonth)
+            viewModel.setDate(year,month,dayOfMonth)
         }
         binding.tvDateChange.setOnClickListener {
             val year = calendar.get(Calendar.YEAR)
@@ -99,7 +110,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
             TimePickerDialog(requireContext(), listener, hour, minute, true).show()
         }
     }
-    fun getFile(){
+    private fun getFile(){
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.setType("*/*")
         intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -109,7 +120,6 @@ class NewTaskFragment : BottomSheetDialogFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         viewModel.saveFile(requestCode,resultCode,data)
-
     }
 
 
