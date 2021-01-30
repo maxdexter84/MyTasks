@@ -1,5 +1,6 @@
 package ru.maxdexter.mytasks.ui.detail
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import androidx.fragment.app.Fragment
@@ -35,6 +36,7 @@ class DetailFragment : BottomSheetDialogFragment() {
 
 
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,10 +45,12 @@ class DetailFragment : BottomSheetDialogFragment() {
 
 
         saveBtnInit()
-        viewModel.currentTaskWithTaskFile.observe(viewLifecycleOwner,{
-            if (it != null){
+        viewModel.currentTaskWithTaskFile.observe(viewLifecycleOwner, {
+            if (it != null) {
                 binding.tvTitle.setText(it.task?.title)
                 binding.tvTaskDescription.setText(it.task?.description)
+                binding.tvDateChange.text = "${it.task?.eventDay}.${it.task?.eventMonth }.${it.task?.eventYear}"
+                binding.tvTimeChange.text = "${it.task?.eventHour} : ${it.task?.eventMinute}"
             }
         })
 
