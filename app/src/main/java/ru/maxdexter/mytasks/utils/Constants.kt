@@ -1,7 +1,7 @@
 package ru.maxdexter.mytasks.utils
 
-class Constants {
-    companion object {
-        const val RC_SIGN_IN = 12345
-    }
-}
+
+const val RC_SIGN_IN = 12345
+const val REQUEST_CODE: Int = 123
+
+

@@ -19,12 +19,12 @@ import ru.maxdexter.mytasks.databinding.FragmentNewTaskBinding
 import ru.maxdexter.mytasks.repository.LocalDatabase
 import ru.maxdexter.mytasks.repository.Repository
 import ru.maxdexter.mytasks.repository.localdatabase.RoomDb
+import ru.maxdexter.mytasks.utils.REQUEST_CODE
 import ru.maxdexter.mytasks.utils.textListener
 import java.util.*
 
 class NewTaskFragment : BottomSheetDialogFragment() {
 
-    private val REQUEST_CODE: Int = 123
     private lateinit var  binding: FragmentNewTaskBinding
     private val calendar = Calendar.getInstance(Locale.getDefault())
     private val date = Calendar.Builder()
@@ -102,7 +102,6 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     private fun initTimePicker() {
         val listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
             viewModel.setTime(hourOfDay,minute)
-          //  val timestamp = Timestamp(date.time)
         }
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)

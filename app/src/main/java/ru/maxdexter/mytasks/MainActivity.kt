@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import ru.maxdexter.mytasks.databinding.ActivityMainBinding
 import ru.maxdexter.mytasks.preferences.AppPreferences
 import ru.maxdexter.mytasks.repository.firebase.Auth
-import ru.maxdexter.mytasks.utils.Constants
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -36,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    
+
 
 }
 

@@ -13,7 +13,7 @@ class NotificationReceiver : BroadcastReceiver() {
         val notification = NotificationCompat.Builder(context, "MyChannel")
             .setSmallIcon(R.drawable.ic_notifications_black_24dp)
             .setContentTitle(intent.getStringExtra("title"))
-            .setContentText(intent.getStringExtra("time"))
+            .setContentText(intent.getStringExtra("text"))
             .build()
 
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

@@ -17,6 +17,7 @@ import ru.maxdexter.mytasks.models.User
 import ru.maxdexter.mytasks.repository.LoadingResponse
 import ru.maxdexter.mytasks.repository.LocalDatabase
 import ru.maxdexter.mytasks.repository.Repository
+import ru.maxdexter.mytasks.utils.REQUEST_CODE
 import java.io.IOException
 import java.util.*
 
@@ -25,9 +26,9 @@ class NewTaskViewModel (private val repository: LocalDatabase): ViewModel() {
     val user = User()
     private val task = Task()
     private val list = mutableListOf<TaskFile>()
-    val taskWithTaskFile = TaskWithTaskFile()
+    private val taskWithTaskFile = TaskWithTaskFile()
 
-    private val REQUEST_CODE: Int = 123
+
 
 
    private val selectDate = Calendar.Builder()
@@ -65,8 +66,8 @@ class NewTaskViewModel (private val repository: LocalDatabase): ViewModel() {
     }
 
     fun setDate(year: Int, month: Int, day: Int){
-        val mon =  if (month.toString().length < 2) "0${month + 1}" else month + 1
-        val d = if (day.toString().length < 2) "0$day" else day
+        val mon =  if (month < 10) "0${month + 1}" else month + 1
+        val d = if (day  < 10) "0$day" else day
         selectDate.setDate(year,month,day)
         task.eventYear = year
         task.eventMonth = month
@@ -76,6 +77,8 @@ class NewTaskViewModel (private val repository: LocalDatabase): ViewModel() {
     }
 
     fun setTime(hour: Int, minute: Int){
+
+
         val h = if(hour.toString().length < 2) "0$hour" else hour
         selectDate.setTimeOfDay(hour,minute,0).build()
         task.eventHour = hour
@@ -113,7 +116,7 @@ class NewTaskViewModel (private val repository: LocalDatabase): ViewModel() {
             try {
                 repository.saveTask(taskWithTaskFile)
             }catch (e: IOException) {
-               val resp = LoadingResponse.Error(e.message)
+                Log.e("ERROR_SAVE",e.message.toString())
             }
 
         }

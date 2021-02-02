@@ -1,6 +1,9 @@
 package ru.maxdexter.mytasks.ui.calendar
 
 import android.app.Activity
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.adapters.HourAdapter
 import ru.maxdexter.mytasks.adapters.TimeItemAdapter
+import ru.maxdexter.mytasks.alarm.NotificationReceiver
 import ru.maxdexter.mytasks.databinding.FragmentCalendarBinding
 import ru.maxdexter.mytasks.models.Hour
 import ru.maxdexter.mytasks.models.TaskWithTaskFile
@@ -26,7 +30,6 @@ import ru.maxdexter.mytasks.repository.LocalDatabase
 import ru.maxdexter.mytasks.repository.Repository
 import ru.maxdexter.mytasks.repository.firebase.Auth
 import ru.maxdexter.mytasks.repository.localdatabase.RoomDb
-import ru.maxdexter.mytasks.utils.Constants
 import java.time.Month
 import java.time.MonthDay
 import java.time.Year
@@ -70,8 +73,9 @@ class CalendarFragment : Fragment() {
 
         })
         binding.fab.setOnClickListener { findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment()) }
+        val calendar =   Calendar.getInstance(Locale.getDefault())
 
-
+        alarmStart(requireContext(),"cbsjdbc","ldsnackjd",calendar.timeInMillis)
         return binding.root
     }
 
@@ -106,5 +110,15 @@ class CalendarFragment : Fragment() {
         }
     }
 
+    private fun alarmStart(context: Context, title: String, text: String, time: Long){
+        val intent = Intent(context, NotificationReceiver::class.java)
+        intent.putExtra("title",title)
+        intent.putExtra("text",text)
+        val pendingIntent = PendingIntent.getBroadcast(context,84,intent,PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,time,pendingIntent)
+
+    }
 
 }
