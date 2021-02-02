@@ -49,23 +49,15 @@ class CalendarFragment : Fragment() {
     }
 
 
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_calendar,container, false)
-        calendarViewModel.loadData(Year.now().value,YearMonth.now().month.value,MonthDay.now().dayOfMonth)
         calendarListener()
-
-        calendarViewModel.listTaskFile.observe(viewLifecycleOwner,{
-            val hourList = calendarViewModel.updateData(it)
-            initRecycler(hourList)
-        })
-
-
         initBottomAppBar()
-
         calendarViewModel.selectedTask.observe(viewLifecycleOwner,{
             if (it != ""){
                 findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToDetailFragment(it))
@@ -73,11 +65,19 @@ class CalendarFragment : Fragment() {
 
         })
         binding.fab.setOnClickListener { findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment()) }
-        val calendar =   Calendar.getInstance(Locale.getDefault())
 
-        alarmStart(requireContext(),"cbsjdbc","ldsnackjd",calendar.timeInMillis)
         return binding.root
     }
+
+    override fun onResume() {
+        super.onResume()
+        calendarViewModel.listTaskFile.observe(viewLifecycleOwner,{
+            val hourList = calendarViewModel.updateData(it)
+            initRecycler(hourList)
+        })
+    }
+
+
 
     private fun calendarListener() {
         binding.calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
@@ -110,15 +110,6 @@ class CalendarFragment : Fragment() {
         }
     }
 
-    private fun alarmStart(context: Context, title: String, text: String, time: Long){
-        val intent = Intent(context, NotificationReceiver::class.java)
-        intent.putExtra("title",title)
-        intent.putExtra("text",text)
-        val pendingIntent = PendingIntent.getBroadcast(context,84,intent,PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,time,pendingIntent)
-
-    }
 
 }

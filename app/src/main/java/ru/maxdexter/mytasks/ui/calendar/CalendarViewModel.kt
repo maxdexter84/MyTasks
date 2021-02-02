@@ -15,17 +15,25 @@ import ru.maxdexter.mytasks.models.TaskWithTaskFile
 import ru.maxdexter.mytasks.repository.LocalDatabase
 import ru.maxdexter.mytasks.repository.Repository
 import java.time.Year
+import java.util.*
 
 class CalendarViewModel(private val repository: LocalDatabase) : ViewModel() {
 
-    private var _listTaskWithTaskFile = MutableLiveData<List<TaskWithTaskFile>>()
+    private var _listTaskWithTaskFile = MutableLiveData<List<TaskWithTaskFile>>(emptyList())
         val listTaskFile: LiveData<List<TaskWithTaskFile>>
         get() = _listTaskWithTaskFile
 
-
+    val calendar = Calendar.getInstance(TimeZone.getDefault(),Locale.getDefault())
     private var _selectedTask = MutableLiveData("")
             val selectedTask: LiveData<String>
             get() = _selectedTask
+
+    init {
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val month = calendar.get(Calendar.MONTH)
+        val year = calendar.get(Calendar.YEAR)
+        loadData(year, month, day)
+    }
 
      fun loadData(year: Int, month: Int, day: Int){
          viewModelScope.launch {

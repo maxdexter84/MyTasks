@@ -12,7 +12,7 @@ import ru.maxdexter.mytasks.databinding.ItemHourLayoutBinding
 import ru.maxdexter.mytasks.models.Hour
 import ru.maxdexter.mytasks.ui.calendar.CalendarViewModel
 
-class HourAdapter(val viewModel: CalendarViewModel): RecyclerView.Adapter<HourAdapter.ViewHolder>() {
+class HourAdapter(private val viewModel: CalendarViewModel): RecyclerView.Adapter<HourAdapter.ViewHolder>() {
 
 
      var list = mutableListOf<Hour>()
