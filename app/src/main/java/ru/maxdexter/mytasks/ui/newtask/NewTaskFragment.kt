@@ -1,8 +1,10 @@
 package ru.maxdexter.mytasks.ui.newtask
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,11 +30,14 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     private lateinit var  binding: FragmentNewTaskBinding
     private val calendar = Calendar.getInstance(Locale.getDefault())
     private val date = Calendar.Builder()
+
     private val viewModel by lazy {
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val db: RoomDb = RoomDb.invoke(requireContext())
         val repository: LocalDatabase = Repository(db.getDao())
-        ViewModelProvider(this,NewTaskViewModelFactory(repository)).get(NewTaskViewModel::class.java)
+        ViewModelProvider(this,NewTaskViewModelFactory(repository,alarmManager, requireContext())).get(NewTaskViewModel::class.java)
     }
+
     private val adapter: FileAdapter by lazy {
         FileAdapter()
     }

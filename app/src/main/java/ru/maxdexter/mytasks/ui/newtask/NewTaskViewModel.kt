@@ -1,15 +1,19 @@
 package ru.maxdexter.mytasks.ui.newtask
 
 import android.app.Activity
+import android.app.AlarmManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import ru.maxdexter.mytasks.App
 import ru.maxdexter.mytasks.models.Task
 import ru.maxdexter.mytasks.models.TaskFile
 import ru.maxdexter.mytasks.models.TaskWithTaskFile
@@ -17,16 +21,18 @@ import ru.maxdexter.mytasks.models.User
 import ru.maxdexter.mytasks.repository.LoadingResponse
 import ru.maxdexter.mytasks.repository.LocalDatabase
 import ru.maxdexter.mytasks.repository.Repository
+import ru.maxdexter.mytasks.utils.Alarm
 import ru.maxdexter.mytasks.utils.REQUEST_CODE
 import java.io.IOException
 import java.util.*
 
-class NewTaskViewModel (private val repository: LocalDatabase): ViewModel() {
+class NewTaskViewModel (private val repository: LocalDatabase, private val alarmManager: AlarmManager, val context: Context): ViewModel() {
     private val calendar = Calendar.getInstance(Locale.getDefault())
     val user = User()
     private val task = Task()
     private val list = mutableListOf<TaskFile>()
     private val taskWithTaskFile = TaskWithTaskFile()
+    val app = App()
 
 
 
@@ -115,12 +121,23 @@ class NewTaskViewModel (private val repository: LocalDatabase): ViewModel() {
         viewModelScope.launch {
             try {
                 repository.saveTask(taskWithTaskFile)
+                createReminderAlarm(task)
             }catch (e: IOException) {
                 Log.e("ERROR_SAVE",e.message.toString())
             }
 
         }
     }
+    private fun createReminderAlarm(task: Task) {
+        if (!task.isCompleted) {
+            Alarm.createAlarm(
+                context,
+                task,
+                alarmManager
+            )
+        }
+    }
+
 
 
 }

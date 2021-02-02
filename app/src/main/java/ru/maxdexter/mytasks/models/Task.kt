@@ -6,15 +6,14 @@ import java.util.*
 @Entity
 data class Task(   @PrimaryKey
                    var id: String = UUID.randomUUID().toString(),
-                   var title: String? = null,
-                   var description: String? = null,
-                   var eventYear: Int? = null,
-                   var eventMonth: Int? = null,
-                   var eventDay: Int? = null,
-                   var eventHour: Int? = null,
-                   var eventMinute: Int? = null,
+                   var title: String = "",
+                   var description: String = "",
+                   var eventYear: Int = 0,
+                   var eventMonth: Int = 0,
+                   var eventDay: Int = 0,
+                   var eventHour: Int = 0,
+                   var eventMinute: Int = 0,
                    var isCompleted: Boolean = false,
                    var repeat: Boolean = false,
-                   var userNumber: String? = null) {
-
-}
+                   var repeatRange: String = "",
+                   var userNumber: String? = "")

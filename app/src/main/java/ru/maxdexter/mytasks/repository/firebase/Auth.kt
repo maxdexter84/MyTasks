@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.flow
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.models.User
 import ru.maxdexter.mytasks.repository.LoadingResponse
-import ru.maxdexter.mytasks.utils.Constants
+import ru.maxdexter.mytasks.utils.RC_SIGN_IN
 
 object Auth {
 
@@ -25,7 +25,7 @@ object Auth {
                 .createSignInIntentBuilder()
                 .setTheme(R.style.AppTheme)
                 .setAvailableProviders(providerList)
-                .build(), Constants.RC_SIGN_IN
+                .build(), RC_SIGN_IN
         )
 
     }
