@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.maxdexter.mytasks.databinding.ItemTaskLayoutBinding
 import ru.maxdexter.mytasks.models.Task
 import ru.maxdexter.mytasks.models.TaskWithTaskFile
+import ru.maxdexter.mytasks.utils.handleParseTime
 
 class TimeItemAdapter(private val itemListener: ItemListener) : ListAdapter<TaskWithTaskFile, TimeItemAdapter.TaskViewHolder>(DiffCallback()){
 
@@ -48,7 +49,7 @@ class TimeItemAdapter(private val itemListener: ItemListener) : ListAdapter<Task
         fun bind(item: TaskWithTaskFile, listener: ItemListener){
             binding.tvTitle.text = item.task?.title
             binding.tvDescription.text = item.task?.description
-            binding.tvTaskTime.text = "${item.task?.eventHour} : ${item.task?.eventMinute}"
+            binding.tvTaskTime.text = handleParseTime(item)
             itemView.setOnClickListener {
                 item.task?.let { it1 -> listener.click(it1.id) }
             }

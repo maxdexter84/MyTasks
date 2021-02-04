@@ -83,13 +83,12 @@ class NewTaskViewModel (private val repository: LocalDatabase, private val alarm
     }
 
     fun setTime(hour: Int, minute: Int){
-
-
-        val h = if(hour.toString().length < 2) "0$hour" else hour
+        val h = if(hour < 10) "0$hour" else hour
+        val m = if (minute < 10) "0$minute" else minute
         selectDate.setTimeOfDay(hour,minute,0).build()
         task.eventHour = hour
         task.eventMinute = minute
-        _liveTime.value = "$h : $minute"
+        _liveTime.value = "$h : $m"
     }
 
     fun saveTask(title: String, description: String){

@@ -1,20 +1,19 @@
 package ru.maxdexter.mytasks.alarm
 
+import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import ru.maxdexter.mytasks.MainActivity
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.models.Task
-import ru.maxdexter.mytasks.utils.CHANNEL_ID
-import ru.maxdexter.mytasks.utils.INTENT_TASK_UUID
-import ru.maxdexter.mytasks.utils.INTENT_TITLE
-import ru.maxdexter.mytasks.utils.REQUEST_CODE
+import ru.maxdexter.mytasks.utils.*
 
 class NotificationReceiver : BroadcastReceiver() {
 
@@ -22,7 +21,7 @@ class NotificationReceiver : BroadcastReceiver() {
 
         val reminderIdentifier = intent?.extras?.getString(INTENT_TASK_UUID)
         val title = intent?.extras?.getString(INTENT_TITLE)
-
+        val taskTimeText = intent?.extras?.getString(INTENT_TIME)
         val notificationIntent = Intent(context, MainActivity::class.java)
         notificationIntent.putExtra(INTENT_TASK_UUID,reminderIdentifier)
         val pendingIntent = PendingIntent.getActivity(context, REQUEST_CODE,notificationIntent,
@@ -34,10 +33,12 @@ class NotificationReceiver : BroadcastReceiver() {
                 .setLargeIcon(BitmapFactory.decodeResource(context.resources,R.mipmap.ic_launcher))
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentTitle(title)
+                .setContentText(taskTimeText)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .setOnlyAlertOnce(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
         }
 
         val notificationManager = context?.let { ContextCompat.getSystemService(it,NotificationManager::class.java) } as NotificationManager
@@ -54,6 +55,7 @@ class NotificationReceiver : BroadcastReceiver() {
             intent.apply {
                 putExtra(INTENT_TASK_UUID, task.id)
                 putExtra(INTENT_TITLE, task.title)
+                putExtra(INTENT_TIME, "${task.eventHour}:${task.eventMinute}")
             }
 
             return PendingIntent.getBroadcast(

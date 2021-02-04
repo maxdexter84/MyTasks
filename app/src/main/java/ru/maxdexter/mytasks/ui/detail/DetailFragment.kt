@@ -49,9 +49,14 @@ class DetailFragment : BottomSheetDialogFragment() {
             if (it != null) {
                 binding.tvTitle.setText(it.task?.title)
                 binding.tvTaskDescription.setText(it.task?.description)
-                binding.tvDateChange.text = "${it.task?.eventDay}.${it.task?.eventMonth }.${it.task?.eventYear}"
-                binding.tvTimeChange.text = "${it.task?.eventHour} : ${it.task?.eventMinute}"
             }
+        })
+        viewModel.taskDate.observe(viewLifecycleOwner,{
+            binding.tvDateChange.text = it
+        })
+
+        viewModel.taskTime.observe(viewLifecycleOwner,{
+            binding.tvTimeChange.text = it
         })
 
         return binding.root

@@ -30,11 +30,7 @@ import ru.maxdexter.mytasks.repository.LocalDatabase
 import ru.maxdexter.mytasks.repository.Repository
 import ru.maxdexter.mytasks.repository.firebase.Auth
 import ru.maxdexter.mytasks.repository.localdatabase.RoomDb
-import java.time.Month
-import java.time.MonthDay
-import java.time.Year
-import java.time.YearMonth
-import java.util.*
+
 
 class CalendarFragment : Fragment() {
 
@@ -46,6 +42,14 @@ class CalendarFragment : Fragment() {
     private lateinit var binding: FragmentCalendarBinding
     private val hourAdapter: HourAdapter by lazy {
         HourAdapter(calendarViewModel)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val args = arguments?.let { CalendarFragmentArgs.fromBundle(it) }?.taskUUID
+        if (args != null && args != "empty"){
+            findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToDetailFragment(args))
+        }
     }
 
 

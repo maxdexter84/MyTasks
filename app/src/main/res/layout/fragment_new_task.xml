@@ -9,7 +9,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".ui.newtask.NewTaskFragment"
         tools:ignore="RtlSymmetry">
 
@@ -94,14 +94,26 @@
             app:layout_constraintTop_toTopOf="@+id/tv_repeat" />
 
 
+        <Spinner
+            android:id="@+id/spinner_unit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_space_16dp"
+            android:layout_marginEnd="@dimen/normal_space_16dp"
+            android:layout_marginTop="@dimen/small_space_8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_repeat" />
+
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_add"
             style="?addButtonAttr"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/add_button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rv_file" />
 
         <ImageButton
             android:id="@+id/iv_add_file"
@@ -110,17 +122,16 @@
 
             android:backgroundTint="@android:color/transparent"
             android:src="@drawable/ic_baseline_attach_file_24"
-            app:layout_constraintBottom_toTopOf="@+id/rv_file"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_repeat" />
+            app:layout_constraintTop_toBottomOf="@+id/spinner_unit" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_file"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            app:layout_constraintBottom_toTopOf="@+id/btn_add"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_add_file" />
 
 
 
