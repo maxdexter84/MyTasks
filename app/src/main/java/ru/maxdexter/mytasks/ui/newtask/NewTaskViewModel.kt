@@ -7,7 +7,11 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.graphics.drawable.toIcon
+import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,7 +27,8 @@ import ru.maxdexter.mytasks.repository.LocalDatabase
 import ru.maxdexter.mytasks.repository.Repository
 import ru.maxdexter.mytasks.utils.Alarm
 import ru.maxdexter.mytasks.utils.REQUEST_CODE
-import java.io.IOException
+import ru.maxdexter.mytasks.utils.handleParseFileName
+import java.io.*
 import java.util.*
 
 class NewTaskViewModel (private val repository: LocalDatabase, private val alarmManager: AlarmManager, val context: Context): ViewModel() {
@@ -102,10 +107,32 @@ class NewTaskViewModel (private val repository: LocalDatabase, private val alarm
     fun saveFile(requestCode: Int, resultCode: Int, data: Intent?){
         val taskFile = TaskFile()
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK){
-            if (data?.data != null){
-                taskFile.uri = data.data.toString()
-                val tokenArr = data.data.toString().split("/")
-                taskFile.name = tokenArr[tokenArr.lastIndex]
+            if (data != null && data.data != null){
+               val type = data.resolveType(context).toString()
+               val dir = context.getExternalFilesDir(null)
+                val file = File(dir,data.dataString ?: "")
+                val exten = file.absoluteFile
+                val exten1 = file.canonicalFile
+
+                val uri = data.dataString?.toUri()
+                if (uri != null){
+                    taskFile.name = handleParseFileName(uri.toString())
+                }
+                taskFile.fileType = type
+                taskFile.uri = data.dataString.toString()
+                viewModelScope.launch {
+                    try {
+                        // Получаем InputStream, из которого будем декодировать Bitmap
+
+
+                    }catch (e: IOException){
+                        Log.e("IOException",e.message.toString())
+                    }catch (e: FileNotFoundException){
+                        Log.e("FileNotFoundException",e.message.toString())
+                    }
+
+                }
+
             }
         }
 

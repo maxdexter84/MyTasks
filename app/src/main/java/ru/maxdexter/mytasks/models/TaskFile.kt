@@ -10,6 +10,7 @@ data class TaskFile(
                     @PrimaryKey
                     var uri: String = "",
                     var taskUUID: String = "",
+                    var fileType: String = "",
                     var name: String = "")
 
 

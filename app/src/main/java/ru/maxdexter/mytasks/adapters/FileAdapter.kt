@@ -9,12 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.databinding.ItemFileBinding
 import ru.maxdexter.mytasks.models.TaskFile
+import ru.maxdexter.mytasks.utils.setImagePrev
 
 class FileAdapter: ListAdapter<TaskFile,FileAdapter.ViewHolder>(TaskDiffCallback()) {
     class ViewHolder(val binding: ItemFileBinding):RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: TaskFile){
+            binding.ivFile.setImagePrev(item.uri, item.fileType)
             binding.tvFileName.text = item.name
+
         }
 
         companion object{

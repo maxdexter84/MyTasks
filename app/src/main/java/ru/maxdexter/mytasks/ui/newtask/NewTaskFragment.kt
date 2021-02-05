@@ -70,7 +70,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
 
     private fun initRecycler() {
         viewModel.fileList.observe(viewLifecycleOwner, {
-            binding.rvFile.layoutManager = LinearLayoutManager(context)
+            binding.rvFile.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
             adapter.submitList(it)
             binding.rvFile.adapter = adapter
         })
