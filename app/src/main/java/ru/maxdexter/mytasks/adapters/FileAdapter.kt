@@ -2,13 +2,11 @@ package ru.maxdexter.mytasks.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.databinding.ItemFileBinding
-import ru.maxdexter.mytasks.models.TaskFile
+import ru.maxdexter.mytasks.domen.models.TaskFile
 import ru.maxdexter.mytasks.utils.setImagePrev
 
 class FileAdapter: ListAdapter<TaskFile,FileAdapter.ViewHolder>(TaskDiffCallback()) {

@@ -1,12 +1,11 @@
-package ru.maxdexter.mytasks.repository.localdatabase
+package ru.maxdexter.mytasks.domen.repository.localdatabase
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
-import ru.maxdexter.mytasks.models.Task
-import ru.maxdexter.mytasks.models.TaskFile
-import ru.maxdexter.mytasks.models.TaskWithTaskFile
-import java.time.Year
+import ru.maxdexter.mytasks.domen.models.Task
+import ru.maxdexter.mytasks.domen.models.TaskFile
+import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
 
 @Dao
 interface TaskDao {

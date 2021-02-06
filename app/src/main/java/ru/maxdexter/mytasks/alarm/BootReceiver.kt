@@ -8,12 +8,19 @@ import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ru.maxdexter.mytasks.repository.Repository
-import ru.maxdexter.mytasks.repository.localdatabase.RoomDb
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.experimental.property.inject
+
+
+import ru.maxdexter.mytasks.domen.repository.LocalDatabaseImpl
+import ru.maxdexter.mytasks.domen.repository.localdatabase.RoomDb
 import ru.maxdexter.mytasks.utils.Alarm
 
-class BootReceiver : BroadcastReceiver() {
-
+@KoinApiExtension
+class BootReceiver : BroadcastReceiver() , KoinComponent{
+    private val repository: LocalDatabaseImpl = get()
     companion object {
         private const val TAG = "BootReceiver"
     }
@@ -24,8 +31,7 @@ class BootReceiver : BroadcastReceiver() {
             if (intent.action == "android.intent.action.BOOT_COMPLETED") {
                 Log.d(TAG, "onReceive: intent action is correct")
                 val alarmManager = context!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                val db = RoomDb.invoke(context)
-                val repository = Repository(db.getDao())
+
                 CoroutineScope(Dispatchers.Main).launch {
                   val  tasks = repository.getAllTask().value
 

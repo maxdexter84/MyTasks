@@ -1,6 +1,5 @@
 package ru.maxdexter.mytasks.alarm
 
-import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -10,9 +9,9 @@ import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import ru.maxdexter.mytasks.MainActivity
+import ru.maxdexter.mytasks.ui.MainActivity
 import ru.maxdexter.mytasks.R
-import ru.maxdexter.mytasks.models.Task
+import ru.maxdexter.mytasks.domen.models.Task
 import ru.maxdexter.mytasks.utils.*
 
 class NotificationReceiver : BroadcastReceiver() {

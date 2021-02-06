@@ -4,17 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import ru.maxdexter.mytasks.models.Hour
-import ru.maxdexter.mytasks.models.Task
-import ru.maxdexter.mytasks.models.TaskWithTaskFile
-import ru.maxdexter.mytasks.repository.LocalDatabase
-import ru.maxdexter.mytasks.repository.Repository
-import java.time.Year
+import ru.maxdexter.mytasks.domen.models.Hour
+import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
+import ru.maxdexter.mytasks.domen.repository.LocalDatabase
 import java.util.*
 
 class CalendarViewModel(private val repository: LocalDatabase) : ViewModel() {
@@ -50,7 +44,6 @@ class CalendarViewModel(private val repository: LocalDatabase) : ViewModel() {
     ): MutableList<Hour> {
         val hourList = mutableListOf<Hour>()
         for (i in 0..23 step 1) {
-            var hour = Hour(i, ("$i" + "59").toInt())
             val taskWithTaskFile = mutableListOf<TaskWithTaskFile>()
             for (item in it) {
                 if (item.task?.eventHour == i) {

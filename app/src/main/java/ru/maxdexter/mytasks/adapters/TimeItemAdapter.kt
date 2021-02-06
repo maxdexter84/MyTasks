@@ -7,8 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.maxdexter.mytasks.databinding.ItemTaskLayoutBinding
-import ru.maxdexter.mytasks.models.Task
-import ru.maxdexter.mytasks.models.TaskWithTaskFile
+import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
 import ru.maxdexter.mytasks.utils.handleParseTime
 
 class TimeItemAdapter(private val itemListener: ItemListener) : ListAdapter<TaskWithTaskFile, TimeItemAdapter.TaskViewHolder>(DiffCallback()){

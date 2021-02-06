@@ -10,33 +10,32 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import org.koin.android.viewmodel.ext.android.viewModel
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.adapters.FileAdapter
 import ru.maxdexter.mytasks.databinding.FragmentNewTaskBinding
-import ru.maxdexter.mytasks.repository.LocalDatabase
-import ru.maxdexter.mytasks.repository.Repository
-import ru.maxdexter.mytasks.repository.localdatabase.RoomDb
+import ru.maxdexter.mytasks.domen.models.Task
+import ru.maxdexter.mytasks.ui.detail.DetailFragmentArgs
+import ru.maxdexter.mytasks.utils.Alarm
 import ru.maxdexter.mytasks.utils.REQUEST_CODE
-import ru.maxdexter.mytasks.utils.textListener
 import java.util.*
 
 class NewTaskFragment : BottomSheetDialogFragment() {
 
     private lateinit var  binding: FragmentNewTaskBinding
     private val calendar = Calendar.getInstance(Locale.getDefault())
-    private val date = Calendar.Builder()
-
-    private val viewModel by lazy {
-        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val db: RoomDb = RoomDb.invoke(requireContext())
-        val repository: LocalDatabase = Repository(db.getDao())
-        ViewModelProvider(this,NewTaskViewModelFactory(repository,alarmManager, requireContext())).get(NewTaskViewModel::class.java)
+    private val alarmManager by lazy {
+        requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
     }
+    private val currentTaskUUID by lazy {
+        arguments?.let { NewTaskFragmentArgs.fromBundle(it) }?.taskUUID
+    }
+
+    private val newTaskViewModel: NewTaskViewModel by viewModel()
+
 
     private val adapter: FileAdapter by lazy {
         FileAdapter()
@@ -52,24 +51,35 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         timeObserver()
         initDatePicker()
         initTimePicker()
+        initBtnAdd()
+        initBntAddFile()
+        initRecycler()
 
+        newTaskViewModel.setAlarm.observe(viewLifecycleOwner,{
+            it?.let { createReminderAlarm(it) }
+        })
+
+        return binding.root
+    }
+
+    private fun initBntAddFile() {
+        binding.ivAddFile.setOnClickListener {
+            getFile()
+        }
+    }
+
+    private fun initBtnAdd() {
         binding.btnAdd.setOnClickListener {
             val title = binding.tvTitle.text.toString()
             val desc = binding.tvTaskDescription.text.toString()
 
-            viewModel.saveTask(title, desc)
+            newTaskViewModel.saveTask(title, desc)
             dismiss()
         }
-        binding.ivAddFile.setOnClickListener {
-            getFile()
-        }
-
-        initRecycler()
-        return binding.root
     }
 
     private fun initRecycler() {
-        viewModel.fileList.observe(viewLifecycleOwner, {
+        newTaskViewModel.fileList.observe(viewLifecycleOwner, {
             binding.rvFile.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
             adapter.submitList(it)
             binding.rvFile.adapter = adapter
@@ -77,13 +87,13 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     }
 
     private fun dateObserver() {
-        viewModel.liveDate.observe(viewLifecycleOwner, {
+        newTaskViewModel.liveDate.observe(viewLifecycleOwner, {
             binding.tvDateChange.text = it
         })
     }
 
     private fun timeObserver() {
-        viewModel.liveTime.observe(viewLifecycleOwner, {
+        newTaskViewModel.liveTime.observe(viewLifecycleOwner, {
             binding.tvTimeChange.text = it
         })
     }
@@ -91,7 +101,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     @SuppressLint("SetTextI18n")
     private fun initDatePicker() {
         val listener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
-            viewModel.setDate(year,month,dayOfMonth)
+            newTaskViewModel.setDate(year,month,dayOfMonth)
         }
         binding.tvDateChange.setOnClickListener {
             val year = calendar.get(Calendar.YEAR)
@@ -106,7 +116,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     @SuppressLint("SetTextI18n")
     private fun initTimePicker() {
         val listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-            viewModel.setTime(hourOfDay,minute)
+            newTaskViewModel.setTime(hourOfDay,minute)
         }
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
@@ -123,7 +133,18 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        viewModel.saveFile(requestCode,resultCode,data)
+        newTaskViewModel.saveFile(requestCode,resultCode,data)
+    }
+
+
+    private fun createReminderAlarm(task: Task) {
+        if (!task.isCompleted) {
+            Alarm.createAlarm(
+                requireContext(),
+                task,
+                alarmManager
+            )
+        }
     }
 
 

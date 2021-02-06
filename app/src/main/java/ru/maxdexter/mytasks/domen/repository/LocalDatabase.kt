@@ -1,12 +1,10 @@
-package ru.maxdexter.mytasks.repository
+package ru.maxdexter.mytasks.domen.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.flow.Flow
-import ru.maxdexter.mytasks.models.Task
-import ru.maxdexter.mytasks.models.TaskFile
-import ru.maxdexter.mytasks.models.TaskWithTaskFile
-import java.util.*
+import ru.maxdexter.mytasks.domen.models.Task
+import ru.maxdexter.mytasks.domen.models.TaskFile
+import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
 
 
 interface LocalDatabase {

@@ -1,43 +1,33 @@
 package ru.maxdexter.mytasks.ui.newtask
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlarmManager
-import android.content.Context
+import android.app.Application
 import android.content.Intent
-import android.net.Uri
 import android.util.Log
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.graphics.drawable.toIcon
-import androidx.core.net.toFile
 import androidx.core.net.toUri
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import kotlinx.coroutines.launch
-import ru.maxdexter.mytasks.App
-import ru.maxdexter.mytasks.models.Task
-import ru.maxdexter.mytasks.models.TaskFile
-import ru.maxdexter.mytasks.models.TaskWithTaskFile
-import ru.maxdexter.mytasks.models.User
-import ru.maxdexter.mytasks.repository.LoadingResponse
-import ru.maxdexter.mytasks.repository.LocalDatabase
-import ru.maxdexter.mytasks.repository.Repository
+import ru.maxdexter.mytasks.domen.models.Task
+import ru.maxdexter.mytasks.domen.models.TaskFile
+import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
+import ru.maxdexter.mytasks.domen.models.User
+import ru.maxdexter.mytasks.domen.repository.LocalDatabase
 import ru.maxdexter.mytasks.utils.Alarm
 import ru.maxdexter.mytasks.utils.REQUEST_CODE
 import ru.maxdexter.mytasks.utils.handleParseFileName
 import java.io.*
 import java.util.*
 
-class NewTaskViewModel (private val repository: LocalDatabase, private val alarmManager: AlarmManager, val context: Context): ViewModel() {
+class NewTaskViewModel (private val repository: LocalDatabase, application: Application): AndroidViewModel(application) {
     private val calendar = Calendar.getInstance(Locale.getDefault())
     val user = User()
     private val task = Task()
     private val list = mutableListOf<TaskFile>()
     private val taskWithTaskFile = TaskWithTaskFile()
-    val app = App()
+    @SuppressLint("StaticFieldLeak")
+    private val context = application.applicationContext
 
 
 
@@ -56,6 +46,9 @@ class NewTaskViewModel (private val repository: LocalDatabase, private val alarm
             val fileList: LiveData<List<TaskFile>>
             get() = _fileList
 
+    private val _setAlarm = MutableLiveData<Task?>(null)
+            val setAlarm: LiveData<Task?>
+            get() = _setAlarm
 
     init {
         getCurrentDate()
@@ -111,9 +104,6 @@ class NewTaskViewModel (private val repository: LocalDatabase, private val alarm
                val type = data.resolveType(context).toString()
                val dir = context.getExternalFilesDir(null)
                 val file = File(dir,data.dataString ?: "")
-                val exten = file.absoluteFile
-                val exten1 = file.canonicalFile
-
                 val uri = data.dataString?.toUri()
                 if (uri != null){
                     taskFile.name = handleParseFileName(uri.toString())
@@ -147,22 +137,14 @@ class NewTaskViewModel (private val repository: LocalDatabase, private val alarm
         viewModelScope.launch {
             try {
                 repository.saveTask(taskWithTaskFile)
-                createReminderAlarm(task)
+                _setAlarm.value = task
             }catch (e: IOException) {
                 Log.e("ERROR_SAVE",e.message.toString())
             }
 
         }
     }
-    private fun createReminderAlarm(task: Task) {
-        if (!task.isCompleted) {
-            Alarm.createAlarm(
-                context,
-                task,
-                alarmManager
-            )
-        }
-    }
+
 
 
 

@@ -6,24 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
+import org.koin.android.viewmodel.ext.android.viewModel
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.databinding.FragmentProfileBinding
-import ru.maxdexter.mytasks.preferences.AppPreferences
-import ru.maxdexter.mytasks.repository.firebase.Auth
+import ru.maxdexter.mytasks.domen.repository.firebase.Auth
 
 class ProfileFragment : BottomSheetDialogFragment() {
 
-    private lateinit var profileViewModel: ProfileViewModel
-    private lateinit var profileViewModelFactory: ProfileViewModelFactory
+    private val profileViewModel: ProfileViewModel by viewModel()
     private lateinit var binding: FragmentProfileBinding
-    lateinit var appPreferences: AppPreferences
-    val job = SupervisorJob()
-    val uiScope = CoroutineScope(job + Dispatchers.Main)
+
+
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -31,22 +26,19 @@ class ProfileFragment : BottomSheetDialogFragment() {
             savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(layoutInflater,R.layout.fragment_profile, container, false)
-        appPreferences = AppPreferences(requireContext())
-        initViewModel()
+
         authObserver()
         initBtn()
+        profileViewModel.currentTheme.observe(viewLifecycleOwner,{
+            binding.switchAppTheme.isChecked = it
+        })
 
-        setTheme()
        return binding.root
     }
 
 
 
-     private fun initViewModel() {
-        profileViewModelFactory = ProfileViewModelFactory(appPreferences)
-        profileViewModel =
-            ViewModelProvider(this, profileViewModelFactory).get(ProfileViewModel::class.java)
-    }
+
 
     private fun authObserver() {
         profileViewModel.isAuth.observe(viewLifecycleOwner, {
@@ -58,14 +50,14 @@ class ProfileFragment : BottomSheetDialogFragment() {
     override fun onResume() {
         super.onResume()
         profileViewModel.getUserData()
-
-
+        setTheme()
     }
 
     private fun setTheme() {
-        binding.switchAppTheme.isChecked = appPreferences.getTheme()
+
+
         binding.switchAppTheme.setOnCheckedChangeListener { _, isChecked ->
-            appPreferences.savePref(isChecked, AppPreferences.IS_DARK_THEME)
+            profileViewModel.setTheme(isChecked)
             requireActivity().recreate()
         }
     }

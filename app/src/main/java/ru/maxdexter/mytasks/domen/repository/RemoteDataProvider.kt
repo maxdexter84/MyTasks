@@ -1,8 +1,7 @@
-package ru.maxdexter.mytasks.repository
+package ru.maxdexter.mytasks.domen.repository
 
 import kotlinx.coroutines.flow.Flow
-import ru.maxdexter.mytasks.models.Task
-import ru.maxdexter.mytasks.models.User
+import ru.maxdexter.mytasks.domen.models.Task
 
 interface RemoteDataProvider {
 

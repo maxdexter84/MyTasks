@@ -2,14 +2,12 @@ package ru.maxdexter.mytasks.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.opengl.Visibility
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.maxdexter.mytasks.databinding.ItemHourLayoutBinding
-import ru.maxdexter.mytasks.models.Hour
+import ru.maxdexter.mytasks.domen.models.Hour
 import ru.maxdexter.mytasks.ui.calendar.CalendarViewModel
 
 class HourAdapter(private val viewModel: CalendarViewModel): RecyclerView.Adapter<HourAdapter.ViewHolder>() {

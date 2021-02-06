@@ -1,36 +1,35 @@
-package ru.maxdexter.mytasks.repository
+package ru.maxdexter.mytasks.domen.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.room.RoomDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import ru.maxdexter.mytasks.models.Task
-import ru.maxdexter.mytasks.models.TaskFile
-import ru.maxdexter.mytasks.models.TaskWithTaskFile
-import ru.maxdexter.mytasks.repository.localdatabase.TaskDao
+import ru.maxdexter.mytasks.domen.models.Task
+import ru.maxdexter.mytasks.domen.models.TaskFile
+import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
+import ru.maxdexter.mytasks.domen.repository.localdatabase.RoomDb
+import ru.maxdexter.mytasks.domen.repository.localdatabase.TaskDao
 
-class Repository(private val dao: TaskDao): LocalDatabase{
+class LocalDatabaseImpl(private val database: RoomDb): LocalDatabase{
 
     override suspend fun saveTask(taskWithTaskFile: TaskWithTaskFile) {
         withContext(Dispatchers.IO){
-            dao.insertTaskWithTaskFile(taskWithTaskFile)
+            database.getDao().insertTaskWithTaskFile(taskWithTaskFile)
         }
     }
 
     override fun  getAllTask(): LiveData<List<Task>> {
-       return dao.getAllTask()
+       return database.getDao().getAllTask()
     }
 
     override fun getAllTaskWithTaskFile(year: Int, month: Int, day: Int): Flow<List<TaskWithTaskFile>> {
-        return dao.getAllTaskWithTaskFile(year,month, day).flowOn(Dispatchers.IO)
+        return database.getDao().getAllTaskWithTaskFile(year,month, day).flowOn(Dispatchers.IO)
     }
 
     override fun getCurrentTask(uuid: String): Flow<TaskWithTaskFile> {
-        return dao.getTaskWithTaskFile(uuid).flowOn(Dispatchers.IO)
+        return database.getDao().getTaskWithTaskFile(uuid).flowOn(Dispatchers.IO)
     }
 
     override suspend fun deleteTask(uuid: String) {

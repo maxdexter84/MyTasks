@@ -8,9 +8,10 @@ import android.content.pm.PackageManager
 import android.os.SystemClock
 import android.util.Log
 import androidx.core.app.AlarmManagerCompat
+import org.koin.experimental.property.inject
 import ru.maxdexter.mytasks.alarm.BootReceiver
 import ru.maxdexter.mytasks.alarm.NotificationReceiver
-import ru.maxdexter.mytasks.models.Task
+import ru.maxdexter.mytasks.domen.models.Task
 import java.util.*
 
 class Alarm {

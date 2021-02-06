@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.models
+package ru.maxdexter.mytasks.domen.models
 
 sealed class  DataState<T> {
     class Load<T>(): DataState<T>()

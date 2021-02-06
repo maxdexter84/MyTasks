@@ -1,11 +1,11 @@
-package ru.maxdexter.mytasks.repository.localdatabase
+package ru.maxdexter.mytasks.domen.repository.localdatabase
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import ru.maxdexter.mytasks.models.Task
-import ru.maxdexter.mytasks.models.TaskFile
+import ru.maxdexter.mytasks.domen.models.Task
+import ru.maxdexter.mytasks.domen.models.TaskFile
 
 @Database(entities = [Task::class,TaskFile::class], version = 1)
 abstract class RoomDb: RoomDatabase() {

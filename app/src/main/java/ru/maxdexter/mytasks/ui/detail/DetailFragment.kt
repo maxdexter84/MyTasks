@@ -2,20 +2,17 @@ package ru.maxdexter.mytasks.ui.detail
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.text.Editable
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.InternalCoroutinesApi
+import org.koin.android.viewmodel.compat.ViewModelCompat.viewModel
+import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.databinding.DetailFragmentBinding
-import ru.maxdexter.mytasks.repository.LocalDatabase
-import ru.maxdexter.mytasks.repository.Repository
-import ru.maxdexter.mytasks.repository.localdatabase.RoomDb
+
 class DetailFragment : BottomSheetDialogFragment() {
 
     companion object {
@@ -27,11 +24,7 @@ class DetailFragment : BottomSheetDialogFragment() {
         arguments?.let { DetailFragmentArgs.fromBundle(it) }?.uuid
     }
 
-    private val viewModel by lazy {
-        val db: RoomDb = RoomDb.invoke(requireContext())
-        val repository: LocalDatabase = Repository(db.getDao())
-        ViewModelProvider(this, DetailViewModelFactory(repository,currentTaskUUID ?: "")).get(DetailViewModel::class.java)
-    }
+    private val detailViewModel: DetailViewModel by viewModel { parametersOf(currentTaskUUID)}
 
 
 
@@ -45,17 +38,17 @@ class DetailFragment : BottomSheetDialogFragment() {
 
 
         saveBtnInit()
-        viewModel.currentTaskWithTaskFile.observe(viewLifecycleOwner, {
+        detailViewModel.currentTaskWithTaskFile.observe(viewLifecycleOwner, {
             if (it != null) {
                 binding.tvTitle.setText(it.task?.title)
                 binding.tvTaskDescription.setText(it.task?.description)
             }
         })
-        viewModel.taskDate.observe(viewLifecycleOwner,{
+        detailViewModel.taskDate.observe(viewLifecycleOwner,{
             binding.tvDateChange.text = it
         })
 
-        viewModel.taskTime.observe(viewLifecycleOwner,{
+        detailViewModel.taskTime.observe(viewLifecycleOwner,{
             binding.tvTimeChange.text = it
         })
 

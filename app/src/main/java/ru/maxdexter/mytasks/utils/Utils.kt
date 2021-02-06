@@ -1,6 +1,6 @@
 package ru.maxdexter.mytasks.utils
 
-import ru.maxdexter.mytasks.models.TaskWithTaskFile
+import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
 import java.lang.StringBuilder
 import java.util.*
 

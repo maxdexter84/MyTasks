@@ -1,8 +1,6 @@
-package ru.maxdexter.mytasks.models
+package ru.maxdexter.mytasks.domen.models
 
-import android.net.Uri
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity

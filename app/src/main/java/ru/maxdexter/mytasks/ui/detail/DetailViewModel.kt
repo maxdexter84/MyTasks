@@ -6,11 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import ru.maxdexter.mytasks.models.TaskWithTaskFile
-import ru.maxdexter.mytasks.repository.LocalDatabase
+import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
+import ru.maxdexter.mytasks.domen.repository.LocalDatabase
 import ru.maxdexter.mytasks.utils.handleParseDate
 import ru.maxdexter.mytasks.utils.handleParseTime
-import java.util.*
 
 
 class DetailViewModel(private val repository: LocalDatabase,  uuid: String) : ViewModel() {

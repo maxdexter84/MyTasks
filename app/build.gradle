@@ -83,4 +83,14 @@ dependencies {
 
     // Glide for images
     implementation "com.github.bumptech.glide:glide:4.11.0"
+
+
+    // Koin for Android
+    implementation 'org.koin:koin-android:2.2.2'
+// Koin Android Scope features
+    implementation 'org.koin:koin-android-scope:2.2.2'
+// Koin Android ViewModel features
+    implementation 'org.koin:koin-android-viewmodel:2.2.2'
+// Koin Android Experimental features
+    implementation 'org.koin:koin-android-ext:2.2.2'
 }
