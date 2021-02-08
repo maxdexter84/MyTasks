@@ -12,3 +12,7 @@ const val INTENT_TIME = "task_time"
 const val CHANNEL_ID = "channel_id"
 const val CHANNEL_NAME = "channel_name"
 const val CHANNEL_DESCRIPTION = "channel_description"
+
+
+ const val USERS_COLLECTION = "users"
+ const val TASKS_COLLECTION = "tasks"

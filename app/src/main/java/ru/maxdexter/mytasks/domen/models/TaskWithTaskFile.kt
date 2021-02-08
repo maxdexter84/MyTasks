@@ -5,7 +5,7 @@ import androidx.room.Relation
 
 data class TaskWithTaskFile(
     @Embedded
-    var task: Task? = null,
+    var task: Task = Task(),
     @Relation(parentColumn = "id", entityColumn = "taskUUID",entity = TaskFile::class,)
-    var list: List<TaskFile>? = null) {
+    var list: List<TaskFile> = emptyList()) {
 }

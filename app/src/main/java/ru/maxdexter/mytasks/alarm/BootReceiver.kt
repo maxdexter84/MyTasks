@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.koin.experimental.property.inject
 
 
 import ru.maxdexter.mytasks.domen.repository.LocalDatabaseImpl
