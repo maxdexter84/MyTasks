@@ -30,9 +30,9 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        val intent = intent.extras?.get(INTENT_TASK_UUID)
-        if (intent != null){
-            navController.navigate(MobileNavigationDirections.actionGlobalCalendarFragment(intent.toString()))
+        val taskUUID = intent.extras?.get(INTENT_TASK_UUID)
+        if (taskUUID != null){
+            navController.navigate(MobileNavigationDirections.actionGlobalCalendarFragment(taskUUID.toString()))
         }
 
     }

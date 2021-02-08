@@ -12,7 +12,7 @@ import ru.maxdexter.mytasks.utils.handleParseDate
 import ru.maxdexter.mytasks.utils.handleParseTime
 
 
-class DetailViewModel(private val repository: LocalDatabase,  uuid: String) : ViewModel() {
+class DetailViewModel(private val uuid: String?,private val repository: LocalDatabase) : ViewModel() {
 
     private val _currentTaskWithTaskFile = MutableLiveData<TaskWithTaskFile>()
             val currentTaskWithTaskFile: LiveData<TaskWithTaskFile>
@@ -29,7 +29,8 @@ class DetailViewModel(private val repository: LocalDatabase,  uuid: String) : Vi
 
 
     init {
-        getTask(uuid)
+        uuid?.let { getTask(it) }
+
     }
 
 

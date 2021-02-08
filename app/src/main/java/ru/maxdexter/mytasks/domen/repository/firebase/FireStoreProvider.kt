@@ -6,6 +6,10 @@ import ru.maxdexter.mytasks.domen.repository.LoadingResponse
 import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
 
 class FireStoreProvider : RemoteDataProvider{
+    override fun saveAllTasks(tasks: List<Task>): Flow<Boolean> {
+        TODO("Not yet implemented")
+    }
+
     override fun saveTask(task: Task): Flow<Boolean> {
         TODO("Not yet implemented")
     }
@@ -21,7 +25,6 @@ class FireStoreProvider : RemoteDataProvider{
     override fun <T> getTaskByUUID(uuid: String): Flow<LoadingResponse<T>> {
         TODO("Not yet implemented")
     }
-
 
 
 }
