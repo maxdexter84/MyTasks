@@ -1,6 +1,7 @@
 package ru.maxdexter.mytasks.utils
 
 import com.google.firebase.Timestamp
+import ru.maxdexter.mytasks.domen.models.Task
 import ru.maxdexter.mytasks.domen.models.TaskFS
 import ru.maxdexter.mytasks.domen.models.TaskFile
 import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
@@ -34,7 +35,7 @@ fun handleParseFileName(uri: String): String{
 }
 
 
-fun TaskWithTaskFileToTaskFS(taskWithTaskFile: TaskWithTaskFile): TaskFS {
+fun taskWithTaskFileToTaskFS(taskWithTaskFile: TaskWithTaskFile): TaskFS {
     val task = taskWithTaskFile.task
     val date: Date = GregorianCalendar(task.eventYear,task.eventMonth,task.eventDay,task.eventHour,task.eventMinute).time
     val id: String = task.id
@@ -50,5 +51,25 @@ fun TaskWithTaskFileToTaskFS(taskWithTaskFile: TaskWithTaskFile): TaskFS {
     return TaskFS(id, title, description, timestamp, isCompleted, repeat, repeatRange, repeatRangeValue, userFiles, userNumber)
 }
 
+fun taskFSToTaskWithTaskFile(taskFS: TaskFS): TaskWithTaskFile {
+    val calendar = Calendar.getInstance()
+    calendar.time = taskFS.timestamp.toDate()
+    val id: String = taskFS.id
+    val title: String = taskFS.title
+    val description: String = taskFS.description
+    val eventYear: Int = calendar.get(Calendar.YEAR)
+    val eventMonth: Int = calendar.get(Calendar.MONTH)
+    val eventDay: Int = calendar.get(Calendar.DAY_OF_WEEK)
+    val eventHour: Int = calendar.get(Calendar.HOUR_OF_DAY)
+    val eventMinute: Int = calendar.get(Calendar.MINUTE)
+    val isCompleted: Boolean = taskFS.isCompleted
+    val repeat: Boolean = taskFS.repeat
+    val repeatRange: String = taskFS.repeatRange
+    val repeatRangeValue: Long = taskFS.repeatRangeValue
+    val userNumber: String? = taskFS.userNumber
+    val task = Task(id, title, description, eventYear, eventMonth, eventDay, eventHour, eventMinute, isCompleted, repeat, repeatRange, repeatRangeValue, userNumber)
+    return TaskWithTaskFile(task,taskFS.userFiles)
+
+}
 
 

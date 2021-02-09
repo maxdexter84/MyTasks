@@ -1,14 +1,16 @@
 package ru.maxdexter.mytasks.domen.repository
 
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.inject.Deferred
 import kotlinx.coroutines.flow.Flow
 import ru.maxdexter.mytasks.domen.models.Task
+import ru.maxdexter.mytasks.domen.models.TaskFS
 
 interface RemoteDataProvider {
     fun getUserTasksCollection(): CollectionReference
-    fun saveAllTasks(tasks: List<Task>):Flow<Boolean>
-    fun saveTask(task: Task): Flow<Boolean>
-    fun deleteTask(task: Task):Flow<Boolean>
-    fun <T>getAllTask(): Flow<LoadingResponse<T>>
-    fun <T>getTaskByUUID(uuid: String) : Flow<LoadingResponse<T>>
+    suspend  fun<T> saveAllTasks(tasks: List<TaskFS>):LoadingResponse<T>
+    suspend fun<T> saveTask(task: TaskFS): LoadingResponse<T>
+    suspend fun<T>deleteTask(task: TaskFS):LoadingResponse<T>
+    suspend fun <T>getAllTask(): Flow<LoadingResponse<T>>
+    suspend fun <T>getTaskByUUID(uuid: String) : LoadingResponse<T>
 }
