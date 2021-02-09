@@ -38,9 +38,7 @@ class ProfileViewModel(private val appPreferences: AppPreferences) : ViewModel()
 
     private fun handleMapFirebaseUser(it: FirebaseUser): User {
         val phone = it.phoneNumber.toString()
-         val user = User()
-        user.phone = phone
-        return user
+        return User(phone)
 
     }
 

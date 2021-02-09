@@ -8,19 +8,25 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.*
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinApiExtension
 import ru.maxdexter.mytasks.domen.models.Task
 import ru.maxdexter.mytasks.domen.models.TaskFile
 import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
 import ru.maxdexter.mytasks.domen.models.User
 import ru.maxdexter.mytasks.domen.repository.LocalDatabase
+import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
+import ru.maxdexter.mytasks.domen.repository.firebase.Auth
+import ru.maxdexter.mytasks.domen.repository.firebase.FireStoreProvider
 import ru.maxdexter.mytasks.utils.Alarm
 import ru.maxdexter.mytasks.utils.REQUEST_CODE
 import ru.maxdexter.mytasks.utils.handleParseFileName
+import ru.maxdexter.mytasks.utils.taskWithTaskFileToTaskFS
 import java.io.*
 import java.util.*
 
-class NewTaskViewModel (private val repository: LocalDatabase, application: Application): AndroidViewModel(application) {
+class NewTaskViewModel (private val repository: LocalDatabase, private val remoteRepository: RemoteDataProvider ,application: Application): AndroidViewModel(application) {
     private val calendar = Calendar.getInstance(Locale.getDefault())
     val user = User()
     private val task = Task()
@@ -132,13 +138,17 @@ class NewTaskViewModel (private val repository: LocalDatabase, application: Appl
 
     }
 
+    @KoinApiExtension
     private fun saveTaskToDb(){
         taskWithTaskFile.task = task
         viewModelScope.launch {
             try {
                 repository.saveTask(taskWithTaskFile)
                 _setAlarm.value = task
-            }catch (e: IOException) {
+                if(remoteRepository.getCurrentUser() !=  null){
+                    remoteRepository.saveTask(taskWithTaskFileToTaskFS(taskWithTaskFile))
+                }else{Log.e("SAVE_TASK_TO_FIRESTORE", "the user is not logged in") }
+                }catch (e: IOException) {
                 Log.e("ERROR_SAVE",e.message.toString())
             }
 

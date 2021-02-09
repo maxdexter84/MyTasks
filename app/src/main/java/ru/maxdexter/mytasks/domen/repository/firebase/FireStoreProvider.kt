@@ -9,9 +9,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinApiExtension
 import ru.maxdexter.mytasks.domen.models.Task
 import ru.maxdexter.mytasks.domen.models.TaskFS
+import ru.maxdexter.mytasks.domen.models.User
 import ru.maxdexter.mytasks.domen.repository.LoadingResponse
 import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
 import ru.maxdexter.mytasks.utils.TASKS_COLLECTION
@@ -43,15 +45,17 @@ class FireStoreProvider(private val firestore: FirebaseFirestore,private val fir
 
     }
 
-    override suspend fun <T> saveTask(task: TaskFS): LoadingResponse<T> = suspendCoroutine {continuation ->
-        try {
-            getUserTasksCollection().document(task.id).set(task).addOnSuccessListener {
-                continuation.resume(LoadingResponse.Success(task as T,true))
-            }.addOnFailureListener {
-                continuation.resume(LoadingResponse.Error(it.message as T,false))
-
+    override suspend fun  saveTask(task: TaskFS) {
+        withContext(Dispatchers.IO){
+            try {
+                getUserTasksCollection().document(task.id).set(task).addOnFailureListener {
+                    it.message?.let { it1 -> Log.e("SAVE_TASK_TO_FIRESTORE", it1) }
+                }
+            }catch (e: IOException){
+                e.message?.let { Log.e("SAVE_TASK_TO_FIRESTORE", it) }
             }
-        }catch (e: java.lang.Exception){continuation.resumeWithException(e)}
+        }
+
 
     }
 
@@ -93,5 +97,11 @@ class FireStoreProvider(private val firestore: FirebaseFirestore,private val fir
         }catch (e: IOException){}
     }
 
+     override fun getCurrentUser(): User? =
+             currentUser?.let { firebaseUser ->
+                if(firebaseUser.phoneNumber.isNullOrEmpty()) null else firebaseUser.phoneNumber?.let {
+                    User(it)
+                }
+            }
 
 }

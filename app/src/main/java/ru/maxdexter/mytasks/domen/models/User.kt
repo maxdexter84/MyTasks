@@ -2,6 +2,4 @@ package ru.maxdexter.mytasks.domen.models
 
 
 
-open class User {
-    var phone: String = "0"
-}
+data class User(val phone: String = "0")

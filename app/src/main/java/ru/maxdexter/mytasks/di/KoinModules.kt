@@ -20,6 +20,7 @@ import ru.maxdexter.mytasks.ui.newtask.NewTaskViewModel
 import ru.maxdexter.mytasks.ui.notifications.NotificationsViewModel
 import ru.maxdexter.mytasks.ui.profile.ProfileViewModel
 
+
 @OptIn(KoinApiExtension::class)
 val application = module {
     single(named("room")) { Room.databaseBuilder(get(),
@@ -28,12 +29,12 @@ val application = module {
     single(named("firestore")){Firebase.firestore}
     single(named("firebaseAuth")) { FirebaseAuth.getInstance()}
     single (named("appPref")) { AppPreferences(get()) }
-    single<RemoteDataProvider>(named("FireStoreProvider")) { FireStoreProvider(get(named("firestore")),get(named("firebaseAuth"))) }
+    single<RemoteDataProvider>(named("fireStoreProvider")) { FireStoreProvider(get(named("firestore")),get(named("firebaseAuth"))) }
     single<LocalDatabase>(named("repository")) { LocalDatabaseImpl(get(named("room")))}
 }
 
 val newTaskModule = module {
-        viewModel { NewTaskViewModel(get(named("repository")),get()) }
+        viewModel { NewTaskViewModel(get(named("repository")),get(named("fireStoreProvider")),get()) }
 
 }
 
