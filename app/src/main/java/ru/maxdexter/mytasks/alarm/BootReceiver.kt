@@ -13,8 +13,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
 
-import ru.maxdexter.mytasks.domen.repository.LocalDatabaseImpl
-import ru.maxdexter.mytasks.domen.repository.localdatabase.RoomDb
+import ru.maxdexter.mytasks.domen.repository.localdatabase.LocalDatabaseImpl
 import ru.maxdexter.mytasks.utils.Alarm
 
 @KoinApiExtension

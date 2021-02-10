@@ -68,7 +68,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:22.0.2'
 
 
-
+    implementation 'com.google.firebase:firebase-storage:19.2.1'
     // Declare the dependency for the Cloud Firestore library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-firestore-ktx'

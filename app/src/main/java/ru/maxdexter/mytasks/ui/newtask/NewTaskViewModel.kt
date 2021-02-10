@@ -2,13 +2,11 @@ package ru.maxdexter.mytasks.ui.newtask
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlarmManager
 import android.app.Application
 import android.content.Intent
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.*
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import ru.maxdexter.mytasks.domen.models.Task
@@ -17,9 +15,6 @@ import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
 import ru.maxdexter.mytasks.domen.models.User
 import ru.maxdexter.mytasks.domen.repository.LocalDatabase
 import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
-import ru.maxdexter.mytasks.domen.repository.firebase.Auth
-import ru.maxdexter.mytasks.domen.repository.firebase.FireStoreProvider
-import ru.maxdexter.mytasks.utils.Alarm
 import ru.maxdexter.mytasks.utils.REQUEST_CODE
 import ru.maxdexter.mytasks.utils.handleParseFileName
 import ru.maxdexter.mytasks.utils.taskWithTaskFileToTaskFS
@@ -145,14 +140,20 @@ class NewTaskViewModel (private val repository: LocalDatabase, private val remot
             try {
                 repository.saveTask(taskWithTaskFile)
                 _setAlarm.value = task
-                if(remoteRepository.getCurrentUser() !=  null){
-                    remoteRepository.saveTask(taskWithTaskFileToTaskFS(taskWithTaskFile))
+                val user = remoteRepository.getCurrentUser()
+                if(user !=  null){
+                    taskWithTaskFile.task.userNumber = user.phone
+                   saveTaskToFireStore(taskWithTaskFile)
                 }else{Log.e("SAVE_TASK_TO_FIRESTORE", "the user is not logged in") }
                 }catch (e: IOException) {
                 Log.e("ERROR_SAVE",e.message.toString())
             }
 
         }
+    }
+
+    private suspend fun saveTaskToFireStore(taskWithTaskFile: TaskWithTaskFile){
+        remoteRepository.saveTask(taskWithTaskFileToTaskFS(taskWithTaskFile))
     }
 
 

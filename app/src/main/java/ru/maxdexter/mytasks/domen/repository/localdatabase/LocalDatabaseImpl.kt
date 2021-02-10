@@ -1,7 +1,6 @@
-package ru.maxdexter.mytasks.domen.repository
+package ru.maxdexter.mytasks.domen.repository.localdatabase
 
 import androidx.lifecycle.LiveData
-import androidx.room.RoomDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -9,10 +8,9 @@ import kotlinx.coroutines.withContext
 import ru.maxdexter.mytasks.domen.models.Task
 import ru.maxdexter.mytasks.domen.models.TaskFile
 import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
-import ru.maxdexter.mytasks.domen.repository.localdatabase.RoomDb
-import ru.maxdexter.mytasks.domen.repository.localdatabase.TaskDao
+import ru.maxdexter.mytasks.domen.repository.LocalDatabase
 
-class LocalDatabaseImpl(private val database: RoomDb): LocalDatabase{
+class LocalDatabaseImpl(private val database: RoomDb): LocalDatabase {
 
     override suspend fun saveTask(taskWithTaskFile: TaskWithTaskFile) {
         withContext(Dispatchers.IO){

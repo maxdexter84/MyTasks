@@ -2,16 +2,12 @@ package ru.maxdexter.mytasks.domen.repository.firebase
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinApiExtension
-import ru.maxdexter.mytasks.domen.models.Task
 import ru.maxdexter.mytasks.domen.models.TaskFS
 import ru.maxdexter.mytasks.domen.models.User
 import ru.maxdexter.mytasks.domen.repository.LoadingResponse
@@ -25,7 +21,7 @@ import kotlin.coroutines.suspendCoroutine
 
 
 @KoinApiExtension
-class FireStoreProvider(private val firestore: FirebaseFirestore,private val firebaseAuth: FirebaseAuth) : RemoteDataProvider{
+class RemoteDataProviderImpl(private val firestore: FirebaseFirestore, private val firebaseAuth: FirebaseAuth) : RemoteDataProvider{
 
     private val currentUser
         get() = firebaseAuth.currentUser
@@ -35,12 +31,12 @@ class FireStoreProvider(private val firestore: FirebaseFirestore,private val fir
     }?: throw Exception("Not Auth Exception")
 
 
-    override suspend fun <T> saveAllTasks(tasks: List<TaskFS>): LoadingResponse<T> = suspendCoroutine{ continuation ->
+    override suspend fun saveAllTasks(tasks: List<TaskFS>): LoadingResponse = suspendCoroutine{ continuation ->
             try {
                 tasks.forEach {
                     getUserTasksCollection().document(it.id).set(tasks)
                 }
-                continuation.resume(LoadingResponse.Success("the data is synchronized" as T, false))
+                continuation.resume(LoadingResponse.Success("the data is synchronized" , false))
             }catch (e: IOException){continuation.resumeWithException(e)}
 
     }
@@ -59,40 +55,40 @@ class FireStoreProvider(private val firestore: FirebaseFirestore,private val fir
 
     }
 
-    override suspend fun <T> deleteTask(task: TaskFS): LoadingResponse<T> = suspendCoroutine{ continuation ->
+    override suspend fun  deleteTask(task: TaskFS): LoadingResponse = suspendCoroutine{ continuation ->
         try {
             getUserTasksCollection().document(task.id).delete().addOnSuccessListener {
-                continuation.resume(LoadingResponse.Success(task as T,true))
+                continuation.resume(LoadingResponse.Success(task ,true))
             }.addOnFailureListener {
-                continuation.resume(LoadingResponse.Success(it.message as T,false))
+                continuation.resume(LoadingResponse.Success(it.message ,false))
             }
         }catch (e: IOException){continuation.resumeWithException(e)}
 
     }
 
-    override suspend fun <T> getAllTask(): Flow<LoadingResponse<T>> = callbackFlow {
+
+    @ExperimentalCoroutinesApi
+    override suspend fun  getAllTask(): MutableStateFlow<LoadingResponse>  {
+        val stateFlow = MutableStateFlow<LoadingResponse>(LoadingResponse.Loading)
         getUserTasksCollection().addSnapshotListener { value, error ->
-            if (value != null)
-            if (!value.isEmpty && error?.localizedMessage.isNullOrEmpty()){
-
-                offer(LoadingResponse.Success(value.documents as T, true))
-            }else {
-                offer(LoadingResponse.Success(value.documents as T, true))
-                if (error != null) {
-                    Log.i("FIRESTORE_ALL_TASKS_ERROR", error.localizedMessage)}
-                }
-
+            if (value != null) {
+                val list = value.documents.map { it.toObject(TaskFS::class.java) }
+                stateFlow.value = LoadingResponse.Success(list, true)
+            } else {
+                stateFlow.value = LoadingResponse.Error(error?.message.toString(), true)
+            }
 
         }
+        return stateFlow
     }
 
-    override suspend fun <T> getTaskByUUID(uuid: String): LoadingResponse<T> = suspendCoroutine{ continuation ->
+    override suspend fun  getTaskByUUID(uuid: String): LoadingResponse = suspendCoroutine{ continuation ->
         try {
            getUserTasksCollection().document(uuid).get().addOnSuccessListener {
                val res = it.toObject(TaskFS::class.java)
-               continuation.resume(LoadingResponse.Success(res as T,true))
+               continuation.resume(LoadingResponse.Success(res ,true))
            }.addOnFailureListener {
-               continuation.resume(LoadingResponse.Success(it.message as T,true))
+               continuation.resume(LoadingResponse.Success(it.message ,true))
            }
         }catch (e: IOException){}
     }

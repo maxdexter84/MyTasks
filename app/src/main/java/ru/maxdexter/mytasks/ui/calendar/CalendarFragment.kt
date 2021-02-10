@@ -55,10 +55,12 @@ class CalendarFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
         calendarViewModel.listTaskFile.observe(viewLifecycleOwner,{
             val hourList = calendarViewModel.updateData(it)
             initRecycler(hourList)
         })
+        calendarViewModel.getAllTaskFromFirestore()
     }
 
 

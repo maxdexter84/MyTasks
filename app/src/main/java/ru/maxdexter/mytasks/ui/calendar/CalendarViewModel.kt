@@ -1,17 +1,24 @@
 package ru.maxdexter.mytasks.ui.calendar
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.maxdexter.mytasks.domen.models.Hour
+import ru.maxdexter.mytasks.domen.models.TaskFS
 import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
+import ru.maxdexter.mytasks.domen.repository.LoadingResponse
 import ru.maxdexter.mytasks.domen.repository.LocalDatabase
+import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
+import ru.maxdexter.mytasks.utils.taskFSToTaskWithTaskFile
 import java.util.*
 
-class CalendarViewModel(private val repository: LocalDatabase) : ViewModel() {
+class CalendarViewModel(private val repository: LocalDatabase, private val fireStoreProvider: RemoteDataProvider) : ViewModel() {
 
     private var _listTaskWithTaskFile = MutableLiveData<List<TaskWithTaskFile>>(emptyList())
         val listTaskFile: LiveData<List<TaskWithTaskFile>>
@@ -27,6 +34,7 @@ class CalendarViewModel(private val repository: LocalDatabase) : ViewModel() {
         val month = calendar.get(Calendar.MONTH)
         val year = calendar.get(Calendar.YEAR)
         loadData(year, month, day)
+
     }
 
      fun loadData(year: Int, month: Int, day: Int){
@@ -46,7 +54,7 @@ class CalendarViewModel(private val repository: LocalDatabase) : ViewModel() {
         for (i in 0..23 step 1) {
             val taskWithTaskFile = mutableListOf<TaskWithTaskFile>()
             for (item in it) {
-                if (item.task?.eventHour == i) {
+                if (item.task.eventHour == i) {
                     taskWithTaskFile.add(item)
 
                 }
@@ -59,6 +67,28 @@ class CalendarViewModel(private val repository: LocalDatabase) : ViewModel() {
     fun selectedTask(uuid: String){
         _selectedTask.value = uuid
 
+    }
+
+     fun getAllTaskFromFirestore(){
+        viewModelScope.launch {
+            fireStoreProvider.getAllTask().collect{ loadingResponse ->
+                when(loadingResponse){
+                    is LoadingResponse.Success<*> -> {
+                        val list = loadingResponse.data as List<TaskFS>
+                        list.map { taskFSToTaskWithTaskFile(it) }.let {
+                            _listTaskWithTaskFile.value = it
+                            Log.i("LOAD_DATA", "data load success")
+                        }
+
+                    }
+                    is LoadingResponse.Error -> {
+                        _listTaskWithTaskFile.value = emptyList()
+                        Log.i("LOAD_DATA_ERROR", loadingResponse.message)
+                    }
+                    is LoadingResponse.Loading ->  Log.i("LOAD_DATA_ERROR","some error")
+                }
+            }
+        }
     }
 
 }

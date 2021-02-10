@@ -10,9 +10,9 @@ import ru.maxdexter.mytasks.domen.models.User
 interface RemoteDataProvider {
     fun getUserTasksCollection(): CollectionReference
     fun getCurrentUser(): User?
-    suspend  fun<T> saveAllTasks(tasks: List<TaskFS>):LoadingResponse<T>
+    suspend fun saveAllTasks(tasks: List<TaskFS>):LoadingResponse
     suspend fun saveTask(task: TaskFS)
-    suspend fun<T>deleteTask(task: TaskFS):LoadingResponse<T>
-    suspend fun <T>getAllTask(): Flow<LoadingResponse<T>>
-    suspend fun <T>getTaskByUUID(uuid: String) : LoadingResponse<T>
+    suspend fun deleteTask(task: TaskFS):LoadingResponse
+    suspend fun getAllTask(): Flow<LoadingResponse>
+    suspend fun getTaskByUUID(uuid: String) : LoadingResponse
 }
