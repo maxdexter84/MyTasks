@@ -19,7 +19,7 @@ class App : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@App)
-            modules(listOf(application,newTaskModule, calendarModule, detailModule, profileModule, notificationModule))
+            modules(listOf(application,newTaskModule, calendarModule, detailModule, profileModule, notificationModule, mainViewModel))
         }
         createNotificationChannel(CHANNEL_ID, CHANNEL_NAME, CHANNEL_DESCRIPTION)
     }

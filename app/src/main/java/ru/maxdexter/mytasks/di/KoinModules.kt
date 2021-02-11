@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import org.koin.android.experimental.dsl.viewModel
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.qualifier.named
@@ -17,6 +18,7 @@ import ru.maxdexter.mytasks.domen.repository.firebase.RemoteDataProviderImpl
 import ru.maxdexter.mytasks.domen.repository.firebase.StorageImpl
 import ru.maxdexter.mytasks.domen.repository.localdatabase.RoomDb
 import ru.maxdexter.mytasks.preferences.AppPreferences
+import ru.maxdexter.mytasks.ui.MainViewModel
 import ru.maxdexter.mytasks.ui.calendar.CalendarViewModel
 import ru.maxdexter.mytasks.ui.detail.DetailViewModel
 import ru.maxdexter.mytasks.ui.newtask.NewTaskViewModel
@@ -58,4 +60,7 @@ val notificationModule = module {
 
 val profileModule = module {
     viewModel { ProfileViewModel(get(named("appPref"))) }
+}
+val mainViewModel = module {
+    viewModel { MainViewModel(get(named("fireStoreProvider"))) }
 }
