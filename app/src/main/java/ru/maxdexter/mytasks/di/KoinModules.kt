@@ -9,10 +9,12 @@ import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import ru.maxdexter.mytasks.domen.repository.DataStorage
 import ru.maxdexter.mytasks.domen.repository.LocalDatabase
 import ru.maxdexter.mytasks.domen.repository.localdatabase.LocalDatabaseImpl
 import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
 import ru.maxdexter.mytasks.domen.repository.firebase.RemoteDataProviderImpl
+import ru.maxdexter.mytasks.domen.repository.firebase.StorageImpl
 import ru.maxdexter.mytasks.domen.repository.localdatabase.RoomDb
 import ru.maxdexter.mytasks.preferences.AppPreferences
 import ru.maxdexter.mytasks.ui.calendar.CalendarViewModel
@@ -29,14 +31,16 @@ val application = module {
         "app_db.db").build() }
     single(named("firestore")){Firebase.firestore}
     single(named("firebaseAuth")) { FirebaseAuth.getInstance()}
-    single(named("storage")){FirebaseStorage.getInstance()}
+    single(named("storageInstance")){FirebaseStorage.getInstance()}
     single (named("appPref")) { AppPreferences(get()) }
+    single<DataStorage> (named("dataStorage")){ StorageImpl(get(named("storageInstance")),get())  }
     single<RemoteDataProvider>(named("fireStoreProvider")) { RemoteDataProviderImpl(get(named("firestore")),get(named("firebaseAuth"))) }
     single<LocalDatabase>(named("repository")) { LocalDatabaseImpl(get(named("room"))) }
 }
 
 val newTaskModule = module {
-        viewModel { NewTaskViewModel(get(named("repository")),get(named("fireStoreProvider")),get()) }
+        viewModel { NewTaskViewModel(get(named("repository")),get(named("fireStoreProvider")),get(
+            named("dataStorage")),get()) }
 
 }
 

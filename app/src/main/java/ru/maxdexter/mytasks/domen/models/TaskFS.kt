@@ -13,5 +13,5 @@ data class TaskFS(
     var repeat: Boolean = false,
     var repeatRange: String = "",
     var repeatRangeValue: Long = 0L,
-    var userFiles: List<TaskFile> = emptyList(),
-    var userNumber: String? = "")
+    var userFilesCloudStorage: List<TaskFile> = emptyList(),
+    var userNumber: String = "")

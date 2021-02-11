@@ -17,4 +17,4 @@ data class Task(   @PrimaryKey
                    var repeat: Boolean = false,
                    var repeatRange: String = "",
                    var repeatRangeValue: Long = 0L,
-                   var userNumber: String? = "")
+                   var userNumber: String = "")

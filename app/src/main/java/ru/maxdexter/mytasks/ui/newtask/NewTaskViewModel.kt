@@ -7,12 +7,17 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import ru.maxdexter.mytasks.domen.models.Task
 import ru.maxdexter.mytasks.domen.models.TaskFile
 import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
 import ru.maxdexter.mytasks.domen.models.User
+import ru.maxdexter.mytasks.domen.repository.DataStorage
 import ru.maxdexter.mytasks.domen.repository.LocalDatabase
 import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
 import ru.maxdexter.mytasks.utils.REQUEST_CODE
@@ -20,16 +25,21 @@ import ru.maxdexter.mytasks.utils.handleParseFileName
 import ru.maxdexter.mytasks.utils.taskWithTaskFileToTaskFS
 import java.io.*
 import java.util.*
+import kotlin.coroutines.coroutineContext
 
-class NewTaskViewModel (private val repository: LocalDatabase, private val remoteRepository: RemoteDataProvider ,application: Application): AndroidViewModel(application) {
+class NewTaskViewModel (private val repository: LocalDatabase,
+                        private val remoteRepository: RemoteDataProvider,
+                        private val storage: DataStorage,
+                        application: Application): AndroidViewModel(application) {
+
     private val calendar = Calendar.getInstance(Locale.getDefault())
-    val user = User()
+
     private val task = Task()
     private val list = mutableListOf<TaskFile>()
     private val taskWithTaskFile = TaskWithTaskFile()
     @SuppressLint("StaticFieldLeak")
     private val context = application.applicationContext
-
+    private val user = remoteRepository.getCurrentUser()
 
 
 
@@ -99,62 +109,57 @@ class NewTaskViewModel (private val repository: LocalDatabase, private val remot
     }
 
     fun saveFile(requestCode: Int, resultCode: Int, data: Intent?){
-        val taskFile = TaskFile()
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK){
             if (data != null && data.data != null){
-               val type = data.resolveType(context).toString()
-               val dir = context.getExternalFilesDir(null)
-                val file = File(dir,data.dataString ?: "")
-                val uri = data.dataString?.toUri()
-                if (uri != null){
-                    taskFile.name = handleParseFileName(uri.toString())
-                }
-                taskFile.fileType = type
-                taskFile.uri = data.dataString.toString()
-                viewModelScope.launch {
-                    try {
-                        // Получаем InputStream, из которого будем декодировать Bitmap
-
-
-                    }catch (e: IOException){
-                        Log.e("IOException",e.message.toString())
-                    }catch (e: FileNotFoundException){
-                        Log.e("FileNotFoundException",e.message.toString())
-                    }
-
-                }
-
+                list.add(createTaskFile(data))
             }
         }
-
-        list.add(taskFile)
         _fileList.value = list
         taskWithTaskFile.list = list
-
     }
 
+    private fun createTaskFile(data:Intent): TaskFile{
+        val type = data.resolveType(context).toString()
+        val uri = data.dataString.toString()
+        val name = handleParseFileName(uri)
+        return TaskFile(uri = uri,fileType = type,name = name)
+    }
+
+
+    private fun saveFileToStorage(taskWithTaskFile: TaskWithTaskFile){
+        GlobalScope.launch(Dispatchers.IO) {
+          val loadingResponse =  storage.saveFileToStorage(taskWithTaskFile).value
+        }
+
+    }
     @KoinApiExtension
     private fun saveTaskToDb(){
         taskWithTaskFile.task = task
         viewModelScope.launch {
             try {
+                taskWithTaskFile.task.userNumber = user?.phone ?: " "
                 repository.saveTask(taskWithTaskFile)
                 _setAlarm.value = task
-                val user = remoteRepository.getCurrentUser()
                 if(user !=  null){
-                    taskWithTaskFile.task.userNumber = user.phone
                    saveTaskToFireStore(taskWithTaskFile)
                 }else{Log.e("SAVE_TASK_TO_FIRESTORE", "the user is not logged in") }
                 }catch (e: IOException) {
                 Log.e("ERROR_SAVE",e.message.toString())
             }
-
         }
+        if (taskWithTaskFile.list.isNotEmpty()) {
+            saveFileToStorage(taskWithTaskFile)
+        }
+
     }
 
-    private suspend fun saveTaskToFireStore(taskWithTaskFile: TaskWithTaskFile){
-        remoteRepository.saveTask(taskWithTaskFileToTaskFS(taskWithTaskFile))
+    private suspend fun saveTaskToFireStore(taskWithTaskFile: TaskWithTaskFile) {
+                remoteRepository.saveTask(taskWithTaskFileToTaskFS(taskWithTaskFile))
     }
+
+
+
+
 
 
 

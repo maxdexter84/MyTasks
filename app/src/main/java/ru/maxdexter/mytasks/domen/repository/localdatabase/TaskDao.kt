@@ -33,7 +33,7 @@ interface TaskDao {
 
     @Transaction
     suspend fun insertTaskWithTaskFile(taskWithTaskFile: TaskWithTaskFile){
-        taskWithTaskFile.task?.let { addTask(it) }
-        taskWithTaskFile.list?.forEach { addTaskFile(it) }
+        addTask(taskWithTaskFile.task)
+        taskWithTaskFile.list.forEach { addTaskFile(it) }
     }
 }

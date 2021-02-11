@@ -47,7 +47,7 @@ fun taskWithTaskFileToTaskFS(taskWithTaskFile: TaskWithTaskFile): TaskFS {
     val repeatRange: String = task.repeatRange
     val repeatRangeValue: Long = task.repeatRangeValue
     val userFiles: List<TaskFile> = taskWithTaskFile.list
-    val userNumber: String? = task.userNumber
+    val userNumber: String = task.userNumber
     return TaskFS(id, title, description, timestamp, isCompleted, repeat, repeatRange, repeatRangeValue, userFiles, userNumber)
 }
 
@@ -66,9 +66,9 @@ fun taskFSToTaskWithTaskFile(taskFS: TaskFS): TaskWithTaskFile {
     val repeat: Boolean = taskFS.repeat
     val repeatRange: String = taskFS.repeatRange
     val repeatRangeValue: Long = taskFS.repeatRangeValue
-    val userNumber: String? = taskFS.userNumber
+    val userNumber: String = taskFS.userNumber
     val task = Task(id, title, description, eventYear, eventMonth, eventDay, eventHour, eventMinute, isCompleted, repeat, repeatRange, repeatRangeValue, userNumber)
-    return TaskWithTaskFile(task,taskFS.userFiles)
+    return TaskWithTaskFile(task,taskFS.userFilesCloudStorage)
 
 }
 

@@ -26,6 +26,10 @@ class LocalDatabaseImpl(private val database: RoomDb): LocalDatabase {
         return database.getDao().getAllTaskWithTaskFile(year,month, day).flowOn(Dispatchers.IO)
     }
 
+    override fun getTaskWithTaskFile(uuid: String): Flow<TaskWithTaskFile> {
+       return database.getDao().getTaskWithTaskFile(uuid).flowOn(Dispatchers.IO)
+    }
+
     override fun getCurrentTask(uuid: String): Flow<TaskWithTaskFile> {
         return database.getDao().getTaskWithTaskFile(uuid).flowOn(Dispatchers.IO)
     }

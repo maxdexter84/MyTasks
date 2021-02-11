@@ -60,7 +60,7 @@ class CalendarFragment : Fragment() {
             val hourList = calendarViewModel.updateData(it)
             initRecycler(hourList)
         })
-        calendarViewModel.getAllTaskFromFirestore()
+
     }
 
 

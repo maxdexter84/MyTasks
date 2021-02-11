@@ -13,6 +13,7 @@ interface LocalDatabase {
 
     fun getAllTask() : LiveData<List<Task>>
     fun getAllTaskWithTaskFile(year: Int, month: Int, day: Int) : Flow<List<TaskWithTaskFile>>
+    fun getTaskWithTaskFile(uuid: String) : Flow<TaskWithTaskFile>
 
     fun getCurrentTask(uuid: String): Flow<TaskWithTaskFile>
 
