@@ -53,7 +53,7 @@ class StorageImpl(private val storage: FirebaseStorage, private val application:
                 val suffix = taskFile.name.split(".")[1]
                 val localFile = File.createTempFile(pref,suffix, application.filesDir)
                 val userFile = userStorage.getFile(localFile)
-                list.add(TaskFile(localFile.absolutePath,taskFS.id,taskFile.fileType,taskFile.name))
+                list.add(TaskFile(uri = localFile.absolutePath,saveToCloud = true,taskUUID = taskFS.id,taskFile.fileType,taskFile.name))
 
             }
             continuation.resume(LoadingResponse.Success(list,true))

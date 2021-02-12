@@ -5,27 +5,25 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.util.Log
-import androidx.core.net.toUri
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import ru.maxdexter.mytasks.domen.models.Task
+import ru.maxdexter.mytasks.domen.models.TaskFS
 import ru.maxdexter.mytasks.domen.models.TaskFile
 import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
-import ru.maxdexter.mytasks.domen.models.User
 import ru.maxdexter.mytasks.domen.repository.DataStorage
 import ru.maxdexter.mytasks.domen.repository.LocalDatabase
 import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
+import ru.maxdexter.mytasks.utils.CheckNetwork
 import ru.maxdexter.mytasks.utils.REQUEST_CODE
 import ru.maxdexter.mytasks.utils.handleParseFileName
 import ru.maxdexter.mytasks.utils.taskWithTaskFileToTaskFS
 import java.io.*
 import java.util.*
-import kotlin.coroutines.coroutineContext
+import kotlin.properties.Delegates
 
 class NewTaskViewModel (private val repository: LocalDatabase,
                         private val remoteRepository: RemoteDataProvider,
@@ -35,13 +33,13 @@ class NewTaskViewModel (private val repository: LocalDatabase,
     private val calendar = Calendar.getInstance(Locale.getDefault())
 
     private val task = Task()
+    private val taskFS = TaskFS()
     private val list = mutableListOf<TaskFile>()
     private val taskWithTaskFile = TaskWithTaskFile()
     @SuppressLint("StaticFieldLeak")
     private val context = application.applicationContext
     private val user = remoteRepository.getCurrentUser()
-
-
+    var isOnline: Boolean = true
 
    private val selectDate = Calendar.Builder()
 
@@ -100,7 +98,7 @@ class NewTaskViewModel (private val repository: LocalDatabase,
         _liveTime.value = "$h : $m"
     }
 
-    fun saveTask(title: String, description: String){
+    fun saveTaskChange(title: String, description: String){
         selectDate.build()
         task.description = description
         task.title = title
@@ -127,35 +125,53 @@ class NewTaskViewModel (private val repository: LocalDatabase,
 
 
     private fun saveFileToStorage(taskWithTaskFile: TaskWithTaskFile){
-        GlobalScope.launch(Dispatchers.IO) {
-          val loadingResponse =  storage.saveFileToStorage(taskWithTaskFile).value
+        if (taskWithTaskFile.list.isNotEmpty()) {
+            GlobalScope.launch(Dispatchers.IO) {
+                storage.saveFileToStorage(taskWithTaskFile)
+            }
         }
+
 
     }
     @KoinApiExtension
     private fun saveTaskToDb(){
         taskWithTaskFile.task = task
-        viewModelScope.launch {
+        taskWithTaskFile.task.userNumber = user?.phone ?: " "
+
             try {
-                taskWithTaskFile.task.userNumber = user?.phone ?: " "
-                repository.saveTask(taskWithTaskFile)
-                _setAlarm.value = task
-                if(user !=  null){
-                   saveTaskToFireStore(taskWithTaskFile)
-                }else{Log.e("SAVE_TASK_TO_FIRESTORE", "the user is not logged in") }
+                if (isOnline){
+                    viewModelScope.launch {
+                        saveTaskToFireStore(taskWithTaskFile)
+                        taskWithTaskFile.task.saveToCloud = true
+                        repository.saveTask(taskWithTaskFile)
+                    }
+                    saveFileToStorage(taskWithTaskFile)
+
+                }else {
+                    viewModelScope.launch {
+                        repository.saveTask(taskWithTaskFile)
+                    }
+                }
+
+                if (task.pushMessage){
+                    _setAlarm.value = task
+                }
+
+
                 }catch (e: IOException) {
                 Log.e("ERROR_SAVE",e.message.toString())
             }
-        }
-        if (taskWithTaskFile.list.isNotEmpty()) {
-            saveFileToStorage(taskWithTaskFile)
-        }
+
+
 
     }
 
     private suspend fun saveTaskToFireStore(taskWithTaskFile: TaskWithTaskFile) {
-                remoteRepository.saveTask(taskWithTaskFileToTaskFS(taskWithTaskFile))
+            remoteRepository.saveTask(taskWithTaskFileToTaskFS(taskWithTaskFile))
+
     }
+
+
 
 
 

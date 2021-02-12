@@ -43,7 +43,7 @@
     </style>
 
     <style name="TextStyle" parent="Widget.AppCompat.TextView">
-        <item name="android:textSize">@dimen/big_text_24sp</item>
+        <item name="android:textSize">@dimen/normal_text_16sp</item>
         <item name="android:fontFamily">@font/roboto</item>
     </style>
 

@@ -9,7 +9,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         tools:context=".ui.newtask.NewTaskFragment"
         tools:ignore="RtlSymmetry">
 
@@ -36,8 +36,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/normal_space_16dp"
-            android:layout_marginTop="@dimen/small_space_8dp"
             android:layout_marginRight="@dimen/normal_space_16dp"
+            android:layout_marginTop="@dimen/small_space_8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/til_title_wrap">
 
@@ -49,39 +49,62 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:id="@+id/tv_date_change"
-            style="?attr/dateTimeTextAttr"
-            android:layout_width="match_parent"
+            android:id="@+id/tv_switch_title"
+            style="?attr/textStyle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/normal_space_16dp"
-            android:layout_marginTop="@dimen/small_space_8dp"
-            android:layout_marginRight="@dimen/normal_space_16dp"
-            android:hint="@string/date_hint"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="@dimen/small_space_8dp"
+            android:text="@string/alarm"
+            app:layout_constraintBottom_toTopOf="@+id/tv_repeat"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_time_change" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/sw_alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/normal_space_16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_switch_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_switch_title" />
+
+
+        <TextView
+            android:id="@+id/tv_date_change"
+            style="?attr/dateTimeTextAttr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/normal_space_16dp"
+            android:hint="@string/date_hint"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_time_change"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_time_change" />
 
         <TextView
             android:id="@+id/tv_time_change"
             style="?attr/dateTimeTextAttr"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/normal_space_16dp"
             android:layout_marginTop="@dimen/small_space_8dp"
-            android:layout_marginRight="@dimen/normal_space_16dp"
             android:hint="@string/time_hint"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_date_change" />
+            app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
+            app:layout_constraintStart_toEndOf="@+id/tv_date_change"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 
         <TextView
             android:id="@+id/tv_repeat"
+            style="@style/TextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/normal_space_16dp"
-            android:layout_marginTop="@dimen/small_space_8dp"
-            style="@style/TextStyle"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="@dimen/small_space_8dp"
             android:text="@string/repeat"
+            app:layout_constraintBottom_toTopOf="@+id/spinner_unit"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_time_change" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_switch_title" />
 
 
         <com.google.android.material.switchmaterial.SwitchMaterial
@@ -89,6 +112,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/normal_space_16dp"
+            android:enabled="false"
             app:layout_constraintBottom_toBottomOf="@+id/tv_repeat"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tv_repeat" />
@@ -100,10 +124,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/normal_space_16dp"
             android:layout_marginEnd="@dimen/normal_space_16dp"
-            android:layout_marginTop="@dimen/small_space_8dp"
+            android:layout_marginBottom="14dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/iv_add_file"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_repeat" />
+            app:layout_constraintTop_toBottomOf="@+id/switch_repeat_task" />
 
 
         <com.google.android.material.button.MaterialButton
@@ -112,6 +138,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/add_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rv_file" />
 
@@ -120,17 +148,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="28dp"
             android:backgroundTint="@android:color/transparent"
             android:src="@drawable/ic_baseline_attach_file_24"
+            app:layout_constraintBottom_toTopOf="@+id/rv_file"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/spinner_unit" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_file"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/normal_space_16dp"
+            android:layout_marginRight="@dimen/normal_space_16dp"
+            android:layout_marginTop="25dp"
             android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/btn_add"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/iv_add_file" />
 

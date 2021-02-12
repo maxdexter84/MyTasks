@@ -48,7 +48,8 @@ fun taskWithTaskFileToTaskFS(taskWithTaskFile: TaskWithTaskFile): TaskFS {
     val repeatRangeValue: Long = task.repeatRangeValue
     val userFiles: List<TaskFile> = taskWithTaskFile.list
     val userNumber: String = task.userNumber
-    return TaskFS(id, title, description, timestamp, isCompleted, repeat, repeatRange, repeatRangeValue, userFiles, userNumber)
+    val pushMessage: Boolean = task.pushMessage
+    return TaskFS(id, title, description, timestamp,pushMessage, isCompleted, repeat, repeatRange, repeatRangeValue, userFiles, userNumber)
 }
 
 fun taskFSToTaskWithTaskFile(taskFS: TaskFS): TaskWithTaskFile {
@@ -62,14 +63,15 @@ fun taskFSToTaskWithTaskFile(taskFS: TaskFS): TaskWithTaskFile {
     val eventDay: Int = calendar.get(Calendar.DAY_OF_WEEK)
     val eventHour: Int = calendar.get(Calendar.HOUR_OF_DAY)
     val eventMinute: Int = calendar.get(Calendar.MINUTE)
-    val isCompleted: Boolean = taskFS.isCompleted
+    val isCompleted: Boolean = taskFS.completed
     val repeat: Boolean = taskFS.repeat
     val repeatRange: String = taskFS.repeatRange
     val repeatRangeValue: Long = taskFS.repeatRangeValue
     val userNumber: String = taskFS.userNumber
-    val task = Task(id, title, description, eventYear, eventMonth, eventDay, eventHour, eventMinute, isCompleted, repeat, repeatRange, repeatRangeValue, userNumber)
+    val saveToCloud:Boolean = true
+    val pushMessage: Boolean = taskFS.pushMessage
+    val task = Task(id, title, description,pushMessage,saveToCloud, eventYear, eventMonth, eventDay, eventHour, eventMinute, isCompleted, repeat, repeatRange, repeatRangeValue, userNumber)
     return TaskWithTaskFile(task,taskFS.userFilesCloudStorage)
 
 }
-
 

@@ -8,6 +8,8 @@ data class Task(   @PrimaryKey
                    var id: String = UUID.randomUUID().toString(),
                    var title: String = "",
                    var description: String = "",
+                   var pushMessage: Boolean = false,
+                   var saveToCloud:Boolean = false,
                    var eventYear: Int = 0,
                    var eventMonth: Int = 0,
                    var eventDay: Int = 0,

@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class TaskFile(
                     @PrimaryKey
                     var uri: String = "",
+                    var saveToCloud: Boolean = false,
                     var taskUUID: String = "",
                     var fileType: String = "",
                     var name: String = "")

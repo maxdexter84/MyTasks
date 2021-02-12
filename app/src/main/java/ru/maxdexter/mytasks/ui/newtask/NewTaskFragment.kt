@@ -10,6 +10,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -18,8 +21,8 @@ import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.adapters.FileAdapter
 import ru.maxdexter.mytasks.databinding.FragmentNewTaskBinding
 import ru.maxdexter.mytasks.domen.models.Task
-import ru.maxdexter.mytasks.ui.detail.DetailFragmentArgs
 import ru.maxdexter.mytasks.utils.Alarm
+import ru.maxdexter.mytasks.utils.CheckNetwork
 import ru.maxdexter.mytasks.utils.REQUEST_CODE
 import java.util.*
 
@@ -41,10 +44,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         FileAdapter()
     }
     @SuppressLint("ShowToast")
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_task, container, false)
         dateObserver()
@@ -58,8 +58,62 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         newTaskViewModel.setAlarm.observe(viewLifecycleOwner,{
             it?.let { createReminderAlarm(it) }
         })
+        initSwAlarm()
 
         return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        CheckNetwork(requireContext()).observe(viewLifecycleOwner,{
+            newTaskViewModel.isOnline = it
+        })
+    }
+    private fun initSpinner() {
+        val arrAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            resources.getStringArray(R.array.time_range)
+        )
+        arrAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
+        binding.spinnerUnit.adapter = arrAdapter
+
+        binding.spinnerUnit.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                Toast.makeText(requireContext(),position.toString(),Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("Not yet implemented")
+            }
+        }
+    }
+
+    private fun initSwAlarm() {
+        binding.swAlarm.setOnCheckedChangeListener { buttonView, isChecked ->
+            when (isChecked) {
+                true -> {
+                    binding.switchRepeatTask.isEnabled = true
+                    binding.switchRepeatTask.setOnCheckedChangeListener { _, isChecked ->
+                        if (isChecked){
+                            binding.spinnerUnit.visibility = View.VISIBLE
+                            initSpinner()
+                        } else {binding.spinnerUnit.visibility = View.INVISIBLE}
+                    }
+
+                }
+                false -> {
+                    binding.switchRepeatTask.isEnabled = false
+                    binding.spinnerUnit.visibility = View.INVISIBLE
+                }
+
+            }
+        }
     }
 
     private fun initBntAddFile() {
@@ -73,7 +127,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
             val title = binding.tvTitle.text.toString()
             val desc = binding.tvTaskDescription.text.toString()
 
-            newTaskViewModel.saveTask(title, desc)
+            newTaskViewModel.saveTaskChange(title, desc)
             dismiss()
         }
     }
