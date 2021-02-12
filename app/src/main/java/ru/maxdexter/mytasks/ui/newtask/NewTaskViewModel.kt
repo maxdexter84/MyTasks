@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import ru.maxdexter.mytasks.domen.models.Task
@@ -17,31 +18,29 @@ import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
 import ru.maxdexter.mytasks.domen.repository.DataStorage
 import ru.maxdexter.mytasks.domen.repository.LocalDatabase
 import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
-import ru.maxdexter.mytasks.utils.CheckNetwork
-import ru.maxdexter.mytasks.utils.REQUEST_CODE
-import ru.maxdexter.mytasks.utils.handleParseFileName
-import ru.maxdexter.mytasks.utils.taskWithTaskFileToTaskFS
+import ru.maxdexter.mytasks.utils.*
 import java.io.*
 import java.util.*
 import kotlin.properties.Delegates
 
-class NewTaskViewModel (private val repository: LocalDatabase,
+class NewTaskViewModel(
+                        private val uuid: String,
+                        private val repository: LocalDatabase,
                         private val remoteRepository: RemoteDataProvider,
                         private val storage: DataStorage,
                         application: Application): AndroidViewModel(application) {
 
     private val calendar = Calendar.getInstance(Locale.getDefault())
 
-    private val task = Task()
-    private val taskFS = TaskFS()
-    private val list = mutableListOf<TaskFile>()
-    private val taskWithTaskFile = TaskWithTaskFile()
+    private var task = Task()
+    private var list = mutableListOf<TaskFile>()
+    private var taskWithTaskFile = TaskWithTaskFile()
     @SuppressLint("StaticFieldLeak")
     private val context = application.applicationContext
     private val user = remoteRepository.getCurrentUser()
     var isOnline: Boolean = true
 
-   private val selectDate = Calendar.Builder()
+
 
     private val _liveDate = MutableLiveData<String>()
             val liveDate: LiveData<String>
@@ -51,7 +50,7 @@ class NewTaskViewModel (private val repository: LocalDatabase,
     val liveTime: LiveData<String>
         get() = _liveTime
 
-    private val _fileList = MutableLiveData<List<TaskFile>>()
+    private val _fileList = MutableLiveData<List<TaskFile>>(emptyList())
             val fileList: LiveData<List<TaskFile>>
             get() = _fileList
 
@@ -59,10 +58,17 @@ class NewTaskViewModel (private val repository: LocalDatabase,
             val setAlarm: LiveData<Task?>
             get() = _setAlarm
 
+    private val _titleAndDescription = MutableLiveData<Pair<String, String>?>(null)
+            val titleAndDescription: LiveData<Pair<String, String>?>
+            get() = _titleAndDescription
     init {
+        if (uuid != "empty"){
+            uuid.let { getTask(it) }
+        }
         getCurrentDate()
         getCurrentTime()
     }
+
 
     private fun getCurrentTime(){
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -81,7 +87,6 @@ class NewTaskViewModel (private val repository: LocalDatabase,
     fun setDate(year: Int, month: Int, day: Int){
         val mon =  if (month < 10) "0${month + 1}" else month + 1
         val d = if (day  < 10) "0$day" else day
-        selectDate.setDate(year,month,day)
         task.eventYear = year
         task.eventMonth = month
         task.eventDay = day
@@ -92,17 +97,20 @@ class NewTaskViewModel (private val repository: LocalDatabase,
     fun setTime(hour: Int, minute: Int){
         val h = if(hour < 10) "0$hour" else hour
         val m = if (minute < 10) "0$minute" else minute
-        selectDate.setTimeOfDay(hour,minute,0).build()
         task.eventHour = hour
         task.eventMinute = minute
         _liveTime.value = "$h : $m"
     }
 
-    fun saveTaskChange(title: String, description: String){
-        selectDate.build()
+    fun saveTaskChange(title: String, description: String,alarm:Boolean,repeat: Boolean, repeatRange:Int){
         task.description = description
         task.title = title
+        task.pushMessage = alarm
+        task.repeat = repeat
+        task.repeatRangeValue = if(repeat)TimeRange.values()[repeatRange].value else 0L
+        task.userNumber = user?.phone ?: " "
         taskWithTaskFile.task = task
+        taskWithTaskFile.list = list
         saveTaskToDb()
     }
 
@@ -113,14 +121,15 @@ class NewTaskViewModel (private val repository: LocalDatabase,
             }
         }
         _fileList.value = list
-        taskWithTaskFile.list = list
+
     }
 
     private fun createTaskFile(data:Intent): TaskFile{
         val type = data.resolveType(context).toString()
         val uri = data.dataString.toString()
         val name = handleParseFileName(uri)
-        return TaskFile(uri = uri,fileType = type,name = name)
+        val id = task.id
+        return TaskFile(uri = uri,fileType = type,name = name,taskUUID = id)
     }
 
 
@@ -135,20 +144,19 @@ class NewTaskViewModel (private val repository: LocalDatabase,
     }
     @KoinApiExtension
     private fun saveTaskToDb(){
-        taskWithTaskFile.task = task
-        taskWithTaskFile.task.userNumber = user?.phone ?: " "
 
             try {
                 if (isOnline){
                     viewModelScope.launch {
-                        saveTaskToFireStore(taskWithTaskFile)
                         taskWithTaskFile.task.saveToCloud = true
                         repository.saveTask(taskWithTaskFile)
                     }
+                    saveTaskToFireStore(taskWithTaskFile)
                     saveFileToStorage(taskWithTaskFile)
 
                 }else {
                     viewModelScope.launch {
+                        taskWithTaskFile.task.saveToCloud = false
                         repository.saveTask(taskWithTaskFile)
                     }
                 }
@@ -166,13 +174,32 @@ class NewTaskViewModel (private val repository: LocalDatabase,
 
     }
 
-    private suspend fun saveTaskToFireStore(taskWithTaskFile: TaskWithTaskFile) {
+    private  fun saveTaskToFireStore(taskWithTaskFile: TaskWithTaskFile) {
+        GlobalScope.launch {
             remoteRepository.saveTask(taskWithTaskFileToTaskFS(taskWithTaskFile))
+        }
+
 
     }
 
 
 
+
+
+
+    private fun getTask(uuid: String){
+        viewModelScope.launch {
+            repository.getCurrentTask(uuid).collect {
+                taskWithTaskFile = it
+                task = taskWithTaskFile.task
+                list.addAll(taskWithTaskFile.list)
+                _fileList.value = list
+                setTime(task.eventHour, task.eventMinute)
+                setDate(task.eventYear,task.eventMonth,task.eventDay)
+                _titleAndDescription.value = task.title to task.description
+            }
+        }
+    }
 
 
 

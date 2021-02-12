@@ -12,7 +12,6 @@ data class TaskFS(
     var pushMessage: Boolean = false,
     var completed: Boolean = false,
     var repeat: Boolean = false,
-    var repeatRange: String = "",
     var repeatRangeValue: Long = 0L,
     var userFilesCloudStorage: List<TaskFile> = emptyList(),
     var userNumber: String = "")

@@ -28,7 +28,7 @@ class CalendarFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val args = arguments?.let { CalendarFragmentArgs.fromBundle(it) }?.taskUUID
         if (args != null && args != "empty"){
-            findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToDetailFragment(args))
+            findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment(args))
         }
     }
 
@@ -44,7 +44,7 @@ class CalendarFragment : Fragment() {
         initBottomAppBar()
         calendarViewModel.selectedTask.observe(viewLifecycleOwner,{
             if (it != ""){
-                findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToDetailFragment(it))
+                findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment(it))
             }
 
         })

@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.os.SystemClock
 import android.util.Log
 import androidx.core.app.AlarmManagerCompat
-import org.koin.experimental.property.inject
 import ru.maxdexter.mytasks.alarm.BootReceiver
 import ru.maxdexter.mytasks.alarm.NotificationReceiver
 import ru.maxdexter.mytasks.domen.models.Task
@@ -26,16 +25,9 @@ class Alarm {
             return SystemClock.elapsedRealtime() + timeDiff
         }
 
-        private fun getRepeatTime(repeatRange: String): Long {
-            return when (repeatRange) {
-                TimeRange.MINUTE.name-> TimeRange.MINUTE.value
-                TimeRange.HOUR.name -> TimeRange.HOUR.value
-                TimeRange.DAY.name -> TimeRange.DAY.value
-                TimeRange.MONTH.name -> TimeRange.MONTH.value
-                else -> TimeRange.YEAR.value
-            }
-        }
 
+
+        @SuppressLint("ShortAlarm")
         fun createAlarm(
             context: Context,
             task: Task,
@@ -50,7 +42,7 @@ class Alarm {
                 alarmManager.setRepeating(
                     AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     getTriggerTime(task.eventDay,task.eventMonth,task.eventYear,task.eventHour,task.eventMinute),
-                    getRepeatTime(task.repeatRange),
+                    task.repeatRangeValue,
                     alarmPendingIntent
                 )
             } else {

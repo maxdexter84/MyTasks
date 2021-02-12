@@ -12,11 +12,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.adapters.FileAdapter
 import ru.maxdexter.mytasks.databinding.FragmentNewTaskBinding
@@ -37,7 +39,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         arguments?.let { NewTaskFragmentArgs.fromBundle(it) }?.taskUUID
     }
 
-    private val newTaskViewModel: NewTaskViewModel by viewModel()
+    private val newTaskViewModel: NewTaskViewModel by viewModel { parametersOf(currentTaskUUID) }
 
 
     private val adapter: FileAdapter by lazy {
@@ -47,6 +49,14 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_task, container, false)
+
+        newTaskViewModel.titleAndDescription.observe(viewLifecycleOwner,{pair->
+            pair?.let {
+                binding.tvTitle.setText(it.first)
+                binding.tvTaskDescription.setText(it.second)
+            }
+
+        })
         dateObserver()
         timeObserver()
         initDatePicker()
@@ -105,7 +115,6 @@ class NewTaskFragment : BottomSheetDialogFragment() {
                             initSpinner()
                         } else {binding.spinnerUnit.visibility = View.INVISIBLE}
                     }
-
                 }
                 false -> {
                     binding.switchRepeatTask.isEnabled = false
@@ -126,8 +135,10 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         binding.btnAdd.setOnClickListener {
             val title = binding.tvTitle.text.toString()
             val desc = binding.tvTaskDescription.text.toString()
-
-            newTaskViewModel.saveTaskChange(title, desc)
+            val alarm = binding.swAlarm.isChecked
+            val repeat = binding.switchRepeatTask.isChecked
+            val repeatRange = if(binding.switchRepeatTask.isChecked)binding.spinnerUnit.selectedItemPosition else -1
+            newTaskViewModel.saveTaskChange(title, desc,alarm, repeat, repeatRange)
             dismiss()
         }
     }

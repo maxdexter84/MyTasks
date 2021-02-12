@@ -12,7 +12,7 @@
         <argument
             android:name="taskUUID"
             app:argType="string"
-            android:defaultValue='""' />
+            android:defaultValue="empty" />
     </dialog><action android:id="@+id/action_global_newTaskFragment" app:destination="@id/newTaskFragment"/>
     <fragment
         android:id="@+id/calendarFragment"
@@ -27,9 +27,6 @@
         <action
             android:id="@+id/action_calendarFragment_to_notificationsFragment"
             app:destination="@id/notificationsFragment" />
-        <action
-            android:id="@+id/action_calendarFragment_to_detailFragment"
-            app:destination="@id/detailFragment" />
         <argument
             android:name="taskUUID"
             app:argType="string"
@@ -45,13 +42,4 @@
         android:id="@+id/notificationsFragment"
         android:name="ru.maxdexter.mytasks.ui.notifications.NotificationsFragment"
         android:label="NotificationsFragment" />
-    <dialog
-        android:id="@+id/detailFragment"
-        android:name="ru.maxdexter.mytasks.ui.detail.DetailFragment"
-        android:label="DetailFragment" >
-        <argument
-            android:name="uuid"
-            app:argType="string"
-            android:defaultValue='""' />
-    </dialog>
 </navigation>
