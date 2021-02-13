@@ -126,7 +126,7 @@ class NewTaskViewModel(
 
     private fun createTaskFile(data:Intent): TaskFile{
         val type = data.resolveType(context).toString()
-        val uri = data.dataString.toString()
+        val uri = data.data.toString()
         val name = handleParseFileName(uri)
         val id = task.id
         return TaskFile(uri = uri,fileType = type,name = name,taskUUID = id)

@@ -22,7 +22,7 @@ fun <T> ImageView.setImage(uri: T){
         DiskCacheStrategy.NONE).skipMemoryCache(true).into(this)
 }
 
-fun  ImageView.setImagePrev(uri: String,type: String){
+fun<T>  ImageView.setImagePrev(uri: T,type: String){
         val typeGroup = type.split("/").first()
     if (typeGroup == "image" || typeGroup == "video"){
         loadImage(uri,this)

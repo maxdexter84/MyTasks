@@ -12,13 +12,18 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.databinding.FragmentProfileBinding
 import ru.maxdexter.mytasks.domen.repository.firebase.Auth
+import ru.maxdexter.mytasks.preferences.AppPreferences
 
 class ProfileFragment : BottomSheetDialogFragment() {
 
     private val profileViewModel: ProfileViewModel by viewModel()
     private lateinit var binding: FragmentProfileBinding
+    private var isDarkTheme: Boolean = false
 
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        isDarkTheme = AppPreferences(requireContext()).getTheme()
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -26,7 +31,6 @@ class ProfileFragment : BottomSheetDialogFragment() {
             savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(layoutInflater,R.layout.fragment_profile, container, false)
-
         authObserver()
         initBtn()
         profileViewModel.currentTheme.observe(viewLifecycleOwner,{
@@ -55,7 +59,7 @@ class ProfileFragment : BottomSheetDialogFragment() {
 
     private fun setTheme() {
 
-
+        binding.switchAppTheme.isChecked = isDarkTheme
         binding.switchAppTheme.setOnCheckedChangeListener { _, isChecked ->
             profileViewModel.setTheme(isChecked)
             requireActivity().recreate()

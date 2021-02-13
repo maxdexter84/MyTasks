@@ -22,4 +22,9 @@
     <string name="notification_channel_id">channel_id</string>
     <string name="time_unit_title">Unit</string>
     <string name="alarm">Alarm on/of</string>
+
+
+    <!-- Messages -->
+    <string name="set_permissions_in_settings">Go to Settings -> Apps and Notifications ->
+        WorkManager Demo -> App Permissions and grant access to Storage.</string>
 </resources>

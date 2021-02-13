@@ -1,6 +1,7 @@
 package ru.maxdexter.mytasks.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
@@ -13,6 +14,7 @@ import ru.maxdexter.mytasks.preferences.AppPreferences
 import ru.maxdexter.mytasks.utils.INTENT_TASK_UUID
 import org.koin.android.viewmodel.ext.android.viewModel
 import ru.maxdexter.mytasks.domen.repository.firebase.Auth
+import ru.maxdexter.mytasks.workmanager.MyWorker
 
 
 class MainActivity : AppCompatActivity() {
@@ -45,6 +47,13 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MyWorker.startWork().observe(this,{
+            Log.i("WORKER",it.state.name)
+        })
     }
 
 
