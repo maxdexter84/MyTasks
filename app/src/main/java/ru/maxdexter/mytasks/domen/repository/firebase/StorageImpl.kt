@@ -25,16 +25,17 @@ class StorageImpl(private val storage: FirebaseStorage, private val application:
 
     override  fun saveFileToStorage(taskWithTaskFile: TaskWithTaskFile): StateFlow<LoadingResponse> {
         val stateFlow = MutableStateFlow<LoadingResponse>(LoadingResponse.Loading)
+        val uriList: MutableList<String> = mutableListOf()
         try {
             val userStorage = taskWithTaskFile.task.userNumber.let { storageRef.child(it) }
             taskWithTaskFile.list.forEach { taskFile ->
                 userStorage.child(taskFile.name)
                     .putFile(taskFile.uri.toUri()).addOnSuccessListener {
-                        stateFlow.value = LoadingResponse.Success(it.storage.downloadUrl, true)
+                        uriList.add( it.storage.downloadUrl.toString())
                     }.addOnFailureListener {
                         stateFlow.value = LoadingResponse.Error(it.message ?: "",false)
                     }
-
+                stateFlow.value = LoadingResponse.Success(uriList, true)
             }
         }catch (e: Exception){
             stateFlow.value = LoadingResponse.Error(e.message ?: "",false)

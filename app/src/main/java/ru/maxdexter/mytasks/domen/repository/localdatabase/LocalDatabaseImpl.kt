@@ -34,8 +34,11 @@ class LocalDatabaseImpl(private val database: RoomDb): LocalDatabase {
         return database.getDao().getTaskWithTaskFile(uuid).flowOn(Dispatchers.IO)
     }
 
-    override suspend fun deleteTask(uuid: String) {
-        TODO("Not yet implemented")
+    override suspend fun deleteTask(task:Task) {
+        withContext(Dispatchers.IO){
+            database.getDao().deleteTask(task)
+        }
+
     }
 
     override suspend fun addTaskFile(taskFile: TaskFile) {
@@ -43,7 +46,9 @@ class LocalDatabaseImpl(private val database: RoomDb): LocalDatabase {
     }
 
     override suspend fun deleteTaskFile(taskFile: TaskFile) {
-        TODO("Not yet implemented")
+        withContext(Dispatchers.IO){
+            database.getDao().deleteTaskFile(taskFile)
+        }
     }
 
 

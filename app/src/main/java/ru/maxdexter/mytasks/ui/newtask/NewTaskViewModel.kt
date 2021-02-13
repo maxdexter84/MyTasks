@@ -133,15 +133,6 @@ class NewTaskViewModel(
     }
 
 
-    private fun saveFileToStorage(taskWithTaskFile: TaskWithTaskFile){
-        if (taskWithTaskFile.list.isNotEmpty()) {
-            GlobalScope.launch(Dispatchers.IO) {
-                storage.saveFileToStorage(taskWithTaskFile)
-            }
-        }
-
-
-    }
     @KoinApiExtension
     private fun saveTaskToDb(){
 
@@ -165,7 +156,6 @@ class NewTaskViewModel(
                     _setAlarm.value = task
                 }
 
-
                 }catch (e: IOException) {
                 Log.e("ERROR_SAVE",e.message.toString())
             }
@@ -178,8 +168,27 @@ class NewTaskViewModel(
         GlobalScope.launch {
             remoteRepository.saveTask(taskWithTaskFileToTaskFS(taskWithTaskFile))
         }
+    }
 
 
+    private fun saveFileToStorage(taskWithTaskFile: TaskWithTaskFile){
+        if (taskWithTaskFile.list.isNotEmpty()) {
+            GlobalScope.launch(Dispatchers.IO) {
+                storage.saveFileToStorage(taskWithTaskFile)
+            }
+        }
+    }
+
+
+    fun deleteTask(){
+        viewModelScope.launch {
+            repository.deleteTask(task)
+            taskWithTaskFile.list.let { list1 ->
+                list1.forEach { file->
+                file.let { repository.deleteTaskFile(it) }
+            } }
+
+        }
     }
 
 
@@ -189,14 +198,17 @@ class NewTaskViewModel(
 
     private fun getTask(uuid: String){
         viewModelScope.launch {
-            repository.getCurrentTask(uuid).collect {
-                taskWithTaskFile = it
-                task = taskWithTaskFile.task
-                list.addAll(taskWithTaskFile.list)
-                _fileList.value = list
-                setTime(task.eventHour, task.eventMinute)
-                setDate(task.eventYear,task.eventMonth,task.eventDay)
-                _titleAndDescription.value = task.title to task.description
+            repository.getCurrentTask(uuid).collect {it->
+                if (it != null ){
+                    taskWithTaskFile = it
+                    task = taskWithTaskFile.task
+                    list.addAll(taskWithTaskFile.list)
+                    _fileList.value = list
+                    setTime(task.eventHour, task.eventMinute)
+                    setDate(task.eventYear,task.eventMonth,task.eventDay)
+                    _titleAndDescription.value = task.title to task.description
+                }
+
             }
         }
     }

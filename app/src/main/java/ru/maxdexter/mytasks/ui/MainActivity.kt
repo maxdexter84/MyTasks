@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.work.Data
 import ru.maxdexter.mytasks.MobileNavigationDirections
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.databinding.ActivityMainBinding
@@ -14,7 +15,7 @@ import ru.maxdexter.mytasks.preferences.AppPreferences
 import ru.maxdexter.mytasks.utils.INTENT_TASK_UUID
 import org.koin.android.viewmodel.ext.android.viewModel
 import ru.maxdexter.mytasks.domen.repository.firebase.Auth
-import ru.maxdexter.mytasks.workmanager.MyWorker
+import ru.maxdexter.mytasks.workmanager.WorkerUpload
 
 
 class MainActivity : AppCompatActivity() {
@@ -49,12 +50,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-        MyWorker.startWork().observe(this,{
-            Log.i("WORKER",it.state.name)
-        })
-    }
 
 
 

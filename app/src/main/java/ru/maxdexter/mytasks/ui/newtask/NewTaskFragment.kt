@@ -67,6 +67,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_task, container, false)
+        if (currentTaskUUID != "empty") binding.ibAddDelete.visibility = View.VISIBLE
         requestPermissionsIfNecessary()
         newTaskViewModel.titleAndDescription.observe(viewLifecycleOwner,{pair->
             pair?.let {
@@ -82,7 +83,10 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         initBtnAdd()
         initBntAddFile()
         initRecycler()
-
+        binding.ibAddDelete.setOnClickListener {
+            newTaskViewModel.deleteTask()
+            dismiss()
+        }
         newTaskViewModel.setAlarm.observe(viewLifecycleOwner,{
             it?.let { createReminderAlarm(it) }
         })
@@ -96,6 +100,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         CheckNetwork(requireContext()).observe(viewLifecycleOwner,{
             newTaskViewModel.isOnline = it
         })
+
     }
     private fun initSpinner() {
         val arrAdapter = ArrayAdapter(
@@ -144,7 +149,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     }
 
     private fun initBntAddFile() {
-        binding.ivAddFile.setOnClickListener {
+        binding.ibAddFile.setOnClickListener {
             getFile()
         }
     }
@@ -209,7 +214,8 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     }
     private fun getFile(){
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.setType("*/*")
+        intent.setType("application/*")
+
 //        intent.addCategory(Intent.CATEGORY_OPENABLE)
 //        intent.putExtra(Intent.EXTRA_LOCAL_ONLY,true)
         startActivityForResult(intent, REQUEST_CODE)
@@ -246,7 +252,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
                     R.string.set_permissions_in_settings,
                     Toast.LENGTH_LONG
                 ).show()
-                binding.ivAddFile.isEnabled = false
+                binding.ibAddFile.isEnabled = false
             }
         }
     }

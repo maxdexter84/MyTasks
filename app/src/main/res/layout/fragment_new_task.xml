@@ -99,10 +99,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/normal_space_16dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="@dimen/small_space_8dp"
+            android:layout_marginTop="@dimen/big_text_24sp"
             android:text="@string/repeat"
-            app:layout_constraintBottom_toTopOf="@+id/spinner_unit"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_switch_title" />
 
@@ -122,14 +120,11 @@
             android:id="@+id/spinner_unit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/normal_space_16dp"
-            android:layout_marginEnd="@dimen/normal_space_16dp"
-            android:layout_marginBottom="14dp"
             android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/iv_add_file"
+            android:layout_marginTop="@dimen/normal_space_16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switch_repeat_task" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_repeat" />
 
 
         <com.google.android.material.button.MaterialButton
@@ -140,22 +135,40 @@
             android:text="@string/add_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rv_file" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageButton
-            android:id="@+id/iv_add_file"
+            android:id="@+id/ib_add_file"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="28dp"
             android:backgroundTint="@android:color/transparent"
             android:src="@drawable/ic_baseline_attach_file_24"
+            app:layout_constraintBottom_toBottomOf="@+id/ib_add_image"
+            app:layout_constraintEnd_toStartOf="@+id/ib_add_image"
+            app:layout_constraintTop_toTopOf="@+id/ib_add_image" />
+
+        <ImageButton
+            android:id="@+id/ib_add_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_space_8dp"
+            android:backgroundTint="@android:color/transparent"
+            android:src="@drawable/ic_baseline_image_24"
             app:layout_constraintBottom_toTopOf="@+id/rv_file"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/spinner_unit" />
+
+        <ImageButton
+            android:id="@+id/ib_add_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:backgroundTint="@android:color/transparent"
+            android:src="@drawable/ic_baseline_delete_24"
+            app:layout_constraintBottom_toBottomOf="@+id/ib_add_image"
+            app:layout_constraintStart_toEndOf="@+id/ib_add_image"
+            app:layout_constraintTop_toTopOf="@+id/ib_add_image" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_file"
@@ -163,12 +176,11 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/normal_space_16dp"
             android:layout_marginRight="@dimen/normal_space_16dp"
-            android:layout_marginTop="25dp"
             android:orientation="horizontal"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/btn_add"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_add_file" />
+            app:layout_constraintStart_toStartOf="parent" />
 
 
 

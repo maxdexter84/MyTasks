@@ -17,7 +17,7 @@ interface LocalDatabase {
 
     fun getCurrentTask(uuid: String): Flow<TaskWithTaskFile>
 
-   suspend fun deleteTask(uuid: String)
+   suspend fun deleteTask(task: Task)
 
    suspend fun addTaskFile(taskFile: TaskFile)
 
