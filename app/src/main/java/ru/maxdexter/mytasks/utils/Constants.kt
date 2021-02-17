@@ -2,7 +2,8 @@ package ru.maxdexter.mytasks.utils
 
 
 const val RC_SIGN_IN = 12345
-const val REQUEST_CODE: Int = 123
+const val REQUEST_CODE_FILE: Int = 123
+const val REQUEST_CODE_PHOTO: Int = 187
 const val REQUEST_CODE_NOTIF: Int = 1234
 
 const val INTENT_TASK_UUID = "task_uuid"

@@ -57,5 +57,5 @@ val profileModule = module {
     viewModel { ProfileViewModel(get(named("appPref"))) }
 }
 val mainViewModel = module {
-    viewModel { MainViewModel(get(named("fireStoreProvider"))) }
+    viewModel { MainViewModel(get(named("fireStoreProvider")),get(named("repository")),get(named("dataStorage"))) }
 }

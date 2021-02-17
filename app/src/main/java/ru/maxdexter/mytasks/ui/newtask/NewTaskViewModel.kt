@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import ru.maxdexter.mytasks.domen.models.Task
-import ru.maxdexter.mytasks.domen.models.TaskFS
 import ru.maxdexter.mytasks.domen.models.TaskFile
 import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
 import ru.maxdexter.mytasks.domen.repository.DataStorage
@@ -21,7 +20,6 @@ import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
 import ru.maxdexter.mytasks.utils.*
 import java.io.*
 import java.util.*
-import kotlin.properties.Delegates
 
 class NewTaskViewModel(
                         private val uuid: String,
@@ -40,6 +38,12 @@ class NewTaskViewModel(
     private val user = remoteRepository.getCurrentUser()
     var isOnline: Boolean = true
 
+    enum class NewTaskEvent{
+        SAVE,DELETE,ADD_PHOTO,ADD_FILE,IDL,CLOSE
+    }
+    private val _event = MutableLiveData<NewTaskEvent>(NewTaskEvent.IDL)
+    val event: LiveData<NewTaskEvent>
+        get() = _event
 
 
     private val _liveDate = MutableLiveData<String>()
@@ -67,6 +71,10 @@ class NewTaskViewModel(
         }
         getCurrentDate()
         getCurrentTime()
+    }
+
+    fun changeEvent(event: NewTaskEvent){
+        _event.value = event
     }
 
 
@@ -101,6 +109,13 @@ class NewTaskViewModel(
         task.eventMinute = minute
         _liveTime.value = "$h : $m"
     }
+    fun saveTitleChange(title: String){
+        taskWithTaskFile.task.title = title
+    }
+
+    fun saveDescriptionChange(description: String){
+        taskWithTaskFile.task.description = description
+    }
 
     fun saveTaskChange(title: String, description: String,alarm:Boolean,repeat: Boolean, repeatRange:Int){
         task.description = description
@@ -115,7 +130,7 @@ class NewTaskViewModel(
     }
 
     fun saveFile(requestCode: Int, resultCode: Int, data: Intent?){
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK){
+        if (requestCode == REQUEST_CODE_FILE && resultCode == Activity.RESULT_OK){
             if (data != null && data.data != null){
                 list.add(createTaskFile(data))
             }

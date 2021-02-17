@@ -5,6 +5,12 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="ru.maxdexter.mytasks.ui.newtask.NewTaskViewModel" />
+        <variable
+            name="event"
+            type="ru.maxdexter.mytasks.ui.newtask.NewTaskViewModel.NewTaskEvent" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,6 +31,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/tv_title"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/event_name" />
@@ -133,6 +140,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/add_button"
+            android:onClick="@{()->viewModel.changeEvent(event.SAVE)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -142,6 +150,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
+            android:onClick="@{()->viewModel.changeEvent(event.ADD_FILE)}"
             android:src="@drawable/ic_baseline_attach_file_24"
             app:layout_constraintBottom_toBottomOf="@+id/ib_add_image"
             app:layout_constraintEnd_toStartOf="@+id/ib_add_image"
@@ -153,6 +162,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small_space_8dp"
             android:backgroundTint="@android:color/transparent"
+            android:onClick="@{()-> viewModel.changeEvent(event.ADD_PHOTO)}"
             android:src="@drawable/ic_baseline_image_24"
             app:layout_constraintBottom_toTopOf="@+id/rv_file"
             app:layout_constraintEnd_toEndOf="parent"
@@ -164,6 +174,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
+            android:clickable="true"
+            android:onClick="@{() -> viewModel.changeEvent(event.DELETE)}"
             android:backgroundTint="@android:color/transparent"
             android:src="@drawable/ic_baseline_delete_24"
             app:layout_constraintBottom_toBottomOf="@+id/ib_add_image"

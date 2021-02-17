@@ -23,7 +23,7 @@ class NotificationReceiver : BroadcastReceiver() {
         val taskTimeText = intent?.extras?.getString(INTENT_TIME)
         val notificationIntent = Intent(context, MainActivity::class.java)
         notificationIntent.putExtra(INTENT_TASK_UUID,reminderIdentifier)
-        val pendingIntent = PendingIntent.getActivity(context, REQUEST_CODE,notificationIntent,
+        val pendingIntent = PendingIntent.getActivity(context, REQUEST_CODE_FILE,notificationIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
@@ -41,7 +41,7 @@ class NotificationReceiver : BroadcastReceiver() {
         }
 
         val notificationManager = context?.let { ContextCompat.getSystemService(it,NotificationManager::class.java) } as NotificationManager
-        notificationManager.notify(REQUEST_CODE,notificationBuilder?.build())
+        notificationManager.notify(REQUEST_CODE_FILE,notificationBuilder?.build())
 
     }
 
@@ -59,7 +59,7 @@ class NotificationReceiver : BroadcastReceiver() {
 
             return PendingIntent.getBroadcast(
                 context,
-                REQUEST_CODE,
+                REQUEST_CODE_FILE,
                 intent,
                 PendingIntent.FLAG_CANCEL_CURRENT
             )

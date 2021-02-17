@@ -5,21 +5,21 @@ import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.MediaStore.ACTION_IMAGE_CAPTURE
+import android.provider.MediaStore.MEDIA_IGNORE_FILENAME
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Spinner
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentResolverCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,11 +32,11 @@ import ru.maxdexter.mytasks.databinding.FragmentNewTaskBinding
 import ru.maxdexter.mytasks.domen.models.Task
 import ru.maxdexter.mytasks.utils.Alarm
 import ru.maxdexter.mytasks.utils.CheckNetwork
-import ru.maxdexter.mytasks.utils.REQUEST_CODE
+import ru.maxdexter.mytasks.utils.REQUEST_CODE_FILE
+import ru.maxdexter.mytasks.utils.REQUEST_CODE_PHOTO
 import java.util.*
 
 class NewTaskFragment : BottomSheetDialogFragment() {
-    private val REQUEST_CODE_IMAGE = 100
     private val REQUEST_CODE_PERMISSIONS = 101
 
     private val KEY_PERMISSIONS_REQUEST_COUNT = "KEY_PERMISSIONS_REQUEST_COUNT"
@@ -69,6 +69,30 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_task, container, false)
         if (currentTaskUUID != "empty") binding.ibAddDelete.visibility = View.VISIBLE
         requestPermissionsIfNecessary()
+        binding.viewModel = newTaskViewModel
+        binding.executePendingBindings()
+
+        newTaskViewModel.event.observe(viewLifecycleOwner,{
+            Toast.makeText(requireContext(),it.name,Toast.LENGTH_SHORT).show()
+            when(it){
+                NewTaskViewModel.NewTaskEvent.IDL -> Log.i("NEW_TASK_EVENT_LISTENER",it.name)
+                NewTaskViewModel.NewTaskEvent.SAVE -> {
+                    saveAndClose()
+                    dismiss()
+                }
+                NewTaskViewModel.NewTaskEvent.DELETE -> {
+                    newTaskViewModel.deleteTask()
+                    dismiss()
+                }
+                NewTaskViewModel.NewTaskEvent.ADD_PHOTO -> {getFile("image/*",
+                    REQUEST_CODE_PHOTO, MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)}
+                NewTaskViewModel.NewTaskEvent.ADD_FILE -> {getFile("application/*",
+                    REQUEST_CODE_FILE, Intent.ACTION_OPEN_DOCUMENT)}
+                NewTaskViewModel.NewTaskEvent.CLOSE -> Log.i("NEW_TASK_EVENT_LISTENER",it.name)
+            }
+        })
+
+
         newTaskViewModel.titleAndDescription.observe(viewLifecycleOwner,{pair->
             pair?.let {
                 binding.tvTitle.setText(it.first)
@@ -76,17 +100,15 @@ class NewTaskFragment : BottomSheetDialogFragment() {
             }
 
         })
+
+
+
         dateObserver()
         timeObserver()
         initDatePicker()
         initTimePicker()
-        initBtnAdd()
-        initBntAddFile()
         initRecycler()
-        binding.ibAddDelete.setOnClickListener {
-            newTaskViewModel.deleteTask()
-            dismiss()
-        }
+
         newTaskViewModel.setAlarm.observe(viewLifecycleOwner,{
             it?.let { createReminderAlarm(it) }
         })
@@ -148,14 +170,9 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun initBntAddFile() {
-        binding.ibAddFile.setOnClickListener {
-            getFile()
-        }
-    }
 
-    private fun initBtnAdd() {
-        binding.btnAdd.setOnClickListener {
+
+    private fun saveAndClose() {
             val title = binding.tvTitle.text.toString()
             val desc = binding.tvTaskDescription.text.toString()
             val alarm = binding.swAlarm.isChecked
@@ -163,7 +180,6 @@ class NewTaskFragment : BottomSheetDialogFragment() {
             val repeatRange = if(binding.switchRepeatTask.isChecked)binding.spinnerUnit.selectedItemPosition else -1
             newTaskViewModel.saveTaskChange(title, desc,alarm, repeat, repeatRange)
             dismiss()
-        }
     }
 
     private fun initRecycler() {
@@ -212,13 +228,10 @@ class NewTaskFragment : BottomSheetDialogFragment() {
             TimePickerDialog(requireContext(), listener, hour, minute, true).show()
         }
     }
-    private fun getFile(){
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.setType("application/*")
-
-//        intent.addCategory(Intent.CATEGORY_OPENABLE)
-//        intent.putExtra(Intent.EXTRA_LOCAL_ONLY,true)
-        startActivityForResult(intent, REQUEST_CODE)
+    private fun getFile(mime: String, requestCode: Int, intentAction: String){
+        val intent = Intent(intentAction)
+        intent.setType(mime)
+        startActivityForResult(intent, requestCode)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

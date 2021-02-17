@@ -4,6 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="viewModel"
+            type="ru.maxdexter.mytasks.ui.calendar.CalendarViewModel" />
 
     </data>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -46,6 +49,7 @@
             android:id="@+id/recycler_table"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
             android:layout_below="@+id/appBarLayout"
             android:layout_gravity="bottom" />
