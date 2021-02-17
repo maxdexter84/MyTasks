@@ -9,9 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.provider.MediaStore
-import android.provider.MediaStore.ACTION_IMAGE_CAPTURE
-import android.provider.MediaStore.MEDIA_IGNORE_FILENAME
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,8 +16,11 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -37,16 +37,6 @@ import ru.maxdexter.mytasks.utils.REQUEST_CODE_PHOTO
 import java.util.*
 
 class NewTaskFragment : BottomSheetDialogFragment() {
-    private val REQUEST_CODE_PERMISSIONS = 101
-
-    private val KEY_PERMISSIONS_REQUEST_COUNT = "KEY_PERMISSIONS_REQUEST_COUNT"
-    private val MAX_NUMBER_REQUEST_PERMISSIONS = 2
-    private var permissionRequestCount: Int = 0
-    private val permissions = Arrays.asList(
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )
-
 
     private lateinit var  binding: FragmentNewTaskBinding
     private val calendar = Calendar.getInstance(Locale.getDefault())
@@ -59,38 +49,27 @@ class NewTaskFragment : BottomSheetDialogFragment() {
 
     private val newTaskViewModel: NewTaskViewModel by viewModel { parametersOf(currentTaskUUID) }
 
+    private val adapter: FileAdapter by lazy { FileAdapter() }
+    private val getPhoto = registerForActivityResult(ActivityResultContracts.TakePicture()){
 
-    private val adapter: FileAdapter by lazy {
-        FileAdapter()
     }
+    private val getDocument = registerForActivityResult(ActivityResultContracts.OpenDocument()){ uri->
+
+        newTaskViewModel.saveFile(uri)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        getMultiplePermission().launch(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE))
+    }
+
     @SuppressLint("ShowToast")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_task, container, false)
         if (currentTaskUUID != "empty") binding.ibAddDelete.visibility = View.VISIBLE
-        requestPermissionsIfNecessary()
         binding.viewModel = newTaskViewModel
         binding.executePendingBindings()
 
-        newTaskViewModel.event.observe(viewLifecycleOwner,{
-            Toast.makeText(requireContext(),it.name,Toast.LENGTH_SHORT).show()
-            when(it){
-                NewTaskViewModel.NewTaskEvent.IDL -> Log.i("NEW_TASK_EVENT_LISTENER",it.name)
-                NewTaskViewModel.NewTaskEvent.SAVE -> {
-                    saveAndClose()
-                    dismiss()
-                }
-                NewTaskViewModel.NewTaskEvent.DELETE -> {
-                    newTaskViewModel.deleteTask()
-                    dismiss()
-                }
-                NewTaskViewModel.NewTaskEvent.ADD_PHOTO -> {getFile("image/*",
-                    REQUEST_CODE_PHOTO, MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)}
-                NewTaskViewModel.NewTaskEvent.ADD_FILE -> {getFile("application/*",
-                    REQUEST_CODE_FILE, Intent.ACTION_OPEN_DOCUMENT)}
-                NewTaskViewModel.NewTaskEvent.CLOSE -> Log.i("NEW_TASK_EVENT_LISTENER",it.name)
-            }
-        })
 
 
         newTaskViewModel.titleAndDescription.observe(viewLifecycleOwner,{pair->
@@ -98,11 +77,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
                 binding.tvTitle.setText(it.first)
                 binding.tvTaskDescription.setText(it.second)
             }
-
         })
-
-
-
         dateObserver()
         timeObserver()
         initDatePicker()
@@ -113,16 +88,35 @@ class NewTaskFragment : BottomSheetDialogFragment() {
             it?.let { createReminderAlarm(it) }
         })
         initSwAlarm()
-
+        eventObserver()
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    private fun eventObserver(){
+        newTaskViewModel.event.observe(viewLifecycleOwner,{ event ->
+            Toast.makeText(requireContext(),event.name,Toast.LENGTH_SHORT).show()
+            when(event){
+                NewTaskViewModel.NewTaskEvent.IDL -> Log.i("NEW_TASK_EVENT_LISTENER",event.name)
+                NewTaskViewModel.NewTaskEvent.SAVE -> {
+                    saveAndClose()
+                    dismiss()
+                }
+                NewTaskViewModel.NewTaskEvent.DELETE -> {
+                    newTaskViewModel.deleteTask()
+                    dismiss()
+                }
+                NewTaskViewModel.NewTaskEvent.ADD_PHOTO -> getPhoto.launch(newTaskViewModel.createFileImage())
+                NewTaskViewModel.NewTaskEvent.ADD_FILE -> getDocument.launch(arrayOf("application/*"))
+                NewTaskViewModel.NewTaskEvent.CLOSE -> Log.i("NEW_TASK_EVENT_LISTENER",event.name)
+            }
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
         CheckNetwork(requireContext()).observe(viewLifecycleOwner,{
             newTaskViewModel.isOnline = it
         })
-
     }
     private fun initSpinner() {
         val arrAdapter = ArrayAdapter(
@@ -132,7 +126,6 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         )
         arrAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
         binding.spinnerUnit.adapter = arrAdapter
-
         binding.spinnerUnit.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -228,16 +221,6 @@ class NewTaskFragment : BottomSheetDialogFragment() {
             TimePickerDialog(requireContext(), listener, hour, minute, true).show()
         }
     }
-    private fun getFile(mime: String, requestCode: Int, intentAction: String){
-        val intent = Intent(intentAction)
-        intent.setType(mime)
-        startActivityForResult(intent, requestCode)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        newTaskViewModel.saveFile(requestCode,resultCode,data)
-    }
-
 
     private fun createReminderAlarm(task: Task) {
         if (!task.isCompleted) {
@@ -250,50 +233,20 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     }
 
 
-    private fun requestPermissionsIfNecessary() {
-        if (!checkAllPermissions()) {
-            if (permissionRequestCount < MAX_NUMBER_REQUEST_PERMISSIONS) {
-                permissionRequestCount += 1
-                ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    permissions.toTypedArray(),
-                    REQUEST_CODE_PERMISSIONS
-                )
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.set_permissions_in_settings,
-                    Toast.LENGTH_LONG
-                ).show()
+    //Узнаем есть ли permissions для камеры
+    fun hasCameraPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+    }
+    //Обрабатываем езультат запроса разрешений
+    private fun getMultiplePermission() = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){
+        it.forEach { (t, u) ->
+            if (t == Manifest.permission.CAMERA && !u){
+                binding.ibAddImage.isEnabled = false
+            }else if (t == Manifest.permission.READ_EXTERNAL_STORAGE && !u){
                 binding.ibAddFile.isEnabled = false
             }
+            Log.i("TAG_PERMISSION", "Permission: $t, granted: $u")
         }
     }
-
-    /** Permission Checking  */
-    private fun checkAllPermissions(): Boolean {
-        var hasPermissions = true
-        for (permission in permissions) {
-            hasPermissions = hasPermissions and isPermissionGranted(permission)
-        }
-        return hasPermissions
-    }
-
-    private fun isPermissionGranted(permission: String) =
-        ContextCompat.checkSelfPermission(requireContext(), permission) ==
-                PackageManager.PERMISSION_GRANTED
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            requestPermissionsIfNecessary() // no-op if permissions are granted already.
-        }
-    }
-
 
 }

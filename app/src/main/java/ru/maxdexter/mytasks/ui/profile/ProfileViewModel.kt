@@ -3,6 +3,7 @@ package ru.maxdexter.mytasks.ui.profile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import ru.maxdexter.mytasks.domen.models.User
@@ -25,6 +26,7 @@ class ProfileViewModel(private val appPreferences: AppPreferences) : ViewModel()
         _currentTheme.value = appPreferences.getTheme()
         getUserData()
     }
+
 
     fun getUserData() {
         val user = FirebaseAuth.getInstance().currentUser

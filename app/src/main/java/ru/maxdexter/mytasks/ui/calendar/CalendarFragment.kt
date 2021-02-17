@@ -1,5 +1,6 @@
 package ru.maxdexter.mytasks.ui.calendar
 
+import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -48,7 +49,8 @@ class CalendarFragment : Fragment() {
             }
 
         })
-        binding.fab.setOnClickListener { findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment()) }
+        binding.fab.setOnClickListener {
+            findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment()) }
 
         return binding.root
     }

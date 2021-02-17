@@ -1,9 +1,13 @@
 package ru.maxdexter.mytasks.ui
 
+import android.Manifest
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -27,13 +31,14 @@ class MainActivity : AppCompatActivity() {
     }
     lateinit var navController: NavController
     private val viewModel: MainViewModel by viewModel()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         when(appPreferences.getTheme()){
             true -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             false -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
         super.onCreate(savedInstanceState)
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
@@ -57,7 +62,6 @@ class MainActivity : AppCompatActivity() {
             viewModel.isOnline = it
         })
     }
-
 
 
 

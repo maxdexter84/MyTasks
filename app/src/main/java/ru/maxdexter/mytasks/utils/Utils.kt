@@ -1,10 +1,13 @@
 package ru.maxdexter.mytasks.utils
 
+import android.content.Intent
+import androidx.core.app.ActivityCompat.startActivityForResult
 import com.google.firebase.Timestamp
 import ru.maxdexter.mytasks.domen.models.Task
 import ru.maxdexter.mytasks.domen.models.TaskFS
 import ru.maxdexter.mytasks.domen.models.TaskFile
 import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
+import ru.maxdexter.mytasks.ui.newtask.NewTaskViewModel
 import java.lang.StringBuilder
 import java.util.*
 
@@ -72,4 +75,7 @@ fun taskFSToTaskWithTaskFile(taskFS: TaskFS): TaskWithTaskFile {
     return TaskWithTaskFile(task,taskFS.userFilesCloudStorage)
 
 }
+
+
+
 

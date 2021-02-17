@@ -4,7 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
+import androidx.core.content.FileProvider
+import androidx.core.net.toFile
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -19,6 +23,7 @@ import ru.maxdexter.mytasks.domen.repository.LocalDatabase
 import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
 import ru.maxdexter.mytasks.utils.*
 import java.io.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 class NewTaskViewModel(
@@ -109,13 +114,7 @@ class NewTaskViewModel(
         task.eventMinute = minute
         _liveTime.value = "$h : $m"
     }
-    fun saveTitleChange(title: String){
-        taskWithTaskFile.task.title = title
-    }
 
-    fun saveDescriptionChange(description: String){
-        taskWithTaskFile.task.description = description
-    }
 
     fun saveTaskChange(title: String, description: String,alarm:Boolean,repeat: Boolean, repeatRange:Int){
         task.description = description
@@ -129,14 +128,9 @@ class NewTaskViewModel(
         saveTaskToDb()
     }
 
-    fun saveFile(requestCode: Int, resultCode: Int, data: Intent?){
-        if (requestCode == REQUEST_CODE_FILE && resultCode == Activity.RESULT_OK){
-            if (data != null && data.data != null){
-                list.add(createTaskFile(data))
-            }
-        }
+    fun saveFile(uriFile: Uri){
+        list.add(createTaskFile(uriFile))
         _fileList.value = list
-
     }
 
     private fun createTaskFile(data:Intent): TaskFile{
@@ -145,6 +139,30 @@ class NewTaskViewModel(
         val name = handleParseFileName(uri)
         val id = task.id
         return TaskFile(uri = uri,fileType = type,name = name,taskUUID = id)
+    }
+
+    private fun createTaskFile(uriFile: Uri): TaskFile{
+        val type = "image/jpg"
+        val type2= uriFile.path
+        val uri = uriFile.path.toString()
+        val name = handleParseFileName(uri)
+        val id = task.id
+        return TaskFile(uri = uri,fileType = type,name = name,taskUUID = id)
+    }
+
+     fun createFileImage():Uri{
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val fileDir:File = context.filesDir
+        val file = File.createTempFile("JPEG_${timeStamp}_",".jpg",fileDir)
+        val uri = file.let { FileProvider.getUriForFile(context, "ru.maxdexter.mytasks.fileprovider", it)  }
+        return uri
+    }
+
+
+    fun createIntentFile(): Intent{
+        val intentFile = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        intentFile.type = "application/*"
+        return intentFile
     }
 
 
@@ -195,6 +213,10 @@ class NewTaskViewModel(
     }
 
 
+
+
+
+
     fun deleteTask(){
         viewModelScope.launch {
             repository.deleteTask(task)
@@ -205,11 +227,6 @@ class NewTaskViewModel(
 
         }
     }
-
-
-
-
-
 
     private fun getTask(uuid: String){
         viewModelScope.launch {
@@ -228,9 +245,10 @@ class NewTaskViewModel(
         }
     }
 
-
-
-
+    override fun onCleared() {
+        super.onCleared()
+        _event.value = NewTaskEvent.IDL
+    }
 
 
 
