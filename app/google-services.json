@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "810187116382",
+    "firebase_url": "https://pushmessage-e9f1c.firebaseio.com",
+    "project_id": "pushmessage-e9f1c",
+    "storage_bucket": "pushmessage-e9f1c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810187116382:android:a5afb3cddf6749a16809cf",
+        "android_client_info": {
+          "package_name": "ru.maxdexter.mytasks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810187116382-co3bba2rvc7t6i3f07q74p8rgofe6um9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ru.maxdexter.mytasks",
+            "certificate_hash": "f256a51e3ebb8e1bc5cf51ad8d408ffa8e765a64"
+          }
+        },
+        {
+          "client_id": "810187116382-k6b01ppc3i3tic265rmqvednfr4k8ehu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVlT0tbbYBg2ovP7G9ODc_5bolzP126bs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810187116382-k6b01ppc3i3tic265rmqvednfr4k8ehu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
