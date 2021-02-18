@@ -1,15 +1,29 @@
 package ru.maxdexter.mytasks.utils
 
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.FileProvider
 import com.google.firebase.Timestamp
+import com.google.firebase.inject.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import ru.maxdexter.mytasks.domen.models.Task
 import ru.maxdexter.mytasks.domen.models.TaskFS
 import ru.maxdexter.mytasks.domen.models.TaskFile
 import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
 import ru.maxdexter.mytasks.ui.newtask.NewTaskViewModel
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 import java.lang.StringBuilder
+import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 fun mapDateToLong(year: Int, month: Int, day: Int, hour: Int, minute: Int): Long{
     return GregorianCalendar(year,month,day,hour,minute).timeInMillis
@@ -76,6 +90,30 @@ fun taskFSToTaskWithTaskFile(taskFS: TaskFS): TaskWithTaskFile {
 
 }
 
+
+suspend fun createFileAndSaveImage(context:Context, bitmap: Bitmap): Deferred<Uri>{
+    //создаем пустой файл в заданной директории
+    val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+    val fileDir: File = context.filesDir
+    val file = File.createTempFile("JPEG_${timeStamp}_",".jpg",fileDir)
+    //создаем поток данных
+    var out: FileOutputStream? = null
+   withContext(Dispatchers.IO){
+        try {
+            out = FileOutputStream(file)
+            //сжимаем изображение и конвертируем в png
+            bitmap.compress(Bitmap.CompressFormat.PNG,0,out)
+        }finally {
+            out.let {
+                try {
+                    it?.close()
+                }catch (e:IOException){}
+            }
+        }
+
+    }
+    return Deferred {  Uri.fromFile(file) }
+}
 
 
 

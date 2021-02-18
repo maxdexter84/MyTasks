@@ -6,7 +6,7 @@ import android.app.AlarmManager
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
-import android.content.Intent
+import androidx.lifecycle.Observer
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -16,12 +16,10 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -30,10 +28,7 @@ import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.adapters.FileAdapter
 import ru.maxdexter.mytasks.databinding.FragmentNewTaskBinding
 import ru.maxdexter.mytasks.domen.models.Task
-import ru.maxdexter.mytasks.utils.Alarm
-import ru.maxdexter.mytasks.utils.CheckNetwork
-import ru.maxdexter.mytasks.utils.REQUEST_CODE_FILE
-import ru.maxdexter.mytasks.utils.REQUEST_CODE_PHOTO
+import ru.maxdexter.mytasks.utils.*
 import java.util.*
 
 class NewTaskFragment : BottomSheetDialogFragment() {
@@ -50,12 +45,12 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     private val newTaskViewModel: NewTaskViewModel by viewModel { parametersOf(currentTaskUUID) }
 
     private val adapter: FileAdapter by lazy { FileAdapter() }
-    private val getPhoto = registerForActivityResult(ActivityResultContracts.TakePicture()){
 
+    private val getPhoto = registerForActivityResult(TakeImageContract()){
+           it?.let { newTaskViewModel.createTaskFile(it) }
     }
-    private val getDocument = registerForActivityResult(ActivityResultContracts.OpenDocument()){ uri->
-
-        newTaskViewModel.saveFile(uri)
+    private val getDocument = registerForActivityResult(TakeFileContract()){ pair->
+          pair?.let {  newTaskViewModel.createTaskFile(it) }
     }
 
     override fun onAttach(context: Context) {
@@ -72,7 +67,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
 
 
 
-        newTaskViewModel.titleAndDescription.observe(viewLifecycleOwner,{pair->
+        newTaskViewModel.titleAndDescription.observe(viewLifecycleOwner, Observer{ pair->
             pair?.let {
                 binding.tvTitle.setText(it.first)
                 binding.tvTaskDescription.setText(it.second)
@@ -84,7 +79,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         initTimePicker()
         initRecycler()
 
-        newTaskViewModel.setAlarm.observe(viewLifecycleOwner,{
+        newTaskViewModel.setAlarm.observe(viewLifecycleOwner, Observer{
             it?.let { createReminderAlarm(it) }
         })
         initSwAlarm()
@@ -93,7 +88,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     }
 
     private fun eventObserver(){
-        newTaskViewModel.event.observe(viewLifecycleOwner,{ event ->
+        newTaskViewModel.event.observe(viewLifecycleOwner, Observer{ event ->
             Toast.makeText(requireContext(),event.name,Toast.LENGTH_SHORT).show()
             when(event){
                 NewTaskViewModel.NewTaskEvent.IDL -> Log.i("NEW_TASK_EVENT_LISTENER",event.name)
@@ -105,16 +100,20 @@ class NewTaskFragment : BottomSheetDialogFragment() {
                     newTaskViewModel.deleteTask()
                     dismiss()
                 }
-                NewTaskViewModel.NewTaskEvent.ADD_PHOTO -> getPhoto.launch(newTaskViewModel.createFileImage())
+                NewTaskViewModel.NewTaskEvent.ADD_PHOTO -> {
+                    val uri = newTaskViewModel.createFileImage()
+                    getPhoto.launch(uri)
+                }
                 NewTaskViewModel.NewTaskEvent.ADD_FILE -> getDocument.launch(arrayOf("application/*"))
                 NewTaskViewModel.NewTaskEvent.CLOSE -> Log.i("NEW_TASK_EVENT_LISTENER",event.name)
+                null->Log.i("NEW_TASK_EVENT_LISTENER","null")
             }
         })
     }
 
     override fun onResume() {
         super.onResume()
-        CheckNetwork(requireContext()).observe(viewLifecycleOwner,{
+        CheckNetwork(requireContext()).observe(viewLifecycleOwner,Observer{
             newTaskViewModel.isOnline = it
         })
     }
@@ -147,8 +146,8 @@ class NewTaskFragment : BottomSheetDialogFragment() {
             when (isChecked) {
                 true -> {
                     binding.switchRepeatTask.isEnabled = true
-                    binding.switchRepeatTask.setOnCheckedChangeListener { _, isChecked ->
-                        if (isChecked){
+                    binding.switchRepeatTask.setOnCheckedChangeListener { _, checked ->
+                        if (checked){
                             binding.spinnerUnit.visibility = View.VISIBLE
                             initSpinner()
                         } else {binding.spinnerUnit.visibility = View.INVISIBLE}
@@ -176,7 +175,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     }
 
     private fun initRecycler() {
-        newTaskViewModel.fileList.observe(viewLifecycleOwner, {
+        newTaskViewModel.fileList.observe(viewLifecycleOwner, Observer{
             binding.rvFile.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
             adapter.submitList(it)
             binding.rvFile.adapter = adapter
@@ -184,13 +183,13 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     }
 
     private fun dateObserver() {
-        newTaskViewModel.liveDate.observe(viewLifecycleOwner, {
+        newTaskViewModel.liveDate.observe(viewLifecycleOwner, Observer{
             binding.tvDateChange.text = it
         })
     }
 
     private fun timeObserver() {
-        newTaskViewModel.liveTime.observe(viewLifecycleOwner, {
+        newTaskViewModel.liveTime.observe(viewLifecycleOwner, Observer{
             binding.tvTimeChange.text = it
         })
     }
@@ -212,7 +211,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
 
     @SuppressLint("SetTextI18n")
     private fun initTimePicker() {
-        val listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+        val listener = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
             newTaskViewModel.setTime(hourOfDay,minute)
         }
         val hour = calendar.get(Calendar.HOUR_OF_DAY)

@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -43,12 +45,13 @@ class CalendarFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_calendar,container, false)
         calendarListener()
         initBottomAppBar()
-        calendarViewModel.selectedTask.observe(viewLifecycleOwner,{
+        calendarViewModel.selectedTask.observe(viewLifecycleOwner, Observer {
             if (it != ""){
                 findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment(it))
             }
 
         })
+
         binding.fab.setOnClickListener {
             findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment()) }
 
@@ -58,7 +61,7 @@ class CalendarFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        calendarViewModel.listTaskFile.observe(viewLifecycleOwner,{
+        calendarViewModel.listTaskFile.observe(viewLifecycleOwner, Observer {
             val hourList = calendarViewModel.updateData(it)
             initRecycler(hourList)
         })

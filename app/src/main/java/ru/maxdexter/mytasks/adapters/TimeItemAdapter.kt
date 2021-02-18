@@ -46,11 +46,11 @@ class TimeItemAdapter(private val itemListener: ItemListener) : ListAdapter<Task
 
         @SuppressLint("SetTextI18n")
         fun bind(item: TaskWithTaskFile, listener: ItemListener){
-            binding.tvTitle.text = item.task?.title
-            binding.tvDescription.text = item.task?.description
+            binding.tvTitle.text = item.task.title
+            binding.tvDescription.text = item.task.description
             binding.tvTaskTime.text = handleParseTime(item)
             itemView.setOnClickListener {
-                item.task?.let { it1 -> listener.click(it1.id) }
+                item.task.let { it1 -> listener.click(it1.id) }
             }
 
         }

@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.qualifier.named
@@ -25,6 +26,7 @@ import ru.maxdexter.mytasks.ui.profile.ProfileViewModel
 
 
 @OptIn(KoinApiExtension::class)
+@ExperimentalCoroutinesApi
 val application = module {
     single(named("room")) { Room.databaseBuilder(get(),
         RoomDb::class.java,

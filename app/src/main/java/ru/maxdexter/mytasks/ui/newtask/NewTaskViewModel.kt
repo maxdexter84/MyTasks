@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
@@ -14,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinApiExtension
 import ru.maxdexter.mytasks.domen.models.Task
 import ru.maxdexter.mytasks.domen.models.TaskFile
@@ -27,7 +29,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class NewTaskViewModel(
-                        private val uuid: String,
+                         uuid: String,
                         private val repository: LocalDatabase,
                         private val remoteRepository: RemoteDataProvider,
                         private val storage: DataStorage,
@@ -98,8 +100,8 @@ class NewTaskViewModel(
     }
 
     fun setDate(year: Int, month: Int, day: Int){
-        val mon =  if (month < 10) "0${month + 1}" else month + 1
-        val d = if (day  < 10) "0$day" else day
+        val mon =  if (month < 10) "0${month + 1}" else "${month + 1}"
+        val d = if (day  < 10) "0$day" else "$day"
         task.eventYear = year
         task.eventMonth = month
         task.eventDay = day
@@ -108,15 +110,16 @@ class NewTaskViewModel(
     }
 
     fun setTime(hour: Int, minute: Int){
-        val h = if(hour < 10) "0$hour" else hour
-        val m = if (minute < 10) "0$minute" else minute
+        val h = if(hour < 10) "0$hour" else "$hour"
+        val m = if (minute < 10) "0$minute" else "$minute"
         task.eventHour = hour
         task.eventMinute = minute
         _liveTime.value = "$h : $m"
     }
 
 
-    fun saveTaskChange(title: String, description: String,alarm:Boolean,repeat: Boolean, repeatRange:Int){
+    @KoinApiExtension
+    fun saveTaskChange(title: String, description: String, alarm:Boolean, repeat: Boolean, repeatRange:Int){
         task.description = description
         task.title = title
         task.pushMessage = alarm
@@ -128,42 +131,30 @@ class NewTaskViewModel(
         saveTaskToDb()
     }
 
-    fun saveFile(uriFile: Uri){
-        list.add(createTaskFile(uriFile))
+    private fun saveFile(taskFile: TaskFile){
+        list.add(taskFile)
         _fileList.value = list
     }
 
-    private fun createTaskFile(data:Intent): TaskFile{
-        val type = data.resolveType(context).toString()
-        val uri = data.data.toString()
-        val name = handleParseFileName(uri)
+
+     fun createTaskFile(pair:Pair<Uri,String>){
+        val type = pair.second
+        val uri = pair.first.toString()
+        val name = handleParseFileName(pair.first.toString())
         val id = task.id
-        return TaskFile(uri = uri,fileType = type,name = name,taskUUID = id)
+        saveFile(TaskFile(uri = uri,fileType = type,name = name,taskUUID = id))
     }
 
-    private fun createTaskFile(uriFile: Uri): TaskFile{
-        val type = "image/jpg"
-        val type2= uriFile.path
-        val uri = uriFile.path.toString()
-        val name = handleParseFileName(uri)
-        val id = task.id
-        return TaskFile(uri = uri,fileType = type,name = name,taskUUID = id)
-    }
-
-     fun createFileImage():Uri{
+    fun createFileImage():Uri{
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val fileDir:File = context.filesDir
-        val file = File.createTempFile("JPEG_${timeStamp}_",".jpg",fileDir)
+        val file = File.createTempFile("JPEG_${timeStamp}_",".png",fileDir)
         val uri = file.let { FileProvider.getUriForFile(context, "ru.maxdexter.mytasks.fileprovider", it)  }
         return uri
     }
 
 
-    fun createIntentFile(): Intent{
-        val intentFile = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intentFile.type = "application/*"
-        return intentFile
-    }
+
 
 
     @KoinApiExtension
@@ -175,8 +166,11 @@ class NewTaskViewModel(
                         taskWithTaskFile.task.saveToCloud = true
                         repository.saveTask(taskWithTaskFile)
                     }
-                    saveTaskToFireStore(taskWithTaskFile)
-                    saveFileToStorage(taskWithTaskFile)
+                    if(remoteRepository.getCurrentUser() != null){
+                        saveTaskToFireStore(taskWithTaskFile)
+                        saveFileToStorage(taskWithTaskFile)
+                    }
+
 
                 }else {
                     viewModelScope.launch {
@@ -211,11 +205,6 @@ class NewTaskViewModel(
             }
         }
     }
-
-
-
-
-
 
     fun deleteTask(){
         viewModelScope.launch {
