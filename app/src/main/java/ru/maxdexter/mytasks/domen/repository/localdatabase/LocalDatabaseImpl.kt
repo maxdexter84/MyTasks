@@ -18,8 +18,8 @@ class LocalDatabaseImpl(private val database: RoomDb): LocalDatabase {
         }
     }
 
-    override fun  getAllTask(): LiveData<List<Task>> {
-       return database.getDao().getAllTask()
+    override fun  getAllTask(): Flow<List<TaskWithTaskFile>> {
+       return database.getDao().getAllTask().flowOn(Dispatchers.IO)
     }
 
     override fun getAllTaskWithTaskFile(year: Int, month: Int, day: Int): Flow<List<TaskWithTaskFile>> {

@@ -36,7 +36,7 @@ class RemoteDataProviderImpl(private val firestore: FirebaseFirestore, private v
                 tasks.forEach {
                     getUserTasksCollection().document(it.id).set(tasks)
                 }
-                continuation.resume(LoadingResponse.Success("the data is synchronized" , false))
+                continuation.resume(LoadingResponse.Success("the data is synchronized"))
             }catch (e: IOException){continuation.resumeWithException(e)}
 
     }
@@ -58,9 +58,9 @@ class RemoteDataProviderImpl(private val firestore: FirebaseFirestore, private v
     override suspend fun  deleteTask(task: TaskFS): LoadingResponse = suspendCoroutine{ continuation ->
         try {
             getUserTasksCollection().document(task.id).delete().addOnSuccessListener {
-                continuation.resume(LoadingResponse.Success(task ,true))
+                continuation.resume(LoadingResponse.Success(task))
             }.addOnFailureListener {
-                continuation.resume(LoadingResponse.Success(it.message ,false))
+                continuation.resume(LoadingResponse.Success(it.message))
             }
         }catch (e: IOException){continuation.resumeWithException(e)}
 
@@ -73,9 +73,9 @@ class RemoteDataProviderImpl(private val firestore: FirebaseFirestore, private v
         getUserTasksCollection().addSnapshotListener { value, error ->
             if (value != null) {
                 val list = value.documents.map { it.toObject(TaskFS::class.java) }
-                stateFlow.value = LoadingResponse.Success(list, true)
+                stateFlow.value = LoadingResponse.Success(list)
             } else {
-                stateFlow.value = LoadingResponse.Error(error?.message.toString(), true)
+                stateFlow.value = LoadingResponse.Error(error?.message.toString())
             }
 
         }
@@ -86,9 +86,9 @@ class RemoteDataProviderImpl(private val firestore: FirebaseFirestore, private v
         try {
            getUserTasksCollection().document(uuid).get().addOnSuccessListener {
                val res = it.toObject(TaskFS::class.java)
-               continuation.resume(LoadingResponse.Success(res ,true))
+               continuation.resume(LoadingResponse.Success(res))
            }.addOnFailureListener {
-               continuation.resume(LoadingResponse.Success(it.message ,true))
+               continuation.resume(LoadingResponse.Success(it.message))
            }
         }catch (e: IOException){}
     }

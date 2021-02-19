@@ -6,15 +6,12 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import ru.maxdexter.mytasks.di.application
 import ru.maxdexter.mytasks.domen.models.TaskFS
 import ru.maxdexter.mytasks.domen.models.TaskFile
 import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
 import ru.maxdexter.mytasks.domen.repository.DataStorage
 import ru.maxdexter.mytasks.domen.repository.LoadingResponse
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -33,12 +30,12 @@ class StorageImpl(private val storage: FirebaseStorage, private val application:
                     .putFile(taskFile.uri.toUri()).addOnSuccessListener {
                         uriList.add( it.storage.downloadUrl.toString())
                     }.addOnFailureListener {
-                        stateFlow.value = LoadingResponse.Error(it.message ?: "",false)
+                        stateFlow.value = LoadingResponse.Error(it.message ?: "")
                     }
-                stateFlow.value = LoadingResponse.Success(uriList, true)
+                stateFlow.value = LoadingResponse.Success(uriList)
             }
         }catch (e: Exception){
-            stateFlow.value = LoadingResponse.Error(e.message ?: "",false)
+            stateFlow.value = LoadingResponse.Error(e.message ?: "")
         }
        return stateFlow
     }
@@ -57,9 +54,9 @@ class StorageImpl(private val storage: FirebaseStorage, private val application:
                 list.add(TaskFile(uri = localFile.absolutePath,saveToCloud = true,taskUUID = taskFS.id,taskFile.fileType,taskFile.name))
 
             }
-            continuation.resume(LoadingResponse.Success(list,true))
+            continuation.resume(LoadingResponse.Success(list))
         }catch (e: Exception) {
-            e.message?.let { LoadingResponse.Error(it,false) }?.let { continuation.resume(it) }
+            e.message?.let { LoadingResponse.Error(it) }?.let { continuation.resume(it) }
         }
 
     }

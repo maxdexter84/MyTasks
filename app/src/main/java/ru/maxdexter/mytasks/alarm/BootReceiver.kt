@@ -7,6 +7,7 @@ import android.content.Intent
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
@@ -31,19 +32,21 @@ class BootReceiver : BroadcastReceiver() , KoinComponent{
                 val alarmManager = context!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
                 CoroutineScope(Dispatchers.Main).launch {
-                  val  tasks = repository.getAllTask().value
+                   repository.getAllTask().collect { list ->
+                      if (!list.isNullOrEmpty()) {
+                          list.forEach { taskWithFile ->
+                              if (!taskWithFile.task.isCompleted) {
+                                  Alarm.createAlarm(
+                                      context.applicationContext,
+                                      taskWithFile.task,
+                                      alarmManager
+                                  )
+                              }
+                          }
+                      }
+                  }
 
-                    if (!tasks.isNullOrEmpty()) {
-                        tasks.forEach { it ->
-                            if (!it.isCompleted) {
-                                Alarm.createAlarm(
-                                    context.applicationContext,
-                                    it,
-                                    alarmManager
-                                )
-                            }
-                        }
-                    }
+
                 }
             }
         }

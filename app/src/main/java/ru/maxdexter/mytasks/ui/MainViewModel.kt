@@ -6,14 +6,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinApiExtension
-import ru.maxdexter.mytasks.domen.models.Task
-import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
+import kotlinx.coroutines.withContext
+import ru.maxdexter.mytasks.domen.models.*
 import ru.maxdexter.mytasks.domen.repository.DataStorage
+import ru.maxdexter.mytasks.domen.repository.LoadingResponse
 import ru.maxdexter.mytasks.domen.repository.LocalDatabase
 import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
+import ru.maxdexter.mytasks.utils.taskFSToTaskWithTaskFile
 import ru.maxdexter.mytasks.utils.taskWithTaskFileToTaskFS
 import java.io.IOException
 
@@ -29,76 +30,65 @@ class MainViewModel(private val remoteRepository: RemoteDataProvider, private va
             val iasAuth: LiveData<Boolean>
             get() = _isAuth
 
+    private val _taskList = MutableLiveData<List<TaskWithTaskFile>>()
+            val taskList: LiveData<List<TaskWithTaskFile>>
+            get() = _taskList
     init {
         _isAuth.value = checkAuth()
     }
 
-        private fun checkAuth(): Boolean{
+    private fun checkAuth(): Boolean{
         val user =  remoteRepository.getCurrentUser()
         return user != null
-    }
+     }
 
-
-
-
-
-    @KoinApiExtension
-    private fun saveTaskToDb(taskWithTaskFile: TaskWithTaskFile){
-
-        try {
-            if (isOnline){
-                viewModelScope.launch {
-                    taskWithTaskFile.task.saveToCloud = true
-                    localRepository.saveTask(taskWithTaskFile)
-                }
-                saveTaskToFireStore(taskWithTaskFile)
-                saveFileToStorage(taskWithTaskFile)
-
-            }else {
-                viewModelScope.launch {
-                    taskWithTaskFile.task.saveToCloud = false
-                    localRepository.saveTask(taskWithTaskFile)
-                }
-            }
-
-            if (taskWithTaskFile.task.pushMessage){
-
-                _setAlarm.value = taskWithTaskFile.task
-            }
-
-        }catch (e: IOException) {
-            Log.e("ERROR_SAVE",e.message.toString())
-        }
-
-
-
-    }
-
-    private  fun saveTaskToFireStore(taskWithTaskFile: TaskWithTaskFile) {
-        GlobalScope.launch {
-            remoteRepository.saveTask(taskWithTaskFileToTaskFS(taskWithTaskFile))
-        }
-    }
-
-
-    private fun saveFileToStorage(taskWithTaskFile: TaskWithTaskFile){
-        if (taskWithTaskFile.list.isNotEmpty()) {
-            GlobalScope.launch(Dispatchers.IO) {
-                storage.saveFileToStorage(taskWithTaskFile)
-            }
-        }
-    }
-
-
-    fun deleteTask(taskWithTaskFile: TaskWithTaskFile){
+     fun getCurrentTaskList(){
         viewModelScope.launch {
-            localRepository.deleteTask(taskWithTaskFile.task)
-            taskWithTaskFile.list.let { list1 ->
-                list1.forEach { file->
-                    file.let { localRepository.deleteTaskFile(it) }
-                } }
+            localRepository.getAllTask().collect { list->
+                list.forEach {
+                    if (!it.task.saveToCloud) {
+                        saveTaskAndFile(it)
+                    }
+                }
 
+            }
         }
     }
 
-}
+    private suspend fun saveTaskAndFile(taskWithTaskFile: TaskWithTaskFile){
+        val taskFS = taskWithTaskFileToTaskFS(taskWithTaskFile)
+        withContext(Dispatchers.IO){
+            try {
+                when(val response = storage.saveFileToStorage(taskWithTaskFile).value){
+                    is LoadingResponse.Success<*> -> {
+                        val result = response.data as List<TaskFile>
+                        taskFS.userFilesCloudStorage = result
+                        remoteRepository.saveTask(taskFS)
+                        updateTaskWithTaskFile(taskFS)
+                    }
+                    is LoadingResponse.Error -> {
+                        getCurrentTaskList()
+                    }
+
+                    else -> {Log.i("TAG","unknown state")}
+                }
+            }catch (e: IOException){
+                Log.e("TAG","saveTaskAndFile ${e.stackTrace}")}
+        }
+    }
+
+    private suspend fun updateTaskWithTaskFile(taskFS: TaskFS){
+                val taskWithTaskFile = taskFSToTaskWithTaskFile(taskFS)
+                taskWithTaskFile.task.saveToCloud = true
+                localRepository.saveTask(taskWithTaskFile)
+        }
+    }
+
+
+
+
+
+
+
+
+

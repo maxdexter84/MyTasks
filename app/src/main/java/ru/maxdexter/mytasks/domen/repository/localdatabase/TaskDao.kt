@@ -19,11 +19,12 @@ interface TaskDao {
     @Transaction @Query("SELECT * FROM task WHERE eventYear = :year AND eventMonth = :month AND eventDay = :day")
     fun getAllTaskWithTaskFile(year: Int, month: Int, day: Int) : Flow<List<TaskWithTaskFile>>
 
+
+    @Transaction @Query("SELECT * FROM task")
+    fun getAllTask() : Flow<List<TaskWithTaskFile>>
+
     @Transaction @Query("SELECT * FROM task WHERE id =:uuid ")
     fun getTaskWithTaskFile(uuid: String) : Flow<TaskWithTaskFile>
-
-    @Query("SELECT * FROM task")
-    fun getAllTask(): LiveData<List<Task>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addTaskFile(file:TaskFile)
