@@ -15,7 +15,7 @@ class TakeImageContract: ActivityResultContract<Uri,Pair<Uri,String>?>(){
             .putExtra(MediaStore.EXTRA_OUTPUT, input)
     }
 
-    override fun parseResult(resultCode: Int, intent: Intent?): Pair<Uri,String>? {
+    override fun parseResult(resultCode: Int, intent: Intent?): Pair<Uri,String> {
         var type = ""
         var picUri = Uri.EMPTY
         if (resultCode == Activity.RESULT_OK ) {

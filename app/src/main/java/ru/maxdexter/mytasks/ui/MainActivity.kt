@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private val appPreferences by lazy {
         AppPreferences(this)
     }
+
     lateinit var navController: NavController
     private val viewModel: MainViewModel by viewModel()
 
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         if (taskUUID != null){
             navController.navigate(MobileNavigationDirections.actionGlobalCalendarFragment(taskUUID.toString()))
         }
+        checkNetworkObserver()
 
         viewModel.iasAuth.observe(this, {
             when(it){
@@ -47,21 +49,24 @@ class MainActivity : AppCompatActivity() {
         })
 
 
+        viewModel.dataToSync.observe(this,  {
+            viewModel.startSaveToCloud(it)
+        })
+
 
     }
 
     override fun onResume() {
         super.onResume()
-        CheckNetwork(this).observe(this,{
-            viewModel.isOnline = it
-            if (it) viewModel.getCurrentTaskList()
-        })
+        viewModel.getCurrentTaskList()
     }
 
 
-
-
-
+    private fun checkNetworkObserver() {
+        CheckNetwork(this).observe(this,  {
+            viewModel.isOnline = it
+        })
+    }
 
 }
 

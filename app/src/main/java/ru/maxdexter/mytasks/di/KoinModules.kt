@@ -47,7 +47,7 @@ val newTaskModule = module {
 }
 
 val calendarModule = module {
-    viewModel { CalendarViewModel(get(named("repository")), get(named("fireStoreProvider"))) }
+    viewModel { CalendarViewModel(get(named("repository")), get(named("fireStoreProvider")), get(named("dataStorage"))) }
 }
 
 

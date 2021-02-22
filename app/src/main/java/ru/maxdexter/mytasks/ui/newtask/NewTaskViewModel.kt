@@ -31,13 +31,11 @@ import java.util.*
 class NewTaskViewModel(
                          uuid: String,
                         private val repository: LocalDatabase,
-                        private val remoteRepository: RemoteDataProvider,
+                        remoteRepository: RemoteDataProvider,
                         private val storage: DataStorage,
                         application: Application): AndroidViewModel(application) {
 
     private val calendar = Calendar.getInstance(Locale.getDefault())
-
-    private var task = Task()
     private var list = mutableListOf<TaskFile>()
     private var taskWithTaskFile = TaskWithTaskFile()
     @SuppressLint("StaticFieldLeak")
@@ -102,9 +100,9 @@ class NewTaskViewModel(
     fun setDate(year: Int, month: Int, day: Int){
         val mon =  if (month < 10) "0${month + 1}" else "${month + 1}"
         val d = if (day  < 10) "0$day" else "$day"
-        task.eventYear = year
-        task.eventMonth = month
-        task.eventDay = day
+        taskWithTaskFile.task.eventYear = year
+        taskWithTaskFile.task.eventMonth = month
+        taskWithTaskFile.task.eventDay = day
         _liveDate.value = "$d.$mon.$year"
 
     }
@@ -112,27 +110,26 @@ class NewTaskViewModel(
     fun setTime(hour: Int, minute: Int){
         val h = if(hour < 10) "0$hour" else "$hour"
         val m = if (minute < 10) "0$minute" else "$minute"
-        task.eventHour = hour
-        task.eventMinute = minute
+        taskWithTaskFile.task.eventHour = hour
+        taskWithTaskFile.task.eventMinute = minute
         _liveTime.value = "$h : $m"
     }
 
 
     @KoinApiExtension
     fun saveTaskChange(title: String, description: String, alarm:Boolean, repeat: Boolean, repeatRange:Int){
-        task.description = description
-        task.title = title
-        task.pushMessage = alarm
-        task.repeat = repeat
-        task.repeatRangeValue = if(repeat)TimeRange.values()[repeatRange].value else 0L
-        task.userNumber = user?.phone ?: " "
-        taskWithTaskFile.task = task
-        taskWithTaskFile.list = list
+        taskWithTaskFile.task.description = description
+        taskWithTaskFile.task.title = title
+        taskWithTaskFile.task.pushMessage = alarm
+        taskWithTaskFile.task.repeat = repeat
+        taskWithTaskFile.task.repeatRangeValue = if(repeat)TimeRange.values()[repeatRange].value else 0L
+        taskWithTaskFile.task.userNumber = user?.phone ?: " "
         saveTaskToDb()
     }
 
     private fun saveFile(taskFile: TaskFile){
         list.add(taskFile)
+        taskWithTaskFile.list = list
         _fileList.value = list
     }
 
@@ -141,7 +138,7 @@ class NewTaskViewModel(
         val type = pair.second
         val uri = pair.first.toString()
         val name = handleParseFileName(pair.first.toString())
-        val id = task.id
+        val id = taskWithTaskFile.task.id
         saveFile(TaskFile(uri = uri,fileType = type,name = name,taskUUID = id))
     }
 
@@ -153,62 +150,26 @@ class NewTaskViewModel(
         return uri
     }
 
-
-
-
-
     @KoinApiExtension
     private fun saveTaskToDb(){
-
-            try {
-                if (isOnline){
-                    viewModelScope.launch {
-                        taskWithTaskFile.task.saveToCloud = true
-                        repository.saveTask(taskWithTaskFile)
-                    }
-                    if(remoteRepository.getCurrentUser() != null){
-                        saveTaskToFireStore(taskWithTaskFile)
-                        saveFileToStorage(taskWithTaskFile)
-                    }
-
-
-                }else {
-                    viewModelScope.launch {
-                        taskWithTaskFile.task.saveToCloud = false
-                        repository.saveTask(taskWithTaskFile)
-                    }
-                }
-
-                if (task.pushMessage){
-                    _setAlarm.value = task
-                }
-
-                }catch (e: IOException) {
-                Log.e("ERROR_SAVE",e.message.toString())
+        try {
+            viewModelScope.launch {
+                repository.saveTask(taskWithTaskFile)
+            }
+            if (taskWithTaskFile.task.pushMessage){
+                _setAlarm.value = taskWithTaskFile.task
             }
 
-
-
-    }
-
-    private  fun saveTaskToFireStore(taskWithTaskFile: TaskWithTaskFile) {
-        GlobalScope.launch {
-            remoteRepository.saveTask(taskWithTaskFileToTaskFS(taskWithTaskFile))
+            }catch (e: IOException) {
+            Log.e("ERROR_SAVE",e.message.toString())
         }
     }
 
 
-    private fun saveFileToStorage(taskWithTaskFile: TaskWithTaskFile){
-        if (taskWithTaskFile.list.isNotEmpty()) {
-            GlobalScope.launch(Dispatchers.IO) {
-                storage.saveFileToStorage(taskWithTaskFile)
-            }
-        }
-    }
 
     fun deleteTask(){
         viewModelScope.launch {
-            repository.deleteTask(task)
+            repository.deleteTask(taskWithTaskFile.task)
             taskWithTaskFile.list.let { list1 ->
                 list1.forEach { file->
                 file.let { repository.deleteTaskFile(it) }
@@ -222,12 +183,11 @@ class NewTaskViewModel(
             repository.getCurrentTask(uuid).collect {it->
                 if (it != null ){
                     taskWithTaskFile = it
-                    task = taskWithTaskFile.task
                     list.addAll(taskWithTaskFile.list)
                     _fileList.value = list
-                    setTime(task.eventHour, task.eventMinute)
-                    setDate(task.eventYear,task.eventMonth,task.eventDay)
-                    _titleAndDescription.value = task.title to task.description
+                    setTime(taskWithTaskFile.task.eventHour, taskWithTaskFile.task.eventMinute)
+                    setDate(taskWithTaskFile.task.eventYear,taskWithTaskFile.task.eventMonth,taskWithTaskFile.task.eventDay)
+                    _titleAndDescription.value = taskWithTaskFile.task.title to taskWithTaskFile.task.description
                 }
 
             }
@@ -238,7 +198,4 @@ class NewTaskViewModel(
         super.onCleared()
         _event.value = NewTaskEvent.IDL
     }
-
-
-
 }

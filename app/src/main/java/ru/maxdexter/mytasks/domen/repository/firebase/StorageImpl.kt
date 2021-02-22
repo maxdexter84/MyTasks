@@ -1,16 +1,20 @@
 package ru.maxdexter.mytasks.domen.repository.firebase
 
 import android.app.Application
+import android.util.Log
 import androidx.core.net.toUri
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.tasks.await
 import ru.maxdexter.mytasks.domen.models.TaskFS
 import ru.maxdexter.mytasks.domen.models.TaskFile
 import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
 import ru.maxdexter.mytasks.domen.repository.DataStorage
 import ru.maxdexter.mytasks.domen.repository.LoadingResponse
+import ru.maxdexter.mytasks.utils.loadstatus.LoadToCloudStatus
 import java.io.File
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -18,30 +22,45 @@ import kotlin.coroutines.suspendCoroutine
 @ExperimentalCoroutinesApi
 class StorageImpl(private val storage: FirebaseStorage, private val application: Application) : DataStorage {
     private val storageRef = storage.reference
+  override suspend fun saveFileToStorage(taskFileList: List<TaskFile>,userNumber: String): StateFlow<LoadToCloudStatus>{
+      val stateFlow = MutableStateFlow<LoadToCloudStatus>(LoadToCloudStatus.Loading)
+           try {
+               val userStorage = userNumber.let { storageRef.child(it) }
+               val resultList = mutableListOf<TaskFile>()
+               var taskFile: TaskFile
+               var count = 0
+               taskFileList.forEach{item->
+                   saveFile(userStorage,item).await()
+                       .task.addOnCompleteListener { task->
+                           if (task.isComplete && task.isSuccessful) {
+                               taskFile = item.copy()
+                               taskFile.saveToCloud = true
+                               taskFile.name = task.result?.metadata?.name.toString()
+                               taskFile.fileType = task.result?.metadata?.contentType.toString()
+                               task.result?.storage?.downloadUrl?.addOnSuccessListener {
+                                   taskFile.uri = it.toString()
+                               }
+                               resultList.add(taskFile)
+                               count++
+                           }
+                       }
+               }
 
+               stateFlow.value = LoadToCloudStatus.Success(taskFileList)
+           }catch (e: Exception){
+               stateFlow.value = LoadToCloudStatus.Error(e.message ?: "")
+               Log.e("UPLOAD_ERROR",e.message.toString())
+           }
+    return stateFlow
+   }
 
-    override  fun saveFileToStorage(taskWithTaskFile: TaskWithTaskFile): StateFlow<LoadingResponse> {
-        val stateFlow = MutableStateFlow<LoadingResponse>(LoadingResponse.Loading)
-        val uriList: MutableList<String> = mutableListOf()
-        try {
-            val userStorage = taskWithTaskFile.task.userNumber.let { storageRef.child(it) }
-            taskWithTaskFile.list.forEach { taskFile ->
-                userStorage.child(taskFile.name)
-                    .putFile(taskFile.uri.toUri()).addOnSuccessListener {
-                        uriList.add( it.storage.downloadUrl.toString())
-                    }.addOnFailureListener {
-                        stateFlow.value = LoadingResponse.Error(it.message ?: "")
-                    }
-                stateFlow.value = LoadingResponse.Success(uriList)
-            }
-        }catch (e: Exception){
-            stateFlow.value = LoadingResponse.Error(e.message ?: "")
-        }
-       return stateFlow
+    private  fun saveFile(storageReference: StorageReference, taskFile: TaskFile): UploadTask {
+        return storageReference.child(taskFile.name).putFile(taskFile.uri.toUri())
     }
 
 
     override suspend fun getFileFromStorage(uri: String, taskFS: TaskFS): LoadingResponse = suspendCoroutine { continuation ->
+        val storageRef = storage.reference
         continuation.resume(LoadingResponse.Loading)
         val userStorage = taskFS.userNumber.let { storageRef.child(it) }
         val list:MutableList<TaskFile> = mutableListOf()
@@ -62,6 +81,7 @@ class StorageImpl(private val storage: FirebaseStorage, private val application:
     }
 
     override suspend fun deleteFileFromStorage(name: String?, taskFS: TaskFS?): LoadingResponse = suspendCoroutine {
+        val storageRef = storage.reference
         val userStorage = taskFS?.userNumber?.let { storageRef.child(it) }
         if (name != null){
             val file = userStorage?.child(name)

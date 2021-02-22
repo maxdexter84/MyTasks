@@ -16,7 +16,7 @@ import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.adapters.HourAdapter
 import ru.maxdexter.mytasks.databinding.FragmentCalendarBinding
 import ru.maxdexter.mytasks.domen.models.Hour
-
+import ru.maxdexter.mytasks.utils.CheckNetwork
 
 
 class CalendarFragment : Fragment() {
@@ -37,34 +37,46 @@ class CalendarFragment : Fragment() {
 
 
 
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View {
+
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_calendar,container, false)
         calendarListener()
         initBottomAppBar()
-        calendarViewModel.selectedTask.observe(viewLifecycleOwner, Observer {
-            if (it != ""){
-                findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment(it))
-            }
-
-        })
-
-        binding.fab.setOnClickListener {
-            findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment()) }
+        selectedTaskObserver()
+        initFab()
 
         return binding.root
     }
 
+
+    private fun initFab() {
+        binding.fab.setOnClickListener {
+            findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment())
+        }
+    }
+
+
+
+    private fun selectedTaskObserver() {
+        calendarViewModel.selectedTask.observe(viewLifecycleOwner, Observer {
+            if (it != "") {
+                findNavController().navigate(
+                    CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment(
+                        it
+                    )
+                )
+            }
+        })
+    }
+
     override fun onResume() {
         super.onResume()
-
         calendarViewModel.listTaskFile.observe(viewLifecycleOwner, Observer {
             val hourList = calendarViewModel.updateData(it)
             initRecycler(hourList)
         })
+
 
     }
 

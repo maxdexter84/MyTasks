@@ -82,6 +82,8 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         newTaskViewModel.setAlarm.observe(viewLifecycleOwner, Observer{
             it?.let { createReminderAlarm(it) }
         })
+
+
         initSwAlarm()
         eventObserver()
         return binding.root
