@@ -9,7 +9,7 @@ import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import ru.maxdexter.mytasks.ui.MainActivity
+import ru.maxdexter.mytasks.ui.activity.MainActivity
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.data.localdatabase.entity.Task
 import ru.maxdexter.mytasks.utils.*

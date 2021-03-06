@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.ui
+package ru.maxdexter.mytasks.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

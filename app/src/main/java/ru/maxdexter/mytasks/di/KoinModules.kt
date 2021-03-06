@@ -18,7 +18,7 @@ import ru.maxdexter.mytasks.data.firebase.RemoteDataProviderImpl
 import ru.maxdexter.mytasks.data.firebase.StorageImpl
 import ru.maxdexter.mytasks.data.localdatabase.RoomDb
 import ru.maxdexter.mytasks.preferences.AppPreferences
-import ru.maxdexter.mytasks.ui.MainViewModel
+import ru.maxdexter.mytasks.ui.activity.MainViewModel
 import ru.maxdexter.mytasks.ui.calendar.CalendarViewModel
 import ru.maxdexter.mytasks.ui.newtask.NewTaskViewModel
 import ru.maxdexter.mytasks.ui.notifications.NotificationsViewModel
