@@ -18,7 +18,7 @@
         <item name="scrimBackground">@color/reply_white_50_alpha_060</item>
         <item name="android:statusBarColor">@color/reply_blue_50_alpha_060</item>
         <item name="colorPrimarySurfaceVariant">?attr/colorSurface</item>
-        <!--System/Platform attributes-->
+
         <item name="android:windowBackground">?android:colorBackground</item>
         <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
 

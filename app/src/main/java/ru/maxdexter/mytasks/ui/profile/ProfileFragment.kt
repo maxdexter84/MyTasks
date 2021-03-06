@@ -61,7 +61,6 @@ class ProfileFragment : BottomSheetDialogFragment() {
     }
 
     private fun setTheme() {
-
         binding.switchAppTheme.isChecked = isDarkTheme
         binding.switchAppTheme.setOnCheckedChangeListener { _, isChecked ->
             profileViewModel.setTheme(isChecked)

@@ -46,7 +46,6 @@ class ProfileViewModel(private val appPreferences: AppPreferences) : ViewModel()
 
     fun setTheme(isDarkTheme: Boolean){
         appPreferences.savePref(isDarkTheme,AppPreferences.IS_DARK_THEME)
-
     }
 
 

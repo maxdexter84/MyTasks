@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.adapters
+package ru.maxdexter.mytasks.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

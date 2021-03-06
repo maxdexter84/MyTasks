@@ -1,6 +1,5 @@
 package ru.maxdexter.mytasks.ui.calendar
 
-import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,15 +7,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.koin.android.viewmodel.ext.android.viewModel
 import ru.maxdexter.mytasks.R
-import ru.maxdexter.mytasks.adapters.HourAdapter
+import ru.maxdexter.mytasks.ui.adapters.HourAdapter
 import ru.maxdexter.mytasks.databinding.FragmentCalendarBinding
 import ru.maxdexter.mytasks.domen.models.Hour
-import ru.maxdexter.mytasks.utils.CheckNetwork
 
 
 class CalendarFragment : Fragment() {

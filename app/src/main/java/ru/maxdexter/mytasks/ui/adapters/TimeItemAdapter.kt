@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.adapters
+package ru.maxdexter.mytasks.ui.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

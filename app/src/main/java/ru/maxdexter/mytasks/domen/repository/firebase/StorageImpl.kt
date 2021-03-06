@@ -8,6 +8,7 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
 import ru.maxdexter.mytasks.domen.models.TaskFS
 import ru.maxdexter.mytasks.domen.models.TaskFile
@@ -27,26 +28,25 @@ class StorageImpl(private val storage: FirebaseStorage, private val application:
            try {
                val userStorage = userNumber.let { storageRef.child(it) }
                val resultList = mutableListOf<TaskFile>()
-               var taskFile: TaskFile
                var count = 0
                taskFileList.forEach{item->
-                   saveFile(userStorage,item).await()
+                  val resUri = saveFile(userStorage,item).await()
                        .task.addOnCompleteListener { task->
                            if (task.isComplete && task.isSuccessful) {
-                               taskFile = item.copy()
+                               val taskFile: TaskFile = item.copy()
                                taskFile.saveToCloud = true
                                taskFile.name = task.result?.metadata?.name.toString()
                                taskFile.fileType = task.result?.metadata?.contentType.toString()
                                task.result?.storage?.downloadUrl?.addOnSuccessListener {
                                    taskFile.uri = it.toString()
+                                   resultList.add(taskFile)
                                }
-                               resultList.add(taskFile)
                                count++
                            }
                        }
                }
 
-               stateFlow.value = LoadToCloudStatus.Success(taskFileList)
+               stateFlow.value = LoadToCloudStatus.Success(resultList)
            }catch (e: Exception){
                stateFlow.value = LoadToCloudStatus.Error(e.message ?: "")
                Log.e("UPLOAD_ERROR",e.message.toString())
