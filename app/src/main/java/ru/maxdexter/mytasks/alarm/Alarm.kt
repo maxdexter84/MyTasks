@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.utils
+package ru.maxdexter.mytasks.alarm
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
@@ -8,9 +8,8 @@ import android.content.pm.PackageManager
 import android.os.SystemClock
 import android.util.Log
 import androidx.core.app.AlarmManagerCompat
-import ru.maxdexter.mytasks.alarm.BootReceiver
-import ru.maxdexter.mytasks.alarm.NotificationReceiver
-import ru.maxdexter.mytasks.domen.models.Task
+import ru.maxdexter.mytasks.data.localdatabase.entity.Task
+import ru.maxdexter.mytasks.utils.mapDateToLong
 import java.util.*
 
 class Alarm {

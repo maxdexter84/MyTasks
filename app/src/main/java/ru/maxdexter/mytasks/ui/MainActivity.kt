@@ -12,7 +12,7 @@ import ru.maxdexter.mytasks.databinding.ActivityMainBinding
 import ru.maxdexter.mytasks.preferences.AppPreferences
 import ru.maxdexter.mytasks.utils.INTENT_TASK_UUID
 import org.koin.android.viewmodel.ext.android.viewModel
-import ru.maxdexter.mytasks.domen.repository.firebase.Auth
+import ru.maxdexter.mytasks.data.firebase.Auth
 import ru.maxdexter.mytasks.utils.CheckNetwork
 
 

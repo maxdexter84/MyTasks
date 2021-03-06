@@ -5,26 +5,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import ru.maxdexter.mytasks.domen.models.Hour
-import ru.maxdexter.mytasks.domen.models.TaskFS
-import ru.maxdexter.mytasks.domen.models.TaskFile
-import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
-import ru.maxdexter.mytasks.domen.repository.DataStorage
-import ru.maxdexter.mytasks.domen.repository.LoadingResponse
-import ru.maxdexter.mytasks.domen.repository.LocalDatabase
-import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
-import ru.maxdexter.mytasks.utils.loadstatus.LoadToCloudStatus
+import ru.maxdexter.mytasks.ui.entity.Hour
+import ru.maxdexter.mytasks.data.firebase.entity.TaskFS
+import ru.maxdexter.mytasks.data.localdatabase.entity.TaskWithTaskFile
+import ru.maxdexter.mytasks.repository.DataStorage
+import ru.maxdexter.mytasks.repository.LoadingResponse
+import ru.maxdexter.mytasks.repository.LocalDatabase
+import ru.maxdexter.mytasks.repository.RemoteDataProvider
 import ru.maxdexter.mytasks.utils.taskFSToTaskWithTaskFile
-import ru.maxdexter.mytasks.utils.taskWithTaskFileToTaskFS
-import java.io.IOException
 import java.util.*
 
 class CalendarViewModel(private val localDatabase: LocalDatabase, private val remoteDatabase: RemoteDataProvider, private val storage: DataStorage) : ViewModel() {

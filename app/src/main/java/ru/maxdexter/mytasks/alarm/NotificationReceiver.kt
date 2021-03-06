@@ -11,7 +11,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import ru.maxdexter.mytasks.ui.MainActivity
 import ru.maxdexter.mytasks.R
-import ru.maxdexter.mytasks.domen.models.Task
+import ru.maxdexter.mytasks.data.localdatabase.entity.Task
 import ru.maxdexter.mytasks.utils.*
 
 class NotificationReceiver : BroadcastReceiver() {
@@ -48,7 +48,7 @@ class NotificationReceiver : BroadcastReceiver() {
     companion object {
         fun getAlarmPendingIntent(
             context: Context,
-            task:Task
+            task: Task
         ): PendingIntent {
             val intent = Intent(context, NotificationReceiver::class.java)
             intent.apply {

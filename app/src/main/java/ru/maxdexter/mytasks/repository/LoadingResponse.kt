@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.domen.repository
+package ru.maxdexter.mytasks.repository
 
 sealed class LoadingResponse{
     class Success<T>(val data: T) : LoadingResponse()

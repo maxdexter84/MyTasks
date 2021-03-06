@@ -1,10 +1,9 @@
-package ru.maxdexter.mytasks.domen.repository
+package ru.maxdexter.mytasks.repository
 
 
 import kotlinx.coroutines.flow.StateFlow
-import ru.maxdexter.mytasks.domen.models.TaskFS
-import ru.maxdexter.mytasks.domen.models.TaskFile
-import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
+import ru.maxdexter.mytasks.data.firebase.entity.TaskFS
+import ru.maxdexter.mytasks.data.localdatabase.entity.TaskFile
 import ru.maxdexter.mytasks.utils.loadstatus.LoadToCloudStatus
 
 

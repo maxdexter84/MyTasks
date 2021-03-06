@@ -1,6 +1,7 @@
-package ru.maxdexter.mytasks.domen.models
+package ru.maxdexter.mytasks.data.firebase.entity
 
 import com.google.firebase.Timestamp
+import ru.maxdexter.mytasks.data.localdatabase.entity.TaskFile
 import java.util.*
 
 

@@ -24,10 +24,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.maxdexter.mytasks.R
+import ru.maxdexter.mytasks.alarm.Alarm
 import ru.maxdexter.mytasks.ui.adapters.FileAdapter
 import ru.maxdexter.mytasks.databinding.FragmentNewTaskBinding
-import ru.maxdexter.mytasks.domen.models.Task
+import ru.maxdexter.mytasks.data.localdatabase.entity.Task
 import ru.maxdexter.mytasks.utils.*
+import ru.maxdexter.mytasks.utils.contracts.TakeFileContract
+import ru.maxdexter.mytasks.utils.contracts.TakeImageContract
 import java.util.*
 
 class NewTaskFragment : BottomSheetDialogFragment() {

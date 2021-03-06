@@ -1,29 +1,22 @@
 package ru.maxdexter.mytasks.utils
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.FileProvider
 import com.google.firebase.Timestamp
 import com.google.firebase.inject.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import ru.maxdexter.mytasks.domen.models.Task
-import ru.maxdexter.mytasks.domen.models.TaskFS
-import ru.maxdexter.mytasks.domen.models.TaskFile
-import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
-import ru.maxdexter.mytasks.ui.newtask.NewTaskViewModel
+import ru.maxdexter.mytasks.data.localdatabase.entity.Task
+import ru.maxdexter.mytasks.data.firebase.entity.TaskFS
+import ru.maxdexter.mytasks.data.localdatabase.entity.TaskFile
+import ru.maxdexter.mytasks.data.localdatabase.entity.TaskWithTaskFile
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 fun mapDateToLong(year: Int, month: Int, day: Int, hour: Int, minute: Int): Long{
     return GregorianCalendar(year,month,day,hour,minute).timeInMillis

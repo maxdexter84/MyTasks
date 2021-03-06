@@ -9,10 +9,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.maxdexter.mytasks.domen.models.*
-import ru.maxdexter.mytasks.domen.repository.DataStorage
-import ru.maxdexter.mytasks.domen.repository.LocalDatabase
-import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
+import ru.maxdexter.mytasks.data.localdatabase.entity.Task
+import ru.maxdexter.mytasks.data.localdatabase.entity.TaskWithTaskFile
+import ru.maxdexter.mytasks.repository.DataStorage
+import ru.maxdexter.mytasks.repository.LocalDatabase
+import ru.maxdexter.mytasks.repository.RemoteDataProvider
 import ru.maxdexter.mytasks.utils.loadstatus.LoadToCloudStatus
 import ru.maxdexter.mytasks.utils.taskWithTaskFileToTaskFS
 import java.io.IOException

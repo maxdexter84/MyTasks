@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.utils
+package ru.maxdexter.mytasks.utils.contracts
 
 import android.app.Activity
 import android.content.Context

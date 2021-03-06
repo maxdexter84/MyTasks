@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.domen.repository.firebase
+package ru.maxdexter.mytasks.data.firebase
 
 import android.app.Activity
 import android.content.Context

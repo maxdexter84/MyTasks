@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.domen.models
+package ru.maxdexter.mytasks.data.localdatabase.entity
 
 import androidx.room.Embedded
 import androidx.room.Relation

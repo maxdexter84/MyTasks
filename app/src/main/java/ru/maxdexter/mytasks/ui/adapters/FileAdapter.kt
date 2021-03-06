@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.maxdexter.mytasks.databinding.ItemFileBinding
-import ru.maxdexter.mytasks.domen.models.TaskFile
-import ru.maxdexter.mytasks.utils.setImagePrev
+import ru.maxdexter.mytasks.data.localdatabase.entity.TaskFile
+import ru.maxdexter.mytasks.utils.extension.setImagePrev
 
 class FileAdapter: ListAdapter<TaskFile,FileAdapter.ViewHolder>(TaskDiffCallback()) {
     class ViewHolder(val binding: ItemFileBinding):RecyclerView.ViewHolder(binding.root) {

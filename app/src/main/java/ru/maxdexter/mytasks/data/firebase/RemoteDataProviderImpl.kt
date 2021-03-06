@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.domen.repository.firebase
+package ru.maxdexter.mytasks.data.firebase
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
@@ -8,10 +8,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinApiExtension
-import ru.maxdexter.mytasks.domen.models.TaskFS
-import ru.maxdexter.mytasks.domen.models.User
-import ru.maxdexter.mytasks.domen.repository.LoadingResponse
-import ru.maxdexter.mytasks.domen.repository.RemoteDataProvider
+import ru.maxdexter.mytasks.data.firebase.entity.TaskFS
+import ru.maxdexter.mytasks.data.firebase.entity.User
+import ru.maxdexter.mytasks.repository.LoadingResponse
+import ru.maxdexter.mytasks.repository.RemoteDataProvider
 import ru.maxdexter.mytasks.utils.TASKS_COLLECTION
 import ru.maxdexter.mytasks.utils.USERS_COLLECTION
 import java.io.IOException

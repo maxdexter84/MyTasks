@@ -6,13 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import org.koin.android.viewmodel.ext.android.viewModel
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.databinding.FragmentProfileBinding
-import ru.maxdexter.mytasks.domen.repository.firebase.Auth
+import ru.maxdexter.mytasks.data.firebase.Auth
 import ru.maxdexter.mytasks.preferences.AppPreferences
 
 class ProfileFragment : BottomSheetDialogFragment() {

@@ -13,7 +13,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import ru.maxdexter.mytasks.R
 import ru.maxdexter.mytasks.ui.adapters.HourAdapter
 import ru.maxdexter.mytasks.databinding.FragmentCalendarBinding
-import ru.maxdexter.mytasks.domen.models.Hour
+import ru.maxdexter.mytasks.ui.entity.Hour
 
 
 class CalendarFragment : Fragment() {

@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.domen.repository.firebase
+package ru.maxdexter.mytasks.data.firebase
 
 import android.app.Application
 import android.util.Log
@@ -8,13 +8,11 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
-import ru.maxdexter.mytasks.domen.models.TaskFS
-import ru.maxdexter.mytasks.domen.models.TaskFile
-import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
-import ru.maxdexter.mytasks.domen.repository.DataStorage
-import ru.maxdexter.mytasks.domen.repository.LoadingResponse
+import ru.maxdexter.mytasks.data.firebase.entity.TaskFS
+import ru.maxdexter.mytasks.data.localdatabase.entity.TaskFile
+import ru.maxdexter.mytasks.repository.DataStorage
+import ru.maxdexter.mytasks.repository.LoadingResponse
 import ru.maxdexter.mytasks.utils.loadstatus.LoadToCloudStatus
 import java.io.File
 import kotlin.coroutines.resume
@@ -23,7 +21,7 @@ import kotlin.coroutines.suspendCoroutine
 @ExperimentalCoroutinesApi
 class StorageImpl(private val storage: FirebaseStorage, private val application: Application) : DataStorage {
     private val storageRef = storage.reference
-  override suspend fun saveFileToStorage(taskFileList: List<TaskFile>,userNumber: String): StateFlow<LoadToCloudStatus>{
+  override suspend fun saveFileToStorage(taskFileList: List<TaskFile>, userNumber: String): StateFlow<LoadToCloudStatus>{
       val stateFlow = MutableStateFlow<LoadToCloudStatus>(LoadToCloudStatus.Loading)
            try {
                val userStorage = userNumber.let { storageRef.child(it) }

@@ -1,11 +1,10 @@
-package ru.maxdexter.mytasks.domen.repository.localdatabase
+package ru.maxdexter.mytasks.data.localdatabase
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
-import ru.maxdexter.mytasks.domen.models.Task
-import ru.maxdexter.mytasks.domen.models.TaskFile
-import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
+import ru.maxdexter.mytasks.data.localdatabase.entity.Task
+import ru.maxdexter.mytasks.data.localdatabase.entity.TaskFile
+import ru.maxdexter.mytasks.data.localdatabase.entity.TaskWithTaskFile
 
 @Dao
 interface TaskDao {
@@ -27,7 +26,7 @@ interface TaskDao {
     fun getTaskWithTaskFile(uuid: String) : Flow<TaskWithTaskFile>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addTaskFile(file:TaskFile)
+    fun addTaskFile(file: TaskFile)
 
     @Delete
     fun deleteTaskFile(file: TaskFile)

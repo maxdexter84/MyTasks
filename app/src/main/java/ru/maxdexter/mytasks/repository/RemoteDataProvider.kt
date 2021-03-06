@@ -1,11 +1,9 @@
-package ru.maxdexter.mytasks.domen.repository
+package ru.maxdexter.mytasks.repository
 
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.inject.Deferred
 import kotlinx.coroutines.flow.Flow
-import ru.maxdexter.mytasks.domen.models.Task
-import ru.maxdexter.mytasks.domen.models.TaskFS
-import ru.maxdexter.mytasks.domen.models.User
+import ru.maxdexter.mytasks.data.firebase.entity.TaskFS
+import ru.maxdexter.mytasks.data.firebase.entity.User
 
 interface RemoteDataProvider {
     fun getUserTasksCollection(): CollectionReference

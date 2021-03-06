@@ -1,21 +1,13 @@
-package ru.maxdexter.mytasks.utils
+package ru.maxdexter.mytasks.utils.extension
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.media.Image
-import android.net.Uri
-import android.util.Log
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
 import com.bumptech.glide.request.RequestOptions
-import com.google.rpc.context.AttributeContext
 import ru.maxdexter.mytasks.R
-import java.io.File
-import java.net.URI
 
 fun <T> ImageView.setImage(uri: T){
     Glide.with(this.context).load(uri).apply(RequestOptions().placeholder(R.drawable.loading_animation).error(R.drawable.ic_brocken_img)).diskCacheStrategy(

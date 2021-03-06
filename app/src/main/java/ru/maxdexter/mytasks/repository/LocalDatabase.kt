@@ -1,10 +1,9 @@
-package ru.maxdexter.mytasks.domen.repository
+package ru.maxdexter.mytasks.repository
 
-import androidx.lifecycle.LiveData
 import kotlinx.coroutines.flow.Flow
-import ru.maxdexter.mytasks.domen.models.Task
-import ru.maxdexter.mytasks.domen.models.TaskFile
-import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
+import ru.maxdexter.mytasks.data.localdatabase.entity.Task
+import ru.maxdexter.mytasks.data.localdatabase.entity.TaskFile
+import ru.maxdexter.mytasks.data.localdatabase.entity.TaskWithTaskFile
 
 
 interface LocalDatabase {

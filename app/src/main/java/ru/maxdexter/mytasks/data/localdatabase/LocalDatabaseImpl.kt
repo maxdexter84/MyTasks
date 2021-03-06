@@ -1,14 +1,13 @@
-package ru.maxdexter.mytasks.domen.repository.localdatabase
+package ru.maxdexter.mytasks.data.localdatabase
 
-import androidx.lifecycle.LiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import ru.maxdexter.mytasks.domen.models.Task
-import ru.maxdexter.mytasks.domen.models.TaskFile
-import ru.maxdexter.mytasks.domen.models.TaskWithTaskFile
-import ru.maxdexter.mytasks.domen.repository.LocalDatabase
+import ru.maxdexter.mytasks.data.localdatabase.entity.Task
+import ru.maxdexter.mytasks.data.localdatabase.entity.TaskFile
+import ru.maxdexter.mytasks.data.localdatabase.entity.TaskWithTaskFile
+import ru.maxdexter.mytasks.repository.LocalDatabase
 
 class LocalDatabaseImpl(private val database: RoomDb): LocalDatabase {
 
@@ -34,7 +33,7 @@ class LocalDatabaseImpl(private val database: RoomDb): LocalDatabase {
         return database.getDao().getTaskWithTaskFile(uuid).flowOn(Dispatchers.IO)
     }
 
-    override suspend fun deleteTask(task:Task) {
+    override suspend fun deleteTask(task: Task) {
         withContext(Dispatchers.IO){
             database.getDao().deleteTask(task)
         }

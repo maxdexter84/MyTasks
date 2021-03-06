@@ -3,10 +3,9 @@ package ru.maxdexter.mytasks.ui.profile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import ru.maxdexter.mytasks.domen.models.User
+import ru.maxdexter.mytasks.data.firebase.entity.User
 import ru.maxdexter.mytasks.preferences.AppPreferences
 import ru.maxdexter.mytasks.preferences.AppPreferences.Companion.IS_AUTH
 
