@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="bottomNavigationAttr" format="reference"/>
+    <attr name="dateTimeTextAttr" format="reference"/>
+    <attr name="addButtonAttr" format="reference"/>
+    <attr name="colorPrimarySurfaceVariant" format="color" />
+
+    <attr name="textStyle" format="reference"/>
+</resources>

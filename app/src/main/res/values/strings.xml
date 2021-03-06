@@ -3,4 +3,28 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="event_name">Event name</string>
+    <string name="event_description">Description</string>
+    <string name="date_hint">06 october 2020</string>
+    <string name="time_hint">22:50</string>
+    <string name="add_button">Add</string>
+    <string name="close_button">Close</string>
+    <string name="repeat">Repeat</string>
+    <string name="title_note">Note</string>
+    <string name="title_calendar">Calendar</string>
+    <string name="Authentication">Authentication</string>
+    <string name="synchronization">Synchronization</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="login">In</string>
+    <string name="logout">Out</string>
+    <string name="add_new_task_fab_description">Add new task</string>
+    <string name="notification_channel_id">channel_id</string>
+    <string name="time_unit_title">Unit</string>
+    <string name="alarm">Alarm on/of</string>
+
+
+    <!-- Messages -->
+    <string name="set_permissions_in_settings">Go to Settings -> Apps and Notifications ->
+        WorkManager Demo -> App Permissions and grant access to Storage.</string>
 </resources>

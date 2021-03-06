@@ -1,10 +1,54 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/reply_blue_700</item>
+        <item name="colorPrimaryVariant">@color/reply_blue_800</item>
+        <item name="colorSecondary">@color/reply_orange_500</item>
+        <item name="colorSecondaryVariant">@color/reply_orange_400</item>
+
+        <item name="android:colorBackground">@color/reply_blue_50</item>
+        <item name="colorSurface">@color/reply_white_50</item>
+        <item name="colorError">@color/reply_red_400</item>
+
+        <item name="colorOnPrimary">@color/reply_white_50</item>
+        <item name="colorOnSecondary">@color/reply_black_900</item>
+        <item name="colorOnBackground">@color/reply_black_900</item>
+        <item name="colorOnSurface">@color/reply_black_900</item>
+        <item name="colorOnError">@color/reply_black_900</item>
+        <item name="scrimBackground">@color/reply_white_50_alpha_060</item>
+        <item name="android:statusBarColor">@color/reply_blue_50_alpha_060</item>
+        <item name="colorPrimarySurfaceVariant">?attr/colorSurface</item>
+        <!--System/Platform attributes-->
+        <item name="android:windowBackground">?android:colorBackground</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+
+        <item name="dateTimeTextAttr">@style/dateTime</item>
+        <item name="addButtonAttr">@style/addButtonStyle</item>
+        <item name="textStyle">@style/TextStyle</item>
+    </style>
+    
+
+
+    <style name="dateTime" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/colorTextDay</item>
+        <item name="android:textSize">@dimen/big_text_24sp</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="addButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/reply_orange_500</item>
+        <item name="fontFamily">@font/rubik</item>
+        <item name="cornerRadius">@dimen/min_space_0dp</item>
+    </style>
+
+    <style name="TextStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">@dimen/normal_text_16sp</item>
+        <item name="android:fontFamily">@font/roboto</item>
+    </style>
+
+    <style name="MySwitchStyle" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="thumbTint">@color/selector_switch_thumb</item>
     </style>
 
 </resources>
