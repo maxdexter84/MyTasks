@@ -14,4 +14,5 @@ class UITask(val id: String = UUID.randomUUID().toString(),
              val isCompleted: Boolean = false,
              val repeat: Boolean = false,
              val repeatRangeValue: Long = 0L,
+             val fileList: List<UIFile>,
              val userNumber: String = "")
