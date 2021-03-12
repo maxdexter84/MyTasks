@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="ru.maxdexter.mytasks">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -38,9 +37,9 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
         <receiver
-            android:name=".alarm.NotificationReceiver"
+            android:name=".utils.alarm.NotificationReceiver"
             android:enabled="true"/>
-        <receiver android:name=".alarm.BootReceiver"
+        <receiver android:name=".utils.alarm.BootReceiver"
             android:enabled="true"
             android:exported="false"
             >

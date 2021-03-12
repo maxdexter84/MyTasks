@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.ui.calendar
+package ru.maxdexter.mytasks.ui.fragments.calendar
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -28,7 +27,11 @@ class CalendarFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val args = arguments?.let { CalendarFragmentArgs.fromBundle(it) }?.taskUUID
         if (args != null && args != "empty"){
-            findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment(args))
+            findNavController().navigate(
+                CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment(
+                    args
+                )
+            )
         }
     }
 
@@ -56,7 +59,7 @@ class CalendarFragment : Fragment() {
 
 
     private fun selectedTaskObserver() {
-        calendarViewModel.selectedTask.observe(viewLifecycleOwner, Observer {
+        calendarViewModel.selectedTask.observe(viewLifecycleOwner,  {
             if (it != "") {
                 findNavController().navigate(
                     CalendarFragmentDirections.actionCalendarFragmentToNewTaskFragment(
@@ -69,7 +72,7 @@ class CalendarFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        calendarViewModel.listTaskFile.observe(viewLifecycleOwner, Observer {
+        calendarViewModel.listUITask.observe(viewLifecycleOwner,  {
             val hourList = calendarViewModel.updateData(it)
             initRecycler(hourList)
         })
@@ -80,7 +83,7 @@ class CalendarFragment : Fragment() {
 
 
     private fun calendarListener() {
-        binding.calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+        binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             calendarViewModel.loadData(year, month, dayOfMonth)
         }
     }

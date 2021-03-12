@@ -1,52 +1,46 @@
 package ru.maxdexter.mytasks.data.localdatabase
 
+import androidx.lifecycle.LiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import ru.maxdexter.mytasks.data.localdatabase.entity.Task
 import ru.maxdexter.mytasks.data.localdatabase.entity.TaskFile
 import ru.maxdexter.mytasks.data.localdatabase.entity.TaskWithTaskFile
-import ru.maxdexter.mytasks.repository.LocalDatabase
 
-class LocalDatabaseImpl(private val database: RoomDb): LocalDatabase {
+class LocalDatabaseImpl(private val dao: TaskDao): ILocalDatabase {
 
     override suspend fun saveTask(taskWithTaskFile: TaskWithTaskFile) {
         withContext(Dispatchers.IO){
-            database.getDao().insertTaskWithTaskFile(taskWithTaskFile)
+            dao.insertTaskWithTaskFile(taskWithTaskFile)
         }
     }
 
     override fun  getAllTask(): Flow<List<TaskWithTaskFile>> {
-       return database.getDao().getAllTask().flowOn(Dispatchers.IO)
+       return dao.getAllTask().flowOn(Dispatchers.IO)
     }
 
     override fun getAllTaskWithTaskFile(year: Int, month: Int, day: Int): Flow<List<TaskWithTaskFile>> {
-        return database.getDao().getAllTaskWithTaskFile(year,month, day).flowOn(Dispatchers.IO)
+        return dao.getAllTaskWithTaskFile(year,month, day).flowOn(Dispatchers.IO)
     }
 
-    override fun getTaskWithTaskFile(uuid: String): Flow<TaskWithTaskFile> {
-       return database.getDao().getTaskWithTaskFile(uuid).flowOn(Dispatchers.IO)
-    }
-
-    override fun getCurrentTask(uuid: String): Flow<TaskWithTaskFile> {
-        return database.getDao().getTaskWithTaskFile(uuid).flowOn(Dispatchers.IO)
+    override fun getCurrentTask(uuid: String): LiveData<TaskWithTaskFile> {
+        return dao.getTaskWithTaskFile(uuid)
     }
 
     override suspend fun deleteTask(task: Task) {
         withContext(Dispatchers.IO){
-            database.getDao().deleteTask(task)
+            dao.deleteTask(task)
         }
 
     }
 
-    override suspend fun addTaskFile(taskFile: TaskFile) {
-        TODO("Not yet implemented")
-    }
 
     override suspend fun deleteTaskFile(taskFile: TaskFile) {
         withContext(Dispatchers.IO){
-            database.getDao().deleteTaskFile(taskFile)
+            dao.deleteTaskFile(taskFile)
         }
     }
 

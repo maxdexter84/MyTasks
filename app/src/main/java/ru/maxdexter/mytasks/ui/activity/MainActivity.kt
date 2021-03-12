@@ -49,18 +49,10 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        viewModel.dataToSync.observe(this,  {
-            viewModel.startSaveToCloud(it)
-        })
+
 
 
     }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.getCurrentTaskList()
-    }
-
 
     private fun checkNetworkObserver() {
         CheckNetwork(this).observe(this,  {

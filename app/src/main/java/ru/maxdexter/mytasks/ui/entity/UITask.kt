@@ -2,7 +2,7 @@ package ru.maxdexter.mytasks.ui.entity
 
 import java.util.*
 
-class UITask(val id: String = UUID.randomUUID().toString(),
+data class UITask(val id: String = UUID.randomUUID().toString(),
              val title: String = "",
              val description: String = "",
              val pushMessage: Boolean = false,
@@ -13,6 +13,6 @@ class UITask(val id: String = UUID.randomUUID().toString(),
              val eventMinute: Int = 0,
              val isCompleted: Boolean = false,
              val repeat: Boolean = false,
-             val repeatRangeValue: Long = 0L,
-             val fileList: List<UIFile>,
+             val repeatRangeValue: Int = -1,
+             val fileList: List<UIFile> = emptyList(),
              val userNumber: String = "")

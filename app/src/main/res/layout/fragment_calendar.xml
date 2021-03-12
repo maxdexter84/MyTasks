@@ -6,14 +6,14 @@
     <data>
         <variable
             name="viewModel"
-            type="ru.maxdexter.mytasks.ui.calendar.CalendarViewModel" />
+            type="ru.maxdexter.mytasks.ui.fragments.calendar.CalendarViewModel" />
 
     </data>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.calendar.CalendarFragment">
+        tools:context=".ui.fragments.calendar.CalendarFragment">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayout"

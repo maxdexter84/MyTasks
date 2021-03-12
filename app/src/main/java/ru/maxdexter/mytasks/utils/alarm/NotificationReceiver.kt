@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.alarm
+package ru.maxdexter.mytasks.utils.alarm
 
 import android.app.NotificationManager
 import android.app.PendingIntent

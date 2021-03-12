@@ -7,15 +7,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.maxdexter.mytasks.databinding.ItemFileBinding
 import ru.maxdexter.mytasks.data.localdatabase.entity.TaskFile
+import ru.maxdexter.mytasks.ui.entity.UIFile
 import ru.maxdexter.mytasks.utils.extension.setImagePrev
 
-class FileAdapter: ListAdapter<TaskFile,FileAdapter.ViewHolder>(TaskDiffCallback()) {
+class FileAdapter: ListAdapter<UIFile,FileAdapter.ViewHolder>(TaskDiffCallback()) {
     class ViewHolder(val binding: ItemFileBinding):RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: TaskFile){
+        fun bind(item: UIFile){
             binding.ivFile.setImagePrev(item.uri, item.fileType)
             binding.tvFileName.text = item.name
-
         }
 
         companion object{
@@ -39,12 +39,12 @@ class FileAdapter: ListAdapter<TaskFile,FileAdapter.ViewHolder>(TaskDiffCallback
         holder.bind(item)
     }
 
-    class TaskDiffCallback :  DiffUtil.ItemCallback<TaskFile>(){
-        override fun areItemsTheSame(oldItem: TaskFile, newItem: TaskFile): Boolean {
+    class TaskDiffCallback :  DiffUtil.ItemCallback<UIFile>(){
+        override fun areItemsTheSame(oldItem: UIFile, newItem: UIFile): Boolean {
             return oldItem == newItem
         }
 
-        override fun areContentsTheSame(oldItem: TaskFile, newItem: TaskFile): Boolean {
+        override fun areContentsTheSame(oldItem: UIFile, newItem: UIFile): Boolean {
            return oldItem.uri == newItem.uri
         }
 

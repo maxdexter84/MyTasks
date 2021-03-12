@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.alarm
+package ru.maxdexter.mytasks.utils.alarm
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager

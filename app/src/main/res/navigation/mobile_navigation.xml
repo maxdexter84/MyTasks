@@ -7,7 +7,7 @@
 
     <dialog
         android:id="@+id/newTaskFragment"
-        android:name="ru.maxdexter.mytasks.ui.newtask.NewTaskFragment"
+        android:name="ru.maxdexter.mytasks.ui.fragments.newtask.NewTaskFragment"
         android:label="NewTaskFragment" >
         <argument
             android:name="taskUUID"
@@ -16,7 +16,7 @@
     </dialog><action android:id="@+id/action_global_newTaskFragment" app:destination="@id/newTaskFragment"/>
     <fragment
         android:id="@+id/calendarFragment"
-        android:name="ru.maxdexter.mytasks.ui.calendar.CalendarFragment"
+        android:name="ru.maxdexter.mytasks.ui.fragments.calendar.CalendarFragment"
         android:label="CalendarFragment" >
         <action
             android:id="@+id/action_calendarFragment_to_profileFragment"
@@ -36,10 +36,10 @@
     <action android:id="@+id/action_global_calendarFragment" app:destination="@id/calendarFragment" />
     <dialog
         android:id="@+id/profileFragment"
-        android:name="ru.maxdexter.mytasks.ui.profile.ProfileFragment"
+        android:name="ru.maxdexter.mytasks.ui.fragments.profile.ProfileFragment"
         android:label="ProfileFragment" />
     <dialog
         android:id="@+id/notificationsFragment"
-        android:name="ru.maxdexter.mytasks.ui.notifications.NotificationsFragment"
+        android:name="ru.maxdexter.mytasks.ui.fragments.notifications.NotificationsFragment"
         android:label="NotificationsFragment" />
 </navigation>

@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.ui.profile
+package ru.maxdexter.mytasks.ui.fragments.profile
 
 
 import android.os.Bundle

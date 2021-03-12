@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.ui.newtask
+package ru.maxdexter.mytasks.ui.fragments.newtask
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -21,18 +21,22 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.component.KoinApiExtension
 import org.koin.core.parameter.parametersOf
 import ru.maxdexter.mytasks.R
-import ru.maxdexter.mytasks.alarm.Alarm
-import ru.maxdexter.mytasks.ui.adapters.FileAdapter
 import ru.maxdexter.mytasks.databinding.FragmentNewTaskBinding
-import ru.maxdexter.mytasks.data.localdatabase.entity.Task
+import ru.maxdexter.mytasks.utils.alarm.Alarm
+import ru.maxdexter.mytasks.ui.adapters.FileAdapter
+import ru.maxdexter.mytasks.domen.extension.mapToTaskWithTaskFile
+import ru.maxdexter.mytasks.ui.entity.UITask
 import ru.maxdexter.mytasks.utils.*
 import ru.maxdexter.mytasks.utils.contracts.TakeFileContract
 import ru.maxdexter.mytasks.utils.contracts.TakeImageContract
 import java.util.*
 
+@InternalCoroutinesApi
 class NewTaskFragment : BottomSheetDialogFragment() {
 
     private lateinit var  binding: FragmentNewTaskBinding
@@ -40,19 +44,17 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     private val alarmManager by lazy {
         requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
     }
-    private val currentTaskUUID by lazy {
-        arguments?.let { NewTaskFragmentArgs.fromBundle(it) }?.taskUUID
-    }
 
-    private val newTaskViewModel: NewTaskViewModel by viewModel { parametersOf(currentTaskUUID) }
+    private val uiTask = UITask()
+    private val newTaskViewModel: NewTaskViewModel by viewModel { parametersOf("") }
 
     private val adapter: FileAdapter by lazy { FileAdapter() }
 
     private val getPhoto = registerForActivityResult(TakeImageContract()){
-           it?.let { newTaskViewModel.createTaskFile(it) }
+           it?.let { newTaskViewModel.createUIFile(it) }
     }
     private val getDocument = registerForActivityResult(TakeFileContract()){ pair->
-          pair?.let {  newTaskViewModel.createTaskFile(it) }
+          pair?.let {  newTaskViewModel.createUIFile(it) }
     }
 
     override fun onAttach(context: Context) {
@@ -63,25 +65,16 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     @SuppressLint("ShowToast")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_task, container, false)
-        if (currentTaskUUID != "empty") binding.ibAddDelete.visibility = View.VISIBLE
         binding.viewModel = newTaskViewModel
         binding.executePendingBindings()
 
-
-
-        newTaskViewModel.titleAndDescription.observe(viewLifecycleOwner, Observer{ pair->
-            pair?.let {
-                binding.tvTitle.setText(it.first)
-                binding.tvTaskDescription.setText(it.second)
-            }
-        })
         dateObserver()
         timeObserver()
         initDatePicker()
         initTimePicker()
         initRecycler()
 
-        newTaskViewModel.setAlarm.observe(viewLifecycleOwner, Observer{
+        newTaskViewModel.setAlarm.observe(viewLifecycleOwner, {
             it?.let { createReminderAlarm(it) }
         })
 
@@ -92,7 +85,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     }
 
     private fun eventObserver(){
-        newTaskViewModel.event.observe(viewLifecycleOwner, Observer{ event ->
+        newTaskViewModel.event.observe(viewLifecycleOwner, { event ->
             Toast.makeText(requireContext(),event.name,Toast.LENGTH_SHORT).show()
             when(event){
                 NewTaskViewModel.NewTaskEvent.IDL -> Log.i("NEW_TASK_EVENT_LISTENER",event.name)
@@ -146,7 +139,7 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     }
 
     private fun initSwAlarm() {
-        binding.swAlarm.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.swAlarm.setOnCheckedChangeListener { _, isChecked ->
             when (isChecked) {
                 true -> {
                     binding.switchRepeatTask.isEnabled = true
@@ -168,12 +161,14 @@ class NewTaskFragment : BottomSheetDialogFragment() {
 
 
 
+    @KoinApiExtension
     private fun saveAndClose() {
             val title = binding.tvTitle.text.toString()
             val desc = binding.tvTaskDescription.text.toString()
             val alarm = binding.swAlarm.isChecked
             val repeat = binding.switchRepeatTask.isChecked
             val repeatRange = if(binding.switchRepeatTask.isChecked)binding.spinnerUnit.selectedItemPosition else -1
+            val task = uiTask.copy(title = title,description = desc,pushMessage = alarm,repeatRangeValue = repeatRange, repeat = repeat)
             newTaskViewModel.saveTaskChange(title, desc,alarm, repeat, repeatRange)
             dismiss()
     }
@@ -187,20 +182,20 @@ class NewTaskFragment : BottomSheetDialogFragment() {
     }
 
     private fun dateObserver() {
-        newTaskViewModel.liveDate.observe(viewLifecycleOwner, Observer{
+        newTaskViewModel.date.observe(viewLifecycleOwner, Observer{
             binding.tvDateChange.text = it
         })
     }
 
     private fun timeObserver() {
-        newTaskViewModel.liveTime.observe(viewLifecycleOwner, Observer{
+        newTaskViewModel.time.observe(viewLifecycleOwner, Observer{
             binding.tvTimeChange.text = it
         })
     }
 
     @SuppressLint("SetTextI18n")
     private fun initDatePicker() {
-        val listener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+        val listener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
             newTaskViewModel.setDate(year,month,dayOfMonth)
         }
         binding.tvDateChange.setOnClickListener {
@@ -225,11 +220,11 @@ class NewTaskFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun createReminderAlarm(task: Task) {
+    private fun createReminderAlarm(task: UITask) {
         if (!task.isCompleted) {
             Alarm.createAlarm(
                 requireContext(),
-                task,
+                task.mapToTaskWithTaskFile().task,
                 alarmManager
             )
         }

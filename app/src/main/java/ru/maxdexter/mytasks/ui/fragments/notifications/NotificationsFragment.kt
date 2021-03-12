@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.ui.notifications
+package ru.maxdexter.mytasks.ui.fragments.notifications
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,7 +22,7 @@ class NotificationsFragment : BottomSheetDialogFragment() {
 
         val root = inflater.inflate(R.layout.fragment_notifications, container, false)
         val textView: TextView = root.findViewById(R.id.text_notifications)
-        notificationsViewModel.text.observe(viewLifecycleOwner, Observer {
+        notificationsViewModel.text.observe(viewLifecycleOwner,  {
             textView.text = it
         })
         return root

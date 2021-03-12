@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.maxdexter.mytasks.databinding.ItemHourLayoutBinding
 import ru.maxdexter.mytasks.ui.entity.Hour
-import ru.maxdexter.mytasks.ui.calendar.CalendarViewModel
+import ru.maxdexter.mytasks.ui.fragments.calendar.CalendarViewModel
 
 class HourAdapter(private val viewModel: CalendarViewModel): RecyclerView.Adapter<HourAdapter.ViewHolder>() {
 

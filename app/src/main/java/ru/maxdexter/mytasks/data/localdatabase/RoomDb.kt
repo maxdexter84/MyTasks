@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import ru.maxdexter.mytasks.data.localdatabase.entity.Task
 import ru.maxdexter.mytasks.data.localdatabase.entity.TaskFile
 
-@Database(entities = [Task::class, TaskFile::class], version = 1)
+@Database(entities = [Task::class, TaskFile::class], version = 1,exportSchema = false)
 abstract class RoomDb: RoomDatabase() {
    abstract fun getDao():TaskDao
 

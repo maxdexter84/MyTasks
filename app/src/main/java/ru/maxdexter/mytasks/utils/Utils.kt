@@ -11,6 +11,7 @@ import ru.maxdexter.mytasks.data.localdatabase.entity.Task
 import ru.maxdexter.mytasks.data.firebase.entity.TaskFS
 import ru.maxdexter.mytasks.data.localdatabase.entity.TaskFile
 import ru.maxdexter.mytasks.data.localdatabase.entity.TaskWithTaskFile
+import ru.maxdexter.mytasks.ui.entity.UITask
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -29,9 +30,9 @@ fun mapDateToLong(year: Int, month: Int, day: Int, hour: Int, minute: Int): Long
     return "$day $month $year"
 }
 
- fun handleParseTime(taskWithTaskFile: TaskWithTaskFile):String {
-    val minute = taskWithTaskFile.task.eventMinute.let { if (it < 10) "0$it" else "$it"}
-    val hour = taskWithTaskFile.task.eventHour.let { if (it < 10) "0$it" else "$it"}
+ fun handleParseTime(item: UITask):String {
+    val minute = item.eventMinute.let { if (it < 10) "0$it" else "$it"}
+    val hour = item.eventHour.let { if (it < 10) "0$it" else "$it"}
     return  "$hour : $minute"
 }
 

@@ -1,7 +1,9 @@
 package ru.maxdexter.mytasks.data.localdatabase
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import ru.maxdexter.mytasks.data.localdatabase.entity.Task
 import ru.maxdexter.mytasks.data.localdatabase.entity.TaskFile
 import ru.maxdexter.mytasks.data.localdatabase.entity.TaskWithTaskFile
@@ -23,7 +25,7 @@ interface TaskDao {
     fun getAllTask() : Flow<List<TaskWithTaskFile>>
 
     @Transaction @Query("SELECT * FROM task WHERE id =:uuid ")
-    fun getTaskWithTaskFile(uuid: String) : Flow<TaskWithTaskFile>
+    fun getTaskWithTaskFile(uuid: String) : LiveData<TaskWithTaskFile>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addTaskFile(file: TaskFile)

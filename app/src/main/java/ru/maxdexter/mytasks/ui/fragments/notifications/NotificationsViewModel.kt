@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.ui.notifications
+package ru.maxdexter.mytasks.ui.fragments.notifications
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

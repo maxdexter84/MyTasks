@@ -1,4 +1,4 @@
-package ru.maxdexter.mytasks.ui.profile
+package ru.maxdexter.mytasks.ui.fragments.profile
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

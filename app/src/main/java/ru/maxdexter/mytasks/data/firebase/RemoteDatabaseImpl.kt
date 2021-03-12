@@ -10,8 +10,7 @@ import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinApiExtension
 import ru.maxdexter.mytasks.data.firebase.entity.TaskFS
 import ru.maxdexter.mytasks.data.firebase.entity.User
-import ru.maxdexter.mytasks.repository.LoadingResponse
-import ru.maxdexter.mytasks.repository.RemoteDataProvider
+import ru.maxdexter.mytasks.domen.common.LoadingResponse
 import ru.maxdexter.mytasks.utils.TASKS_COLLECTION
 import ru.maxdexter.mytasks.utils.USERS_COLLECTION
 import java.io.IOException
@@ -21,7 +20,8 @@ import kotlin.coroutines.suspendCoroutine
 
 
 @KoinApiExtension
-class RemoteDataProviderImpl(private val firestore: FirebaseFirestore, private val firebaseAuth: FirebaseAuth) : RemoteDataProvider{
+class RemoteDatabaseImpl(private val firestore: FirebaseFirestore, private val firebaseAuth: FirebaseAuth) :
+    IRemoteDatabase {
 
     private val currentUser
         get() = firebaseAuth.currentUser

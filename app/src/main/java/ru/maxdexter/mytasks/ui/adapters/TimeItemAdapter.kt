@@ -8,27 +8,28 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.maxdexter.mytasks.databinding.ItemTaskLayoutBinding
 import ru.maxdexter.mytasks.data.localdatabase.entity.TaskWithTaskFile
+import ru.maxdexter.mytasks.ui.entity.UITask
 import ru.maxdexter.mytasks.utils.handleParseTime
 
-class TimeItemAdapter(private val itemListener: ItemListener) : ListAdapter<TaskWithTaskFile, TimeItemAdapter.TaskViewHolder>(DiffCallback()){
+class TimeItemAdapter(private val itemListener: ItemListener) : ListAdapter<UITask, TimeItemAdapter.TaskViewHolder>(DiffCallback()){
 
 
     interface ItemListener{
         fun click(uuid: String)
     }
-    class DiffCallback : DiffUtil.ItemCallback<TaskWithTaskFile>() {
+    class DiffCallback : DiffUtil.ItemCallback<UITask>() {
         override fun areItemsTheSame(
-            oldItem: TaskWithTaskFile,
-            newItem: TaskWithTaskFile
+            oldItem: UITask,
+            newItem: UITask
         ): Boolean {
            return oldItem == newItem
         }
 
         override fun areContentsTheSame(
-            oldItem: TaskWithTaskFile,
-            newItem: TaskWithTaskFile
+            oldItem: UITask,
+            newItem: UITask
         ): Boolean {
-           return oldItem.task == newItem.task
+           return oldItem.id == newItem.id
         }
 
 
@@ -45,12 +46,12 @@ class TimeItemAdapter(private val itemListener: ItemListener) : ListAdapter<Task
     class TaskViewHolder(private val binding:ItemTaskLayoutBinding ) : RecyclerView.ViewHolder(binding.root){
 
         @SuppressLint("SetTextI18n")
-        fun bind(item: TaskWithTaskFile, listener: ItemListener){
-            binding.tvTitle.text = item.task.title
-            binding.tvDescription.text = item.task.description
+        fun bind(item: UITask, listener: ItemListener){
+            binding.tvTitle.text = item.title
+            binding.tvDescription.text = item.description
             binding.tvTaskTime.text = handleParseTime(item)
             itemView.setOnClickListener {
-                item.task.let { it1 -> listener.click(it1.id) }
+                item.let { it1 -> listener.click(it1.id) }
             }
 
         }

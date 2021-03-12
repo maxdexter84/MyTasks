@@ -11,14 +11,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.maxdexter.mytasks.data.localdatabase.entity.Task
 import ru.maxdexter.mytasks.data.localdatabase.entity.TaskWithTaskFile
-import ru.maxdexter.mytasks.repository.DataStorage
-import ru.maxdexter.mytasks.repository.LocalDatabase
-import ru.maxdexter.mytasks.repository.RemoteDataProvider
+import ru.maxdexter.mytasks.data.firebase.IDataStorage
+import ru.maxdexter.mytasks.data.localdatabase.ILocalDatabase
+import ru.maxdexter.mytasks.data.firebase.IRemoteDatabase
+import ru.maxdexter.mytasks.domen.common.IRepository
 import ru.maxdexter.mytasks.utils.loadstatus.LoadToCloudStatus
 import ru.maxdexter.mytasks.utils.taskWithTaskFileToTaskFS
 import java.io.IOException
 
-class MainViewModel(private val remoteDatabase: RemoteDataProvider, private val localDatabase: LocalDatabase, private val storage: DataStorage) : ViewModel() {
+class MainViewModel(private val repository: IRepository, private val storageI: IDataStorage) : ViewModel() {
     var isOnline: Boolean = true
     private val _setAlarm = MutableLiveData<Task>()
             val setAlarm: LiveData<Task>
@@ -43,67 +44,14 @@ class MainViewModel(private val remoteDatabase: RemoteDataProvider, private val 
 
 
 
-    fun getCurrentTaskList(){
-        viewModelScope.launch(Dispatchers.IO) {
-            localDatabase.getAllTask().collect { list->
-                _dataToSync.postValue(list.filter { !it.task.saveToCloud })
-            }
-        }
 
-    }
-
-    fun startSaveToCloud(list: List<TaskWithTaskFile>){
-        if (isOnline && checkAuth()){
-            list.forEach {
-                viewModelScope.launch {
-                    saveTaskAndFile(it)
-                }
-            }
-        }
-    }
 
 
     private fun checkAuth(): Boolean{
-        val user =  remoteDatabase.getCurrentUser()
+        val user =  repository.getCurrentUser()
         return user != null
     }
 
-    private suspend fun saveTaskAndFile(taskWithTaskFile: TaskWithTaskFile){
-        withContext(Dispatchers.IO){
-            try {
-                if (taskWithTaskFile.list.isNotEmpty()){
-                    storage.saveFileToStorage(taskWithTaskFile.list,taskWithTaskFile.task.userNumber).collect {
-                        when(it){
-                            is LoadToCloudStatus.Success -> {
-                                val taskFS = taskWithTaskFileToTaskFS(taskWithTaskFile)
-                                taskFS.userFilesCloudStorage = it.data
-                                remoteDatabase.saveTask(taskFS)
-                                updateTaskWithTaskFile(taskWithTaskFile)
-                            }
-                            is LoadToCloudStatus.Error -> {
-                                getCurrentTaskList()
-                            }
-                            else -> {Log.i("TAG","unknown state")}
-                        }
-                    }
-                }else {
-                    val taskFS = taskWithTaskFileToTaskFS(taskWithTaskFile)
-                    remoteDatabase.saveTask(taskFS)
-                    updateTaskWithTaskFile(taskWithTaskFile)
-                }
-
-
-            }catch (e: IOException){
-                Log.e("TAG","saveTaskAndFile ${e.stackTrace}")}
-        }
-    }
-
-
-    private suspend fun updateTaskWithTaskFile(taskWithTaskFile: TaskWithTaskFile){
-        val task = taskWithTaskFile
-        task.task.saveToCloud = true
-        localDatabase.saveTask(task)
-    }
 
 }
 

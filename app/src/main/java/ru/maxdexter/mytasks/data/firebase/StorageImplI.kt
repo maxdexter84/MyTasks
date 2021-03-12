@@ -11,15 +11,15 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 import ru.maxdexter.mytasks.data.firebase.entity.TaskFS
 import ru.maxdexter.mytasks.data.localdatabase.entity.TaskFile
-import ru.maxdexter.mytasks.repository.DataStorage
-import ru.maxdexter.mytasks.repository.LoadingResponse
+import ru.maxdexter.mytasks.domen.common.LoadingResponse
 import ru.maxdexter.mytasks.utils.loadstatus.LoadToCloudStatus
 import java.io.File
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @ExperimentalCoroutinesApi
-class StorageImpl(private val storage: FirebaseStorage, private val application: Application) : DataStorage {
+class StorageImplI(private val storage: FirebaseStorage, private val application: Application) :
+    IDataStorage {
     private val storageRef = storage.reference
   override suspend fun saveFileToStorage(taskFileList: List<TaskFile>, userNumber: String): StateFlow<LoadToCloudStatus>{
       val stateFlow = MutableStateFlow<LoadToCloudStatus>(LoadToCloudStatus.Loading)
@@ -28,7 +28,7 @@ class StorageImpl(private val storage: FirebaseStorage, private val application:
                val resultList = mutableListOf<TaskFile>()
                var count = 0
                taskFileList.forEach{item->
-                  val resUri = saveFile(userStorage,item).await()
+                 saveFile(userStorage,item).await()
                        .task.addOnCompleteListener { task->
                            if (task.isComplete && task.isSuccessful) {
                                val taskFile: TaskFile = item.copy()
@@ -67,7 +67,6 @@ class StorageImpl(private val storage: FirebaseStorage, private val application:
                 val pref = taskFile.name.split(".")[0]
                 val suffix = taskFile.name.split(".")[1]
                 val localFile = File.createTempFile(pref,suffix, application.filesDir)
-                val userFile = userStorage.getFile(localFile)
                 list.add(TaskFile(uri = localFile.absolutePath,saveToCloud = true,taskUUID = taskFS.id,taskFile.fileType,taskFile.name))
 
             }
